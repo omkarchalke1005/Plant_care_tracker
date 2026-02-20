@@ -1,0 +1,4337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plant Care Tracker - Omkar Vikas Chalke</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f3f7f2;
+      color: #163021;
+      min-height: 100vh;
+    }
+
+    .hidden { display: none !important; }
+
+    /* AUTH */
+    .auth-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #c8e6c9, #f3f7f2);
+    }
+
+    .auth-card {
+      background: white;
+      padding: 2rem 2.5rem;
+      border-radius: 1.2rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-card h1 {
+      font-size: 1.9rem;
+      margin-bottom: 0.5rem;
+      color: #2e7d32;
+    }
+
+    .auth-card p {
+      margin-bottom: 1.5rem;
+      color: #4f6f52;
+    }
+
+    .form-group { margin-bottom: 1rem; }
+
+    label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 0.9rem;
+    }
+
+    input[type="text"],
+    input[type="password"],
+    input[type="email"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.6rem 0.75rem;
+      border-radius: 0.6rem;
+      border: 1px solid #c1d5c1;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border 0.2s, box-shadow 0.2s, transform 0.15s;
+      background: #fdfdfd;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: #4caf50;
+      box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.18);
+      transform: translateY(-1px);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-link,
+    .btn-danger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 1.3rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.2s, color 0.2s;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(46, 125, 50, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(46, 125, 50, 0.45);
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #2e7d32;
+      border: 1px solid #a5d6a7;
+    }
+
+    .btn-secondary:hover { background: #e8f5e9; }
+
+    .btn-link {
+      background: transparent;
+      color: #2e7d32;
+      padding: 0;
+      box-shadow: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-link:hover { text-decoration: underline; }
+
+    /* small delete button style */
+    .btn-danger {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+      padding: 0.3rem 0.7rem;
+      font-size: 0.8rem;
+      box-shadow: none;
+    }
+    .btn-danger:hover {
+      background: #ffcdd2;
+    }
+
+    .small-text {
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      color: #4f6f52;
+    }
+
+    /* APP LAYOUT */
+    #appWrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.9rem 2rem;
+      background: #ffffff;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.03em;
+      color: #2e7d32;
+    }
+
+    .main-header nav button {
+  margin: 0 0.35rem;
+  text-decoration: none;
+  color: #355b3e;
+  font-size: 0.95rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+
+    .main-header nav button.active{
+      background: #e8f5e9;
+      font-weight: 600;
+    }
+
+  .main-header nav button:hover
+ { background: #e8f5e9; }
+
+    .user-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #usernameDisplay {
+      font-size: 0.9rem;
+      color: #355b3e;
+    }
+
+    .main-content {
+      max-width: 1100px;
+      margin: 1.5rem auto 2rem;
+      padding: 0 1rem;
+      flex: 1;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 1.1rem;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.03);
+      margin-bottom: 1.4rem;
+    }
+
+    .card h2 {
+      margin-bottom: 0.6rem;
+      font-size: 1.3rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: #607d66;
+      margin-bottom: 1rem;
+    }
+
+    .app-section { display: none; }
+.app-section.active { display: block; }
+
+    /* HOME (NEW WELCOME PAGE) */
+    .home-hero-main {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 1.3rem;
+    }
+
+    .home-hero-text h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .home-hero-text p {
+      color: #4f6f52;
+      margin-bottom: 0.8rem;
+    }
+
+    .home-hero-text ul {
+      margin-left: 1rem;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+      color: #355b3e;
+    }
+
+    .home-hero-image {
+      border-radius: 1.1rem;
+      background: linear-gradient(135deg, #a5d6a7, #e8f5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .home-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.7rem;
+      margin-top: 0.6rem;
+    }
+
+    .home-gallery img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 0.9rem;
+    }
+
+    /* Home slider */
+    .home-slider {
+      margin-top: 0.7rem;
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .home-slider img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+
+    .home-slider img.active {
+      opacity: 1;
+    }
+
+    /* DASHBOARD / ADD PLANTS */
+    .home-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 1.3rem;
+    }
+
+    .hero-text h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-text p {
+      color: #4f6f52;
+      margin-bottom: 1rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .hero-stat {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 0.9rem;
+      background: #e8f5e9;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .hero-image {
+      border-radius: 1.1rem;
+      background: linear-gradient(135deg, #a5d6a7, #e8f5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-box {
+      background: #f8fff8;
+      border-radius: 0.9rem;
+      padding: 1rem;
+      border: 1px solid #cde9ce;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .info-box h3 { margin-bottom: 0.4rem; }
+
+    /* Attractive Add Plant card */
+    .add-plant-card {
+      background: radial-gradient(circle at top left, #e8f5e9, #ffffff);
+      border: 1px solid #c8e6c9;
+      box-shadow: 0 14px 30px rgba(46, 125, 50, 0.12);
+    }
+    .add-plant-card h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .add-plant-card h2::before {
+      content: "✨";
+      font-size: 1.1rem;
+    }
+
+    /* LIBRARY */
+    .plant-card {
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.03);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+
+    .plant-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    .plant-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .plant-card-body {
+      padding: 0.75rem 0.9rem 0.9rem;
+      position: relative;
+    }
+
+    .plant-name { font-weight: 600; margin-bottom: 0.25rem; }
+
+    .plant-meta { font-size: 0.85rem; color: #607d66; }
+
+    .plant-delete-wrapper {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+
+    /* DASHBOARD – PLANT DETAILS */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: 1.2rem;
+    }
+
+    .plant-photo-placeholder {
+      width: 100%;
+      border-radius: 1rem;
+      height: 220px;
+      background: linear-gradient(135deg, #c8e6c9, #e8f5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      color: #355b3e;
+      overflow: hidden;
+    }
+
+    .plant-photo-placeholder img {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      object-fit: cover;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: #e8f5e9;
+      font-size: 0.8rem;
+      margin-right: 0.25rem;
+    }
+
+    .item-list {
+      list-style: none;
+      margin-top: 0.5rem;
+    }
+
+    .item-list li {
+      padding: 0.35rem 0;
+      border-bottom: 1px dashed #e0e9e0;
+      font-size: 0.9rem;
+    }
+
+    .item-list li:last-child { border-bottom: none; }
+
+    /* CARE TRACKER (Plant Tracker page) */
+    .tracker-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
+      gap: 1.2rem;
+    }
+
+    .task-list {
+      list-style: none;
+      margin-top: 0.4rem;
+    }
+
+    .task-list li {
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.75rem;
+      background: #f1f8e9;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .task-water {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+    }
+
+    .task-fert {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+    }
+
+    .task-other {
+      background: #f5f5f5;
+      border-left: 4px solid #9e9e9e;
+    }
+
+    .calendar { margin-top: 0.5rem; }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+    }
+
+    .calendar-cell {
+      background: #f5f5f5;
+      border-radius: 0.5rem;
+      padding: 0.25rem;
+      min-height: 45px;
+      font-size: 0.75rem;
+      text-align: right;
+    }
+
+    .calendar-cell span { font-weight: 600; }
+
+    .calendar-cell.water-task { background: #bbdefb; }
+    .calendar-cell.fert-task { background: #c8e6c9; }
+    .calendar-cell.both-task { background: #fff9c4; }
+
+    /* PLANT TRACER (dark panel) */
+    .tracer-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 3fr);
+      gap: 1.2rem;
+    }
+
+    .tracer-panel {
+      background: radial-gradient(circle at top, #062616, #020f0a);
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      border: 1px solid #0f3d27;
+      color: #c8facc;
+    }
+
+    .tracer-panel h3 { margin-bottom: 0.6rem; color: #8cffb5; }
+
+    .tracer-panel h2,
+    .tracer-panel h4 { color: #b4ffd8; }
+
+    .tracer-panel .badge {
+      background: rgba(0, 255, 120, 0.1);
+      color: #9bffca;
+    }
+
+    .tracer-panel .item-list li {
+      border-bottom-color: rgba(155, 255, 202, 0.2);
+    }
+
+    .tracer-meta {
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .tracer-meta p { margin-bottom: 0.3rem; }
+
+    .tracer-label { color: #81c995; }
+
+    .growth-chart-title { display:flex; justify-content:space-between; align-items:center; }
+
+    .growth-chart {
+      margin-top: 0.7rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.9rem;
+      height: 150px;
+    }
+
+    .growth-bar-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 0.75rem;
+      color: #a5ffd2;
+    }
+
+    .growth-bar {
+      width: 100%;
+      border-radius: 0.5rem 0.5rem 0 0;
+      background: linear-gradient(180deg, #00ff88, #00784a);
+      margin-bottom: 0.2rem;
+    }
+
+    /* Chatbot messages */
+    #chatWindow {
+      background:#02150d;
+      border-radius:0.7rem;
+      padding:0.6rem;
+      height:200px;
+      overflow-y:auto;
+      font-size:0.8rem;
+      margin-bottom:0.6rem;
+      border:1px solid #0f3b23;
+    }
+
+    .chat-msg-user {
+      text-align:right;
+      margin-bottom:0.3rem;
+    }
+
+    .chat-msg-bot {
+      text-align:left;
+      margin-bottom:0.3rem;
+    }
+
+    .chat-msg-user span,
+    .chat-msg-bot span{
+      display:inline-block;
+      padding:0.25rem 0.5rem;
+      border-radius:0.7rem;
+      max-width:80%;
+    }
+
+    .chat-msg-user span{
+      background:#00c853;
+      color:#02140b;
+    }
+
+    .chat-msg-bot span{
+      background:#062616;
+      color:#c8facc;
+      border:1px solid #0f3b23;
+    }
+
+    /* CONTACT & ABOUT */
+    .contact-info {
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .contact-info p { margin-bottom: 0.4rem; }
+
+    /* --- NEW GLOWING ABOUT DESIGN --- */
+    #aboutSection {
+      background: radial-gradient(circle at top left, #e8fff3, #f5fff9, #e7fbe9);
+      border-radius: 1.3rem;
+      padding: 1.2rem;
+      box-shadow: 0 20px 50px rgba(46,125,50,0.18);
+    }
+
+    #aboutSection .card {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(150, 220, 170, 0.7);
+      box-shadow: 0 14px 30px rgba(60, 140, 80, 0.18);
+    }
+
+    .about-text p {
+      margin-bottom: 0.7rem;
+      line-height: 1.4;
+    }
+
+    .about-pill {
+      display:inline-block;
+      padding:0.35rem 0.9rem;
+      border-radius:999px;
+      background:linear-gradient(135deg,#d5ffe4,#f4fff9);
+      font-size:0.8rem;
+      margin-right:0.35rem;
+      margin-bottom:0.3rem;
+      color:#1f6b34;
+      border:1px solid #bdeecf;
+      box-shadow:0 0 15px rgba(120,255,170,0.5);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+
+    .about-pill:hover{
+      transform:translateY(-2px) scale(1.03);
+      box-shadow:0 0 20px rgba(90,220,140,0.9);
+    }
+
+    .about-highlight {
+      background:linear-gradient(135deg,#f6fff8,#e7ffe9);
+      border-radius:0.9rem;
+      border:1px solid #bfeacc;
+      padding:0.9rem 1rem;
+      margin-top:0.6rem;
+      font-size:0.9rem;
+      box-shadow:0 10px 25px rgba(46,125,50,0.12);
+    }
+
+    .about-highlight h3{
+      color:#1f6b34;
+    }
+
+    .team-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:0.8rem;
+      margin-top:0.7rem;
+    }
+
+    .team-card {
+      background:linear-gradient(135deg,#f6fff9,#e9fff0);
+      border-radius:0.9rem;
+      padding:0.8rem 0.9rem;
+      border:1px solid #c7eed2;
+      box-shadow:0 8px 18px rgba(46,125,50,0.15);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+
+    .team-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 12px 28px rgba(46,125,50,0.22);
+    }
+
+    .team-name {
+      font-weight:600;
+      margin-bottom:0.2rem;
+      color:#1c5f2c;
+    }
+
+    .team-role {
+      font-size:0.85rem;
+      color:#4f6f52;
+    }
+
+    /* PROFILE */
+    .profile-grid {
+      display:grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 2fr);
+      gap:1rem;
+      margin-top:0.5rem;
+    }
+
+    .profile-summary {
+      background:#f8fff8;
+      border-radius:0.9rem;
+      border:1px solid #cde9ce;
+      padding:1rem;
+      font-size:0.95rem;
+    }
+
+    .profile-summary p {
+      margin-bottom:0.4rem;
+    }
+
+    .profile-header {
+      display:flex;
+      align-items:center;
+      gap:0.75rem;
+      margin-bottom:0.8rem;
+    }
+
+    .profile-avatar {
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#4caf50,#2e7d32);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#ffffff;
+      font-weight:700;
+      font-size:1.3rem;
+    }
+
+    .profile-fields {
+      margin-top:0.35rem;
+    }
+
+    .profile-field {
+      display:flex;
+      justify-content:space-between;
+      gap:0.5rem;
+      margin-bottom:0.35rem;
+      font-size:0.9rem;
+    }
+
+    .profile-field-label {
+      color:#607d66;
+    }
+
+    .profile-actions {
+      margin-top:0.6rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.5rem;
+    }
+
+    .profile-edit {
+      margin-top:0.8rem;
+    }
+
+    /* FLOATING CHAT ICON + POPUP */
+    .chat-fab {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      z-index: 120;
+    }
+
+    .plant-doctor-fab{
+  right:140px;
+  background:linear-gradient(135deg,#00c853,#1b5e20);
+}
+
+
+    .chat-fab:hover {
+      transform: translateY(-2px);
+    }
+
+    .chat-popup {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 360px;
+      max-width: 92vw;
+      z-index: 110;
+    }
+
+    .chat-popup .card {
+      margin-bottom: 0;
+    }
+
+    .chat-header-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.4rem;
+    }
+
+    #chatCloseBtn {
+      background:transparent;
+      border:none;
+      font-size:1.2rem;
+      cursor:pointer;
+      color:#2e7d32;
+      padding:0.1rem 0.4rem;
+      border-radius:999px;
+    }
+    #chatCloseBtn:hover {
+      background:#e8f5e9;
+    }
+
+    @media (max-width: 800px) {
+      .home-hero-main,
+      .home-hero,
+      .dashboard-layout,
+      .tracker-layout,
+      .tracer-layout,
+      .profile-grid { grid-template-columns: 1fr; }
+
+      #aboutSection { padding: 0.8rem; }
+
+      .main-header {
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+
+      .main-header nav {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+
+  
+
+body.dark {
+  background:#0e1b14;
+  color:#e8f5e9;
+}
+body.dark .card,
+body.dark .main-header {
+  background:#11261d;
+  color:#e8f5e9;
+}
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background:#0b1f16;
+  color:#e8f5e9;
+  border-color:#2e7d32;
+}
+
+
+
+body.dark {
+  background: #0b1511;
+  color: #e6f4ea;
+}
+
+body.dark .main-header,
+body.dark .card,
+body.dark .auth-card {
+  background: #111f19;
+  color: #e6f4ea;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5 {
+  color: #c8facc;
+}
+
+body.dark p,
+body.dark li,
+body.dark span,
+body.dark label {
+  color: #d4efe0;
+}
+
+body.dark nav a {
+  color: #c8facc;
+}
+body.dark nav a.active,
+body.dark nav a:hover {
+  background: #1f3d2f;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #0f1f18;
+  color: #e6f4ea;
+  border: 1px solid #2e7d32;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #9fd6b6;
+}
+
+body.dark .btn-primary {
+  background: linear-gradient(135deg,#43a047,#1b5e20);
+  color: #ffffff;
+}
+
+body.dark .btn-secondary {
+  background: #1f3d2f;
+  color: #c8facc;
+  border-color: #2e7d32;
+}
+
+body.dark .info-box,
+body.dark .profile-summary {
+  background: #13251d;
+  border-color: #2e7d32;
+}
+
+body.dark .task-list li {
+  background: #1a3328;
+  color: #e6f4ea;
+}
+
+body.dark .calendar-cell {
+  background: #1a3328;
+  color: #e6f4ea;
+}
+
+body.dark .plant-card {
+  background: #13251d;
+}
+
+body.dark .chat-fab {
+  background: linear-gradient(135deg,#43a047,#1b5e20);
+}
+
+body.dark .tracer-panel {
+  background: radial-gradient(circle at top, #04160d, #020b07);
+  border-color: #1f6b34;
+}
+
+
+/* ===== FINAL DARK MODE (FULL VISIBILITY – EXAM SAFE) ===== */
+body.dark,
+body.dark * {
+  color: #eaf7ef !important;
+}
+
+body.dark {
+  background: #08130f !important;
+}
+
+body.dark .main-header,
+body.dark .card,
+body.dark .auth-card,
+body.dark .info-box,
+body.dark .profile-summary,
+body.dark .plant-card {
+  background: #0f1f19 !important;
+  border-color: #2e7d32 !important;
+}
+
+body.dark nav a {
+  color: #c8facc !important;
+}
+
+body.dark nav a.active,
+body.dark nav a:hover {
+  background: #1f3d2f !important;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #0b1f16 !important;
+  color: #eaf7ef !important;
+  border: 1px solid #43a047 !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #a8e6c3 !important;
+}
+
+body.dark button {
+  color: #ffffff !important;
+}
+
+body.dark .btn-primary {
+  background: linear-gradient(135deg,#43a047,#1b5e20) !important;
+}
+
+body.dark .btn-secondary {
+  background: #1f3d2f !important;
+  border-color: #43a047 !important;
+}
+
+body.dark .calendar-cell {
+  background: #1a3328 !important;
+}
+
+body.dark .task-list li {
+  background: #1a3328 !important;
+}
+
+body.dark .tracer-panel {
+  background: radial-gradient(circle at top,#04160d,#020b07) !important;
+  border-color: #1f6b34 !important;
+}
+
+
+/* ===== EXTRA DARK FIX FOR ABOUT & ADD PLANT ===== */
+body.dark #aboutSection,
+body.dark #dashboardSection {
+  background:#0f1f19 !important;
+}
+
+body.dark #aboutSection .card,
+body.dark #dashboardSection .card {
+  background:#13251d !important;
+  color:#eaf7ef !important;
+}
+
+
+/* ===== FINAL DARK MODE CONTRAST FIX ===== */
+body.dark {
+  background:#08130f;
+  color:#eafff2;
+}
+
+/* Headings */
+body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
+  color:#c8facc;
+}
+
+/* Cards */
+body.dark .card,
+body.dark .info-box,
+body.dark .profile-summary {
+  background:#0f261c;
+  border:1px solid #1f6b34;
+  color:#eafff2;
+}
+
+/* About section pills */
+body.dark .about-pill {
+  background:#143d2b;
+  color:#c8facc;
+  border-color:#2e7d32;
+}
+
+/* Hero & highlight boxes */
+body.dark .hero-image,
+body.dark .about-highlight {
+  background:#123527;
+  color:#eafff2;
+}
+
+/* Stat boxes */
+body.dark .hero-stat {
+  background:#123527;
+  color:#eafff2;
+}
+
+/* ===== PLANT MOOD CENTER FIX ===== */
+
+#plantMoodSection{
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#plantMoodSection .card{
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto;   /* ⭐ THIS IS THE MAGIC LINE */
+}
+
+
+/* ===== PLANT MOOD ANIMATION SYSTEM ===== */
+
+.mood-box{
+  padding:20px;
+  border-radius:18px;
+  margin-top:15px;
+  color:white;
+  font-weight:600;
+  animation: moodFade 1s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+@keyframes moodFade{
+  from{opacity:0; transform:translateY(15px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* Glow animation */
+@keyframes glowPulse{
+  0%{ box-shadow:0 0 10px rgba(0,0,0,0.2);}
+  50%{ box-shadow:0 0 25px rgba(255,255,255,0.4);}
+  100%{ box-shadow:0 0 10px rgba(0,0,0,0.2);}
+}
+
+/* Mood Colors */
+
+.mood-divine{
+  background: linear-gradient(135deg,#00e676,#00c853);
+  animation: glowPulse 2s infinite;
+}
+
+.mood-thriving{
+  background: linear-gradient(135deg,#48a3ed,#4abfe6);
+}
+
+.mood-stable{
+  background: linear-gradient(135deg,#fbc02d,#f9a825);
+}
+
+.mood-struggling{
+  background: linear-gradient(135deg,#fd9617,#fe8c2f);
+}
+
+.mood-critical{
+  background: linear-gradient(135deg,#fa3f3c,#fd2c2c);
+  animation: glowPulse 1.5s infinite;
+}
+
+/* ===== PROGRESS BAR ===== */
+
+.progress-container{
+  background:#e4c97e;
+  border-radius:999px;
+  height:22px;
+  margin-top:10px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  border-radius:999px;
+  transition: width 1s ease;
+  background: linear-gradient(90deg,#00e676,#00c853);
+}
+
+
+
+</style>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+</head>
+<body>
+  <!-- AUTH (LOGIN / REGISTER) -->
+  <div id="authWrapper" class="auth-wrapper">
+    <div id="loginCard" class="auth-card">
+      <h1>Plant Care Tracker</h1>
+      <p>Login to track your plants, care notes, and watering schedule.</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="Enter password">
+        </div>
+        <div id="loginMessage" class="small-text"></div>
+        <div style="margin-top: 1rem;">
+          <button type="submit" class="btn-primary" style="width: 100%;">Login</button>
+        </div>
+      </form>
+
+      <p class="small-text" style="margin-top: 1rem;">
+        New here?
+        <button id="showRegisterBtn" class="btn-link">Create an account</button>
+      </p>
+    </div>
+
+    <div id="registerCard" class="auth-card hidden">
+      <h1>Create Account</h1>
+      <p>Register to start your personal plant care dashboard.</p>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="regUsername">Username</label>
+          <input id="regUsername" type="text" placeholder="Choose a username">
+        </div>
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <input id="regName" type="text" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label for="regPhone">Phone Number</label>
+          <input id="regPhone" type="text" placeholder="Your phone number">
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email</label>
+          <input id="regEmail" type="email" placeholder="Your email">
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input id="regPassword" type="password" placeholder="Create a password">
+        </div>
+        <div id="registerMessage" class="small-text"></div>
+        <div style="margin-top: 1rem;">
+          <button type="submit" class="btn-primary" style="width: 100%;">Register</button>
+        </div>
+      </form>
+
+      <p class="small-text" style="margin-top: 1rem;">
+        Already have an account?
+        <button id="showLoginBtn" class="btn-link">Login here</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appWrapper" class="hidden">
+    <header class="main-header">
+      <div class="logo">Plant Care Tracker</div>
+      <nav>
+  <button class="nav-link active" data-section="homeSection">Home</button>
+  <button class="nav-link" data-section="dashboardSection">Add Plants</button>
+  <button class="nav-link" data-section="trackerSection">Care Tracker</button>
+  <button class="nav-link" data-section="librarySection">Plant Gallery</button>
+  <button class="nav-link" data-section="tracerSection">Growth Tracking</button>
+  <button class="nav-link" data-section="plantMoodSection">🌿 Plant Mood</button>
+  <button class="nav-link" data-section="profileSection">Dashboard</button>
+  <button class="nav-link" data-section="contactSection">📞CONTACT</button>
+  <button class="nav-link" data-section="aboutSection">About</button>
+</nav>
+
+      
+      <div class="user-box">
+        <span id="usernameDisplay"></span>
+        <button id="logoutBtn" class="btn-secondary">Logout</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- NEW HOME PAGE -->
+      <section id="homeSection" class="app-section">
+        <div class="card home-hero-main">
+          <div class="home-hero-text">
+            <h1>Welcome to Plant Care Tracker 🌱</h1>
+            <p>
+              This website helps you organize all your plants in one place – with photos, notes,
+              watering reminders and a special plant tracer dashboard.
+            </p>
+            <p><strong>What you can do here:</strong></p>
+            <ul>
+              <li>Save each plant with photo, type and growth stage.</li>
+              <li>Plan watering and fertilizer dates with a calendar.</li>
+              <li>See care history and important notes per plant.</li>
+              <li>Use the Plant Assistant chatbot for quick help.</li>
+            </ul>
+          </div>
+          <div class="home-hero-image">
+            <div>
+              <h3>All your plants, neatly organized.</h3>
+              <p>
+                Start by adding a plant in the <strong>Add Plants</strong> tab.
+                Then explore <strong>Plant Gallery</strong>, <strong>Care Tracker</strong> and
+                <strong>Growth Tracking</strong>.
+              </p>
+              <div id="homeSlider" class="home-slider">
+                <img src="https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Plants on table">
+                <img src="https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Hanging plants">
+                <img src="https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Palm in room">
+                <img src="https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Snake plant on floor">
+                <img src="https://images.pexels.com/photos/1048039/pexels-photo-1048039.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Rubber plant by window">
+                <img src="https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Leaf close-up">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Beautiful Plant Care Gallery</h2>
+          <p class="card-subtitle">
+            A small visual inspiration to remind you how amazing healthy plants look.
+          </p>
+          <div class="home-gallery">
+            <img src="https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Indoor plants on shelf">
+            <img src="https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Hanging plant">
+            <img src="https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Palm in room">
+            <img src="https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Snake plant">
+            <img src="https://images.pexels.com/photos/1048039/pexels-photo-1048039.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Rubber plant">
+            <img src="https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Fern leaves">
+            <img src="https://images.pexels.com/photos/602580/pexels-photo-602580.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Orchid flowers">
+            <img src="https://images.pexels.com/photos/1169084/pexels-photo-1169084.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Sunflower field">
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>How to Use This Website</h2>
+          <p class="card-subtitle">
+            Follow these simple steps to get the best use from Plant Care Tracker.
+          </p>
+          <div class="grid">
+            <div class="info-box">
+              <h3>1. Go to Add Plants</h3>
+              <p>
+                Open the <strong>Add Plants</strong> tab and add your first plant.
+                You can select from the built-in Plant Information Library and upload a picture.
+              </p>
+            </div>
+            <div class="info-box">
+              <h3>2. Check Plant Gallery</h3>
+              <p>
+                After adding plants, all of them appear in the <strong>Plant Gallery</strong>.
+                Click any plant card to open its individual <strong>Plant Dashboard</strong>.
+              </p>
+            </div>
+            <div class="info-box">
+              <h3>3. Use Care Tracker</h3>
+              <p>
+                In the <strong>Care Tracker</strong> tab, add watering and fertilizer tasks,
+                see upcoming and past activities and view everything on the calendar.
+              </p>
+            </div>
+            <div class="info-box">
+              <h3>4. Trace & Chat</h3>
+              <p>
+                In the <strong>Growth Tracking</strong> tab you can see exact watering dates,
+                fertilizer dates, growth bars and then open the AI chatbot icon at the bottom
+                of the screen for help and guidance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADD PLANTS -->
+      <section id="dashboardSection" class="app-section">
+        <div class="card home-hero">
+          <div class="hero-text">
+            <h1>Add Plants & Overview 🌿</h1>
+            <p>
+              This is your main area to add new plants. You can also see overall stats and use the Plant
+              Information Library to quickly fill details.
+            </p>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <div>Total Plants</div>
+                <strong id="plantCount">0</strong>
+              </div>
+              <div class="hero-stat">
+                <div>Upcoming Tasks</div>
+                <strong id="upcomingCount">0</strong>
+              </div>
+            </div>
+          </div>
+          <div class="hero-image">
+            <div>
+              <h3>Add your plants in seconds</h3>
+              <p>Use the library, upload a picture and start tracking watering, sunlight and growth.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLANT INFO LIBRARY -->
+        <div class="card">
+          <h2>Plant Information Library</h2>
+          <p class="card-subtitle">
+            Select a plant to see its information. The details will appear below and will also fill the Add Plant form.
+          </p>
+
+          <div class="form-group">
+            <label for="catalogSearch">Search plant by name</label>
+            <input id="catalogSearch" type="text" placeholder="Type to search in library (e.g. money, tulsi, rose)">
+          </div>
+
+          <div class="form-group">
+            <label for="catalogPlantSelect">Select Plant from Library</label>
+            <select id="catalogPlantSelect"></select>
+          </div>
+
+          <div id="catalogPlantInfoBox" class="info-box">
+            <h3>Plant information</h3>
+            <p>Select a plant above to view description, type and basic care information.</p>
+          </div>
+
+          <p class="small-text">
+            After choosing a plant, scroll down to the "Add a New Plant" form. The plant name,
+            type and information note will already be filled. You can still edit them and upload your own picture.
+          </p>
+        </div>
+
+        <!-- ADD PLANT -->
+        <div class="card add-plant-card">
+          <h2>Add a New Plant</h2>
+          <p class="card-subtitle">
+            Add plant picture, name, type (indoor or outdoor), growth stage and an information note.
+            It will appear in your Plant Gallery, and each plant will have its own dashboard page.
+          </p>
+
+          <form id="addPlantForm">
+            <div class="grid">
+              <div>
+                <div class="form-group">
+                  <label for="plantName">Plant Name</label>
+                  <input id="plantName" type="text" placeholder="Eg. Money Plant">
+                </div>
+                <div class="form-group">
+                  <label for="plantType">Plant Type</label>
+                  <select id="plantType">
+                    <option value="">Select type</option>
+                    <option value="Indoor">Indoor Plant</option>
+                    <option value="Outdoor">Outdoor Plant</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="growthStage">Growth Stage</label>
+                  <input id="growthStage" type="text" placeholder="Eg. Seedling / Mature / New cutting">
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                  <label for="plantImageFile">Upload Plant Picture (optional)</label>
+                  <input id="plantImageFile" type="file" accept="image/*">
+                </div>
+                <div class="form-group">
+                  <label for="plantImageUrl">Or Plant Image URL (optional)</label>
+                  <input id="plantImageUrl" type="text" placeholder="Paste any online image link for the plant">
+                </div>
+                <div class="form-group">
+                  <label for="initialNote">Plant Information Note</label>
+                  <textarea id="initialNote"
+                    placeholder="Eg. Native to tropical regions, prefers bright indirect light and slightly moist soil."></textarea>
+                </div>
+              </div>
+            </div>
+            <div style="margin-top: 0.75rem;">
+              <button type="submit" class="btn-primary">Add Plant</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- PLANT LIBRARY -->
+      <section id="librarySection" class="app-section">
+        <div class="card">
+          <h2>Plant Gallery</h2>
+          <p class="card-subtitle">
+            All the plants you added. Click any plant card to open its full dashboard with growth tracking,
+            information notes and history. Use the delete button to remove a plant completely.
+          </p>
+          <div id="plantLibrary" class="grid"></div>
+        </div>
+      </section>
+
+      <!-- PLANT DASHBOARD (DETAIL FOR ONE PLANT) -->
+      <section id="plantDashboardSection" class="app-section">
+        <div class="card">
+          <h2>Plant Dashboard</h2>
+          <p class="card-subtitle">
+            View and update details for this plant.
+          </p>
+          <div class="dashboard-layout">
+            <div>
+              <div id="plantImageBox" class="plant-photo-placeholder">
+                Select a plant to view its dashboard.
+              </div>
+              <div id="plantInfo"></div>
+            </div>
+            <div>
+              <h3>Notes</h3>
+              <ul id="notesList" class="item-list"></ul>
+              <h3>History</h3>
+              <ul id="historyList" class="item-list"></ul>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Update Plant Details</h3>
+            <form id="updatePlantForm">
+              <div class="grid">
+                <div>
+                  <div class="form-group">
+                    <label for="plantNameDash">Plant Name</label>
+                    <input id="plantNameDash" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="plantTypeDash">Plant Type</label>
+                    <select id="plantTypeDash">
+                      <option value="Indoor">Indoor Plant</option>
+                      <option value="Outdoor">Outdoor Plant</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="growthStageDash">Growth Stage</label>
+                    <input id="growthStageDash" type="text">
+                  </div>
+                </div>
+                <div>
+                  <div class="form-group">
+                    <label for="plantImageUrlDash">Plant Image URL</label>
+                    <input id="plantImageUrlDash" type="text">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary">Update Plant</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Add Note</h3>
+            <form id="addNoteFormDash">
+              <div class="form-group">
+                <label for="noteTextDash">Note</label>
+                <textarea id="noteTextDash" placeholder="Add a care note or observation"></textarea>
+              </div>
+              <button type="submit" class="btn-primary">Add Note</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLANT DASHBOARD (DETAIL FOR ONE PLANT) -->
+      
+
+      
+
+      
+      <!-- CARE TRACKER -->
+      <section id="trackerSection" class="app-section">
+        <div class="card">
+          <h2>Plant Care Tracker</h2>
+          <p class="card-subtitle">
+            Add watering, fertilizing and cutting tasks. Calendar colors: Blue=Water, Green=Fertilizer, Pink=Cutting, Yellow=Water+Fertilizer.
+          </p>
+
+          <div class="tracker-layout">
+            <!-- LEFT -->
+            <div>
+              <h3>Add Care Task</h3>
+
+              <div class="form-group">
+                <label>Select Plant</label>
+                <select id="trackerPlantSelect"></select>
+              </div>
+
+              <div class="form-group">
+                <label>Task Type</label>
+                <select id="trackerTaskType">
+                  <option value="">Select Task</option>
+                  <option value="water">Watering</option>
+                  <option value="fert">Fertilizing</option>
+                  <option value="cut">Cutting Leaf</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Date</label>
+                <input id="trackerTaskDate" type="date">
+              </div>
+
+              <button type="button" class="btn-primary" id="trackerAddBtn">Add Task</button>
+
+              <h3 style="margin-top:0.8rem;">Tasks</h3>
+              <ul id="trackerTaskList" class="task-list"></ul>
+            </div>
+
+            <!-- RIGHT -->
+            <div>
+              <h3>Calendar</h3>
+              <div class="calendar">
+                <div class="calendar-grid" id="trackerCalendarGrid"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- PLANT TRACER -->
+      <section id="tracerSection" class="app-section">
+        <div class="card">
+          <h2>Growth Tracking</h2>
+          <p class="card-subtitle">
+            Exact watering / fertilizer dates and a clear growth phase diagram for each plant.
+          </p>
+
+          <div class="form-group">
+            <label for="tracerPlantSelect">Select Plant for Tracing</label>
+            <select id="tracerPlantSelect"></select>
+          </div>
+
+          <div class="tracer-layout">
+            <!-- LEFT: Overview -->
+            <div class="tracer-panel">
+              <h3>Plant Overview</h3>
+              <div id="tracerPlantImageBox" class="plant-photo-placeholder"
+                   style="background: radial-gradient(circle at top, #0f3b23, #020b07);">
+                Select a plant to view tracing details.
+              </div>
+              <div style="margin-top:0.7rem;" id="tracerPlantHeader"></div>
+
+              <div class="tracer-meta" id="tracerPlantMeta"></div>
+            </div>
+
+            <!-- RIGHT: Growth + dates -->
+            <div class="tracer-panel">
+              <div class="growth-chart-title">
+                <h3>Growth Phases</h3>
+                <span style="font-size:0.8rem;color:#7bedb7;">From seedling to mature</span>
+              </div>
+              <div id="growthChart" class="growth-chart"></div>
+
+              <div style="margin-top:1rem;">
+                <h4>Exact Watering Dates</h4>
+                <ul id="tracerWaterDates" class="item-list"></ul>
+
+                <h4 style="margin-top:0.6rem;">Fertilizer Dates / When to Fertilize</h4>
+                <ul id="tracerFertilizerDates" class="item-list"></ul>
+
+                <p id="tracerNextInfo" style="margin-top:0.6rem;font-size:0.85rem;color:#a5ffd2;"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- PROFILE -->
+      <section id="profileSection" class="app-section">
+        <div class="card">
+          <h2>Your Dashboard</h2>
+          <p class="card-subtitle">
+            Personalise your space and quickly see your plant journey details.
+          </p>
+
+          <div class="profile-grid">
+            <!-- LEFT: main profile -->
+            <div class="profile-summary">
+              <div class="profile-header">
+                <div id="profileAvatar" class="profile-avatar">U</div>
+                <div>
+                  <h3 id="profileDisplayName">Plant lover</h3>
+                  <p class="small-text" style="margin-top:0.15rem;">
+                    Caring for <strong><span id="profilePlantsMain">0</span></strong> plants 🌿
+                  </p>
+                </div>
+              </div>
+
+              <div class="profile-fields">
+                <div class="profile-field">
+                  <span class="profile-field-label">Full Name</span>
+                  <span id="profileNameView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Username</span>
+                  <span id="profileUsernameView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Email</span>
+                  <span id="profileEmailView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Phone</span>
+                  <span id="profilePhoneView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Member since</span>
+                  <span id="profileMemberSince">-</span>
+                </div>
+              </div>
+
+              <div class="profile-actions">
+                <button id="editProfileBtn" class="btn-primary">Edit Profile</button>
+                <button id="cancelEditProfileBtn" class="btn-secondary hidden">Cancel</button>
+              </div>
+            </div>
+
+            <!-- RIGHT: stats -->
+            <div class="profile-summary">
+              <h3 style="margin-bottom:0.4rem;">Your Plant Stats</h3>
+              <ul class="item-list">
+                <li>Total plants: <strong><span id="profilePlantsCount">0</span></strong></li>
+                <li>Indoor plants: <strong><span id="profileIndoorCount">0</span></strong></li>
+                <li>Outdoor plants: <strong><span id="profileOutdoorCount">0</span></strong></li>
+                <li>Latest plant added: <strong><span id="profileLastPlant">-</span></strong></li>
+              </ul>
+              <p class="small-text" style="margin-top:0.5rem;">
+                Tip: keep your profile updated so you can quickly show your project data
+                (total plants, types and activity) during presentations.
+              </p>
+            </div>
+          </div>
+
+          <!-- EDIT PROFILE CARD -->
+          <div id="profileEditCard" class="card profile-edit hidden">
+            <h3>Edit your profile</h3>
+            <p class="card-subtitle">
+              Update your basic details below. Everything is stored safely inside your own browser using localStorage.
+            </p>
+            <form id="editProfileForm">
+              <div class="grid">
+                <div>
+                  <div class="form-group">
+                    <label for="editFullName">Full Name</label>
+                    <input id="editFullName" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input id="editEmail" type="email">
+                  </div>
+                </div>
+                <div>
+                  <div class="form-group">
+                    <label for="editPhone">Phone Number</label>
+                    <input id="editPhone" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="editPassword">Change Password (optional)</label>
+                    <input id="editPassword" type="password" placeholder="Leave blank to keep same password">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary" style="margin-top:0.5rem;">Save Profile</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="contactSection" class="app-section">
+        <div class="card">
+          <h2>Contact Us</h2>
+          <p class="card-subtitle">
+            Have a problem with your plant or the tracker? Send a message and it will open directly in WhatsApp with the admin.
+          </p>
+
+          <div class="contact-info">
+            <p><strong>Phone:</strong> 8956676259</p>
+            <p><strong>WhatsApp:</strong> <a href="https://wa.me/918956676259" target="_blank">+91 8956676259</a></p>
+            <p><strong>Email:</strong> omkarplantcaretracker@gmail.com</p>
+          </div>
+
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="yourName">Your Name</label>
+              <input id="yourName" type="text" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+              <label for="yourEmail">Your Email</label>
+              <input id="yourEmail" type="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+              <label for="yourMessage">Your Message / Problem</label>
+              <textarea id="yourMessage"
+                placeholder="Describe your plant problem or issue with the tracker."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Send Message</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ABOUT (GLOWING) -->
+      <section id="aboutSection" class="app-section">
+        <div class="card">
+          <h2>About Plant Care Tracker</h2>
+          <p class="card-subtitle">
+            A simple idea with a clear mission – helping people everywhere care for their plants with confidence.
+          </p>
+
+          <div class="about-text">
+            <p>
+              <span class="about-pill">Easy to Use</span>
+              <span class="about-pill">Student Friendly</span>
+              <span class="about-pill">Visual Dashboard</span>
+              <span class="about-pill">Free to Try</span>
+            </p>
+
+            <div class="about-highlight">
+              <h3>How useful is this website?</h3>
+              <p style="margin-top:0.4rem;">
+                Plant Care Tracker helps you turn scattered plant notes into one
+                clean, visual dashboard. Instead of remembering everything in your head,
+                you can track watering dates, fertilizer days, growth stages and
+                plant health in one place with a glowing, modern interface.
+              </p>
+            </div>
+
+            <div class="about-highlight">
+              <h3>How people can use this website</h3>
+              <p style="margin-top:0.4rem;">
+                • Students can use it as a mini project to learn HTML, CSS and JavaScript while
+                actually tracking real plants at home or in school.<br>
+                • Plant lovers can track each plant’s story – from first leaf to full growth.<br>
+                • Beginners can follow simple schedules for watering and fertilizing so that they
+                don’t over-water or forget important care.
+              </p>
+            </div>
+
+            <div class="about-highlight">
+              <h3>Our Mission</h3>
+              <p style="margin-top:0.4rem;">
+                Our mission is to make plant care <strong>simple, organised and enjoyable</strong>
+                for everyone – especially students and beginners. We want you to feel confident
+                that your plants are safe, healthy and receiving the right care at the right time.
+              </p>
+            </div>
+
+            <div class="about-highlight">
+              <h3>Our Vision</h3>
+              <p style="margin-top:0.4rem;">
+                We imagine a future where every home, classroom and balcony has plants that are
+                well cared for using easy digital tools like Plant Care Tracker. A world where
+                technology and nature work together instead of being separate.
+              </p>
+            </div>
+
+            <div class="about-highlight">
+              <h3>Global Impact</h3>
+              <p style="margin-top:0.4rem;">
+                Even though this is a student project, the idea can help people everywhere:
+                tracking plants, saving water, avoiding waste and encouraging more greenery
+                in cities and villages. When more people successfully care for plants, we
+                move one small step closer to a greener planet.
+              </p>
+            </div>
+
+            <div class="about-highlight">
+              <h3>How to use Plant Care Tracker in daily life</h3>
+              <p style="margin-top:0.4rem;">
+                • Add every new plant you bring home into the <strong>Add Plants</strong> tab.<br>
+                • Use the <strong>Care Tracker</strong> to add watering and fertilizer tasks.<br>
+                • Check the <strong>Calendar</strong> each week to see what is coming next.<br>
+                • Open the <strong>Growth Tracking</strong> tab when you are confused about a plant’s
+                  exact watering and fertilizer dates.<br>
+                • Visit your <strong>Dashboard</strong> to quickly see how many plants you are taking care of.<br>
+                • Use the floating <strong>AI Chatbot icon</strong> at the bottom of the screen to ask questions
+                  or get basic plant advice.
+              </p>
+            </div>
+
+            <h3 style="margin-top: 1rem;">Our Team</h3>
+            <p class="card-subtitle" style="margin-top:0.2rem;">
+              The people behind Plant Care Tracker.
+            </p>
+
+            <div class="team-grid">
+              <div class="team-card">
+                <div class="team-name">Omkar Chalke</div>
+                <div class="team-role">Co-Founder</div>
+                <p style="margin-top:0.3rem; font-size:0.85rem;">
+                  Works on ideas, features and overall direction of Plant Care Tracker.
+                </p>
+              </div>
+              <div class="team-card">
+                <div class="team-name">Ayush Sawant</div>
+                <div class="team-role">Leader</div>
+                <p style="margin-top:0.3rem; font-size:0.85rem;">
+                  Leads the planning, coordination and helps in turning concepts into working screens.
+                </p>
+              </div>
+              <div class="team-card">
+                <div class="team-name">Vikas Chalke</div>
+                <div class="team-role">UI Designer</div>
+                <p style="margin-top:0.3rem; font-size:0.85rem;">
+                  Focuses on clean, modern design so that the website looks beautiful and easy to use.
+                </p>
+              </div>
+            </div>
+
+            <p style="margin-top:1rem;">
+              Plant Care Tracker is more than just a project – it is a small step towards
+              bringing technology and nature together, starting from you. 🌿
+            </p>
+          </div>
+        </div>
+      </section>
+
+    
+</main>
+<!-- WEATHER REMOVED FOR EXAM VERSION -->
+
+<section id="plantMoodSection" class="app-section">
+  <div class="card">
+    <h2>🌿 Plant Mood Indicator</h2>
+
+    <label>Select Plant:</label>
+    <select id="plantMoodSelect"></select>
+
+    <div id="plantMoodResult" style="margin-top:15px;">
+      Select plant to see mood.
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+    <!-- FLOATING CHAT ICON -->
+     <button id="plantDoctorFab" class="chat-fab plant-doctor-fab"title="Plant Doctor Bot">🌿</button>
+     <button id="chatFab" class="chat-fab"title="Chat with Plant Assistant">🤖</button>
+     <button id="themeToggle" class="chat-fab" style="right:80px;" title="Toggle Dark/Light Mode">🌙</button>
+
+
+    <!-- AI CHATBOT POPUP (UNIQUE VERSION) -->
+    <section id="chatbotSection" class="chat-popup hidden">
+      <div class="card">
+        <div class="chat-header-row">
+          <h2>AI Plant Assistant</h2>
+          <button id="chatCloseBtn" aria-label="Close chat">×</button>
+        </div>
+        <p class="card-subtitle">
+          Ask anything – plant care, watering, fertilizer or how to use this website.  
+          The assistant will always reply with a helpful message.
+        </p>
+
+        <div class="tracer-panel">
+          <p class="small-text" style="color:#9bffca; margin-bottom:0.4rem;">
+            Tip: Add your plants and tasks. Then ask questions like “When should I water my plant?” or
+            “How often to fertilize indoor plants?”
+          </p>
+          <div id="chatWindow"></div>
+          <div style="display:flex; gap:0.5rem;">
+            <input id="chatInput" type="text"
+                   placeholder="Ask anything about plants or this site..."
+                   style="flex:1; padding:0.5rem 0.7rem; border-radius:999px; border:1px solid #0f3b23; background:#01140c; color:#c8facc;">
+            <button id="chatSendBtn" class="btn-secondary"
+                    style="background:#00c853; border-color:#00c853; color:#021407;">Ask</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="plantDoctorPopup" class="chat-popup hidden">
+  <div class="card">
+    <div class="chat-header-row">
+      <h2>🌿 Plant Doctor</h2>
+      <button onclick="closePlantDoctor()">×</button>
+    </div>
+
+    <p class="card-subtitle">
+      Describe plant symptoms and get instant solution.
+    </p>
+
+    <div class="tracer-panel">
+      <div id="plantDoctorChatWindow"
+      style="height:200px;overflow-y:auto;margin-bottom:8px;"></div>
+
+      <div style="display:flex;gap:6px;">
+        <input id="plantDoctorInput"
+        placeholder="Example: yellow leaves, fungus, drooping..."
+        style="flex:1;padding:8px;border-radius:20px;border:1px solid #0f3b23;">
+
+        <button onclick="sendPlantDoctor()"
+        class="btn-secondary"
+        style="background:#00c853;color:black;">
+        Diagnose
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+  </div>
+  <script>
+
+
+
+/*********** FIREBASE CONFIG ***********/
+const firebaseConfig = {
+  apiKey: "AIzaSyARsBCcTWZEgSQ0CBCiLpFAweBJwpQKD3Q",
+  authDomain: "plant-tracker-005.firebaseapp.com",
+  projectId: "plant-tracker-005",
+  storageBucket: "plant-tracker-005.appspot.com",
+  messagingSenderId: "174180572500",
+  appId: "1:174180572500:web:f327f6b298a3c8b22dbcc1"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+async function updateAnalytics(){
+
+  try{
+
+    var tasks = await getTasksForUser() || [];
+    var plants = await getPlantsForUser() || [];
+
+    var total = tasks.length;
+
+    document.getElementById("totalCareActions").innerText = total;
+
+    var water = tasks.filter(t => (t.title||"").toLowerCase().includes("water")).length;
+    var fert = tasks.filter(t => (t.title||"").toLowerCase().includes("fert")).length;
+    var cut = tasks.filter(t => (t.title||"").toLowerCase().includes("cut")).length;
+
+    document.getElementById("monthlyReportList").innerHTML =
+      "<li>Watering done: "+water+"</li>"+
+      "<li>Fertilizer used: "+fert+"</li>"+
+      "<li>Cutting tasks: "+cut+"</li>";
+
+    var score = plants.length ? Math.min(100, 50 + total*5) : 0;
+    document.getElementById("healthScoreValue").innerText = score + "%";
+
+    document.getElementById("careStreakValue").innerText =
+      total > 0 ? total + " Days" : "0 Days";
+
+  }catch(e){
+    console.log("Analytics Error", e);
+  }
+
+}
+
+
+/*********** END FIREBASE CONFIG ***********/
+
+    /* ---------- Helper date functions ---------- */
+    function formatDate(d) {
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1).padStart(2, '0');
+      var day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+
+    function addDays(dateStr, n) {
+      var d = new Date(dateStr);
+      d.setDate(d.getDate() + n);
+      return formatDate(d);
+    }
+
+    function todayStr() {
+      return formatDate(new Date());
+    }
+
+    function daysBetween(startStr, endStr) {
+      var a = new Date(startStr);
+      var b = new Date(endStr);
+      return Math.round((b - a) / (1000 * 60 * 60 * 24));
+    }
+
+    /* ---------- Simple "image analysis" for growth stage ----------
+       NOTE: In real life, to truly analyze the picture (leaf size, stem etc.)
+       you MUST call an AI vision API from a backend.
+       Here we can only GUESS using the file name / URL text.
+    -------------------------------------------------------------- */
+    function guessGrowthStageFromImageMeta(options) {
+      var text = '';
+      if (options && options.fileName) text += ' ' + options.fileName.toLowerCase();
+      if (options && options.url) text += ' ' + options.url.toLowerCase();
+
+      var stage = 'Mature';
+
+      if (text.match(/seed|sprout|seedling|tiny|small/)) {
+        stage = 'Seedling';
+      } else if (text.match(/cutting|propagat|stem|branch|node/)) {
+        stage = 'New cutting';
+      } else {
+        stage = 'Mature';
+      }
+
+      var field = document.getElementById('growthStage');
+      // Only auto-fill if user has not typed anything
+      if (field && !field.value.trim()) {
+        field.value = stage;
+      }
+    }
+
+    /* ---------- Plant catalog (added more plants) ---------- */
+    var plantCatalog = [
+      {name:'Money Plant (Pothos)', type:'Indoor',
+       info:'Fast-growing indoor vine that tolerates low light. Keep soil slightly moist and allow top layer to dry between waterings.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Snake Plant (Sansevieria)', type:'Indoor',
+       info:'Very hardy plant that survives low light and irregular watering. Let soil dry fully between waterings.',
+       imageUrl:'https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Spider Plant', type:'Indoor',
+       info:'Arching leaves with baby plantlets. Likes bright indirect light and evenly moist soil.',
+       imageUrl:'https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Peace Lily', type:'Indoor',
+       info:'Flowering indoor plant that enjoys low to medium light. Keep soil consistently moist, not soggy.',
+       imageUrl:'https://images.pexels.com/photos/3639479/pexels-photo-3639479.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Aloe Vera', type:'Indoor',
+       info:'Succulent with medicinal gel in the leaves. Needs bright light and very little water.',
+       imageUrl:'https://images.pexels.com/photos/2124380/pexels-photo-2124380.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Areca Palm', type:'Indoor',
+       info:'Graceful palm for living rooms. Likes bright light and evenly moist soil, avoid cold drafts.',
+       imageUrl:'https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Rubber Plant', type:'Indoor',
+       info:'Glossy large leaves, prefers bright indirect light. Water when top soil dries.',
+       imageUrl:'https://images.pexels.com/photos/1048039/pexels-photo-1048039.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'ZZ Plant', type:'Indoor',
+       info:'Very low-maintenance plant for low light corners. Water sparingly, as rhizomes store water.',
+       imageUrl:'https://images.pexels.com/photos/2070980/pexels-photo-2070980.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Jade Plant', type:'Indoor',
+       info:'Succulent with thick leaves, symbol of good luck. Loves bright light and infrequent deep watering.',
+       imageUrl:'https://images.pexels.com/photos/450326/pexels-photo-450326.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Boston Fern', type:'Indoor',
+       info:'Feathery fronds, likes high humidity and moist soil. Avoid direct harsh sunlight.',
+       imageUrl:'https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Tulsi (Holy Basil)', type:'Outdoor',
+       info:'Sacred herb widely grown in Indian homes. Needs full sun and regular watering.',
+       imageUrl:'https://images.pexels.com/photos/4505169/pexels-photo-4505169.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Rose', type:'Outdoor',
+       info:'Classic flowering shrub that loves full sun and rich soil. Water deeply and prune spent flowers.',
+       imageUrl:'https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Hibiscus', type:'Outdoor',
+       info:'Tropical shrub with large colorful flowers. Needs full sun and frequent watering in summer.',
+       imageUrl:'https://images.pexels.com/photos/60597/hibiscus-flower-red-pink-60597.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Marigold', type:'Outdoor',
+       info:'Bright orange and yellow flowers used in garlands. Thrives in full sun and well-drained soil.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Bougainvillea', type:'Outdoor',
+       info:'Woody climber covered in colored bracts. Requires strong sunlight and minimal water once established.',
+       imageUrl:'https://images.pexels.com/photos/699963/pexels-photo-699963.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Chrysanthemum', type:'Outdoor',
+       info:'Popular winter flowering plant with many colors. Likes cool temperatures and regular watering.',
+       imageUrl:'https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Orchid (Phalaenopsis)', type:'Indoor',
+       info:'Elegant flowers that last for weeks. Needs bright filtered light and good air circulation.',
+       imageUrl:'https://images.pexels.com/photos/602580/pexels-photo-602580.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Geranium', type:'Outdoor',
+       info:'Colorful flowering plant for balconies. Enjoys sunny spots and moderate watering.',
+       imageUrl:'https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Lavender', type:'Outdoor',
+       info:'Fragrant herb with purple spikes. Needs full sun and very well-drained soil.',
+       imageUrl:'https://images.pexels.com/photos/672142/pexels-photo-672142.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Mint', type:'Outdoor',
+       info:'Fast spreading herb used in tea and chutneys. Likes moist soil and partial sun.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Basil', type:'Outdoor',
+       info:'Aromatic herb used in many cuisines. Needs warm weather, full sun and regular water.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Tomato Plant', type:'Outdoor',
+       info:'Common kitchen garden plant. Requires full sun, staking support and consistent watering.',
+       imageUrl:'https://images.pexels.com/photos/128420/pexels-photo-128420.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Chili Plant', type:'Outdoor',
+       info:'Small shrub with spicy fruits. Likes warm conditions, full sun and regular feed.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Sunflower', type:'Outdoor',
+       info:'Tall plant with large yellow heads. Needs direct sun and rich soil.',
+       imageUrl:'https://images.pexels.com/photos/1169084/pexels-photo-1169084.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Succulent Mix', type:'Indoor',
+       info:'Small rosette succulents suited for desks and shelves. Need bright light and very little water.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Banana Plant', type:'Outdoor',
+       info:'Large tropical plant with big leaves. Needs lots of sun, water and rich soil.',
+       imageUrl:'https://images.pexels.com/photos/236969/pexels-photo-236969.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Areca Palm (Table Size)', type:'Indoor',
+       info:'Smaller areca palm for desks and side tables. Likes bright light and regular watering.',
+       imageUrl:'https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Ficus Bonsai', type:'Indoor',
+       info:'Miniature tree style plant. Needs bright indirect light and regular pruning.',
+       imageUrl:'https://images.pexels.com/photos/4751972/pexels-photo-4751972.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Pothos Marble Queen', type:'Indoor',
+       info:'Variegated pothos with white and green leaves. Likes bright, indirect light and moderate watering.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Croton', type:'Indoor',
+       info:'Colorful foliage plant with red, yellow and orange leaves. Needs bright light for best color.',
+       imageUrl:'https://images.pexels.com/photos/5699668/pexels-photo-5699668.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Areca Nut Palm', type:'Outdoor',
+       info:'Tall palm often grown in gardens. Needs sunlight and regular watering when young.',
+       imageUrl:'https://images.pexels.com/photos/1956982/pexels-photo-1956982.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Neem Tree', type:'Outdoor',
+       info:'Traditional Indian tree with medicinal properties. Needs full sun and moderate watering once established.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Curry Leaf Plant', type:'Outdoor',
+       info:'Common kitchen plant used in Indian cooking. Likes full sun and regular watering, but soil must be well-drained.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Aparajita (Butterfly Pea)', type:'Outdoor',
+       info:'Climber with blue flowers, often used for tea and pooja. Needs support, full sun and regular watering.',
+       imageUrl:'https://images.pexels.com/photos/60597/hibiscus-flower-red-pink-60597.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Coleus', type:'Outdoor',
+       info:'Colorful foliage plant with many leaf patterns. Likes bright light and slightly moist soil.',
+       imageUrl:'https://images.pexels.com/photos/5699668/pexels-photo-5699668.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Philodendron', type:'Indoor',
+       info:'Popular indoor climbing plant that loves bright indirect light and evenly moist soil.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Chinese Evergreen', type:'Indoor',
+       info:'Hardy indoor plant that tolerates low light. Water when the top soil feels dry.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Calathea', type:'Indoor',
+       info:'Prayer plant with patterned leaves that close at night. Likes high humidity and low to medium light.',
+       imageUrl:'https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Rubber Fig (Ficus elastica)', type:'Indoor',
+       info:'Large glossy leaves, good for living rooms. Needs bright indirect light and watering after top soil dries.',
+       imageUrl:'https://images.pexels.com/photos/1048039/pexels-photo-1048039.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Poinsettia', type:'Indoor',
+       info:'Colorful red bracts around winter. Needs bright light and careful watering to avoid root rot.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Ixora', type:'Outdoor',
+       info:'Shrub with clusters of small bright flowers, common in Indian gardens. Needs sun and regular watering.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Jasmine (Mogra)', type:'Outdoor',
+       info:'Fragrant white flowers, often used in garlands. Needs full sun and frequent watering in hot weather.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Adenium (Desert Rose)', type:'Outdoor',
+       info:'Succulent-like plant with swollen trunk and colorful flowers. Loves strong sunlight and low watering.',
+       imageUrl:'https://images.pexels.com/photos/672142/pexels-photo-672142.jpeg?auto=compress&cs=tinysrgb&w=600'}
+    ];
+
+    /* ---------- FIREBASE STORAGE HELPERS ---------- */
+    let currentUser = null;
+
+    function setCurrentUser(user) {
+      currentUser = user;
+    }
+
+    function getCurrentUser() {
+      return currentUser;
+    }
+
+    async function getPlantsForUser() {
+      if (!currentUser) return [];
+      try {
+        const snapshot = await db.collection('users').doc(currentUser.uid).collection('plants').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error('Error getting plants:', error);
+        return [];
+      }
+    }
+
+    async function savePlant(plant) {
+      if (!currentUser) throw new Error('No user logged in');
+      const docRef = await db.collection('users').doc(currentUser.uid).collection('plants').add(plant);
+      return docRef.id;
+    }
+
+    async function updatePlant(plantId, plant) {
+      if (!currentUser) throw new Error('No user logged in');
+      await db.collection('users').doc(currentUser.uid).collection('plants').doc(plantId).update(plant);
+    }
+
+    async function deletePlantFromDB(plantId) {
+  if (!currentUser) throw new Error('No user logged in');
+  await db.collection('users')
+    .doc(currentUser.uid)
+    .collection('plants')
+    .doc(plantId)
+    .delete();
+}
+
+
+    async function getTasksForUser() {
+      if (!currentUser) return [];
+      try {
+        const snapshot = await db.collection('users').doc(currentUser.uid).collection('tasks').get();
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error('Error getting tasks:', error);
+        return [];
+      }
+    }
+
+    async function saveTask(task) {
+      if (!currentUser) throw new Error('No user logged in');
+      const docRef = await db.collection('users').doc(currentUser.uid).collection('tasks').add(task);
+      return docRef.id;
+    }
+
+    async function deleteTask(taskId) {
+      if (!currentUser) throw new Error('No user logged in');
+      await db.collection('users').doc(currentUser.uid).collection('tasks').doc(taskId).delete();
+    }
+
+    function setCurrentPlantId(id) {
+      if (!currentUser) return;
+      localStorage.setItem('pct_current_plant_' + currentUser.uid, String(id));
+    }
+
+    function getCurrentPlantId() {
+      if (!currentUser) return null;
+      return localStorage.getItem('pct_current_plant_' + currentUser.uid);
+    }
+
+    /* ---------- HOME SLIDER ---------- */
+    function initHomeSlider() {
+      var slider = document.getElementById('homeSlider');
+      if (!slider) return;
+      var imgs = slider.querySelectorAll('img');
+      if (!imgs.length) return;
+      var index = 0;
+      imgs.forEach(function (img, i) {
+        img.classList.toggle('active', i === 0);
+      });
+      setInterval(function () {
+        imgs[index].classList.remove('active');
+        index = (index + 1) % imgs.length;
+        imgs[index].classList.add('active');
+      }, 2500);
+    }
+
+    /* ---------- AUTH UI ---------- */
+    function showLogin() {
+      document.getElementById('loginCard').classList.remove('hidden');
+      document.getElementById('registerCard').classList.add('hidden');
+    }
+    function showRegister() {
+      document.getElementById('loginCard').classList.add('hidden');
+      document.getElementById('registerCard').classList.remove('hidden');
+    }
+
+    /* ---------- NAV / SECTIONS ---------- */
+    function showAppSection(id) {
+      document.querySelectorAll('.app-section').forEach(function (s) {
+        s.style.display = 'none';
+      });
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'block';
+
+      document.querySelectorAll('.nav-link').forEach(function (l) {
+        if (l.getAttribute('data-section') === id) l.classList.add('active');
+        else l.classList.remove('active');
+      });
+    }
+
+    async function refreshHeaderStats() {
+      var plants = await getPlantsForUser();
+      var tasks = await getTasksForUser();
+      var plantCountEl = document.getElementById('plantCount');
+      var upcomingCountEl = document.getElementById('upcomingCount');
+      if (plantCountEl) plantCountEl.textContent = plants.length;
+      var today = todayStr();
+      var upcoming = 0;
+      for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].date >= today) upcoming++;
+      }
+      if (upcomingCountEl) upcomingCountEl.textContent = upcoming;
+    }
+
+    /* ---------- PLANT CATALOG UI (with search) ---------- */
+    function setupPlantCatalogUI() {
+      var select = document.getElementById('catalogPlantSelect');
+      var infoBox = document.getElementById('catalogPlantInfoBox');
+      var searchInput = document.getElementById('catalogSearch');
+      if (!select || !infoBox) return;
+
+      function renderOptions(filterText) {
+        select.innerHTML = '<option value="">-- Choose a plant from the list --</option>';
+        var text = (filterText || '').toLowerCase();
+        plantCatalog.forEach(function (p, index) {
+          if (!text || p.name.toLowerCase().indexOf(text) !== -1) {
+            var opt = document.createElement('option');
+            opt.value = index;
+            opt.textContent = p.name + ' (' + p.type + ')';
+            select.appendChild(opt);
+          }
+        });
+      }
+
+      renderOptions('');
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function () {
+          renderOptions(this.value);
+          infoBox.innerHTML =
+            '<h3>Plant information</h3><p>Select a plant above to view description and care tips.</p>';
+        });
+      }
+
+      select.addEventListener('change', function () {
+        var idx = this.value;
+        if (idx === '') {
+          infoBox.innerHTML = '<h3>Plant information</h3><p>Select a plant above to view description and care tips.</p>';
+          return;
+        }
+        var plant = plantCatalog[idx];
+
+        infoBox.innerHTML =
+          '<h3>' + plant.name + '</h3>' +
+          '<p><strong>Type:</strong> ' + plant.type + '</p>' +
+          '<p style="margin-top:0.4rem;">' + plant.info + '</p>';
+
+        document.getElementById('plantName').value = plant.name;
+        document.getElementById('plantType').value = plant.type;
+        document.getElementById('initialNote').value = plant.info;
+        document.getElementById('plantImageUrl').value = plant.imageUrl || '';
+
+        // If growth stage empty, we can auto-set to Seedling or Mature
+        var gs = document.getElementById('growthStage');
+        if (gs && !gs.value.trim()) {
+          gs.value = 'Mature';
+        }
+      });
+    }
+
+    async function initDashboardMain() {
+      await refreshHeaderStats();
+      setupPlantCatalogUI();
+
+      // Attach growth stage auto-detect events
+      var fileInput = document.getElementById('plantImageFile');
+      var urlInput = document.getElementById('plantImageUrl');
+
+      if (fileInput) {
+        fileInput.addEventListener('change', function () {
+          var file = this.files[0];
+          if (file) {
+            guessGrowthStageFromImageMeta({ fileName: file.name });
+          }
+        });
+      }
+
+      if (urlInput) {
+        urlInput.addEventListener('change', function () {
+          var url = this.value.trim();
+          if (url) {
+            guessGrowthStageFromImageMeta({ url: url });
+          }
+        });
+      }
+
+      var form = document.getElementById('addPlantForm');
+      if (!form) return;
+      
+
+var form = document.getElementById('addPlantForm');
+if (!form) return;
+
+form.onsubmit = async function (e) {
+  e.preventDefault();
+
+  var name = document.getElementById('plantName').value.trim();
+  var type = document.getElementById('plantType').value.trim();
+  var imageUrl = document.getElementById('plantImageUrl').value.trim();
+  var growth = document.getElementById('growthStage').value.trim();
+  var note = document.getElementById('initialNote').value.trim();
+  var fileInput = document.getElementById('plantImageFile');
+  var file = fileInput.files[0];
+
+  if (!name || !type) {
+    alert('Please enter plant name and select type.');
+    return;
+  }
+
+  var plant = {
+    name: name,
+    type: type,
+    imageUrl: imageUrl || '',
+    imageData: '',
+    growthStage: growth || 'Seedling',
+    notes: [],
+    history: [],
+    createdAt: todayStr()
+  };
+
+  if (note) {
+    plant.notes.push({ text: note, date: plant.createdAt });
+    plant.history.push({ action: 'Information note added', date: plant.createdAt });
+  }
+
+  try {
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = async function (evt) {
+        plant.imageData = evt.target.result;
+        await savePlant(plant);
+        alert('Plant added!');
+        form.reset();
+        await renderPlantLibrary();
+      };
+      reader.readAsDataURL(file);
+    } else {
+      await savePlant(plant);
+      alert('Plant added!');
+      form.reset();
+      await renderPlantLibrary();
+    }
+  } catch (error) {
+    alert('Error saving plant.');
+  }
+};
+
+    }
+
+    /* ---------- DELETE PLANT ---------- */
+    async function deletePlant(plantId) {
+
+  if (!confirm('Are you sure you want to delete this plant? All its tasks will also be removed.')) {
+    return;
+  }
+
+  try {
+
+    await deletePlantFromDB(plantId);  // ✅ NOW THIS WILL WORK
+
+    var currentId = getCurrentPlantId();
+    if (String(currentId) === String(plantId)) {
+      setCurrentPlantId('');
+    }
+
+    await renderPlantLibrary();
+    await refreshHeaderStats();
+    await fillTaskPlantDropdown();
+    await initTracerDropdown();
+    await renderTracer();
+    await renderProfile();
+    await renderPlantDashboard();
+
+    alert("Plant deleted successfully!");
+
+  } catch (error) {
+    console.log(error);
+    alert("Error deleting plant");
+  }
+
+}
+
+    /* ---------- PLANT LIBRARY ---------- */
+    async function renderPlantLibrary() {
+      var container = document.getElementById('plantLibrary');
+      if (!container) return;
+      var plants = await getPlantsForUser();
+      container.innerHTML = '';
+      if (!plants.length) {
+        container.innerHTML = '<p>You have no plants yet. Add plants from the Add Plants tab.</p>';
+        return;
+      }
+      plants.forEach(function (p) {
+        var card = document.createElement('div');
+        card.className = 'plant-card';
+        card.dataset.id = p.id;
+
+        var img = document.createElement('img');
+        var defaultSrc = 'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600';
+        var src = p.imageData || p.imageUrl || defaultSrc;
+        img.src = src;
+        img.onerror = function() { this.src = defaultSrc; };
+
+        var body = document.createElement('div');
+        body.className = 'plant-card-body';
+
+        var deleteWrapper = document.createElement('div');
+        deleteWrapper.className = 'plant-delete-wrapper';
+        var deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
+        deleteBtn.className = 'btn-danger';
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.addEventListener('click', async function (e) {
+          e.stopPropagation();
+          await deletePlant(p.id);
+          await renderPlantLibrary();
+          await refreshHeaderStats();
+        });
+        deleteWrapper.appendChild(deleteBtn);
+        body.appendChild(deleteWrapper);
+
+        var nameEl = document.createElement('div');
+        nameEl.className = 'plant-name';
+        nameEl.textContent = p.name;
+        var meta = document.createElement('div');
+        meta.className = 'plant-meta';
+        meta.textContent = p.type + ' • ' + (p.growthStage || 'Unknown stage');
+        body.appendChild(nameEl);
+        body.appendChild(meta);
+
+        card.appendChild(img);
+        card.appendChild(body);
+
+        card.addEventListener('click', function () {
+          setCurrentPlantId(p.id);
+          renderPlantDashboard();
+          showAppSection('plantDashboardSection');
+        });
+        container.appendChild(card);
+      });
+    }
+
+    /* ---------- PLANT DASHBOARD (DETAIL PAGE) ---------- */
+    async function renderPlantDashboard(username) {
+      var plantId = getCurrentPlantId(username);
+      var infoBox = document.getElementById('plantInfo');
+      var imageBox = document.getElementById('plantImageBox');
+      var notesList = document.getElementById('notesList');
+      var historyList = document.getElementById('historyList');
+      var plants = await getPlantsForUser();
+      var plant = null;
+      for (var i = 0; i < plants.length; i++) {
+        if (String(plants[i].id) === String(plantId)) {
+          plant = plants[i];
+          break;
+        }
+      }
+      if (!plant) {
+        if (imageBox) imageBox.textContent = 'Select a plant from the Plant Gallery to view its dashboard.';
+        if (infoBox) infoBox.textContent = '';
+        if (notesList) notesList.innerHTML = '';
+        if (historyList) historyList.innerHTML = '';
+        return;
+      }
+
+      var src = plant.imageData || plant.imageUrl ||
+        'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600';
+      imageBox.innerHTML = '<img src="' + src + '" alt="' + plant.name + '" onerror="this.src=\'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600\'">';
+
+      infoBox.innerHTML =
+        '<h2>' + plant.name + '</h2>' +
+        '<p><span class="badge">Type: ' + plant.type + '</span>' +
+        '<span class="badge">Growth: ' + plant.growthStage + '</span>' +
+        '<span class="badge">Started: ' + (plant.createdAt || '-') + '</span></p>';
+
+      notesList.innerHTML = '';
+      if (!plant.notes || !plant.notes.length) {
+        notesList.innerHTML = '<li>No information notes yet.</li>';
+      } else {
+        plant.notes.forEach(function (n) {
+          var li = document.createElement('li');
+          li.textContent = n.date + ' — ' + n.text;
+          notesList.appendChild(li);
+        });
+      }
+
+      historyList.innerHTML = '';
+      if (!plant.history || !plant.history.length) {
+        historyList.innerHTML = '<li>No care history yet.</li>';
+      } else {
+        plant.history.forEach(function (h) {
+          var li2 = document.createElement('li');
+          li2.textContent = h.date + ' — ' + h.action;
+          historyList.appendChild(li2);
+        });
+      }
+
+      document.getElementById('plantNameDash').value = plant.name;
+      document.getElementById('plantTypeDash').value = plant.type;
+      document.getElementById('growthStageDash').value = plant.growthStage;
+      document.getElementById('plantImageUrlDash').value = plant.imageUrl || '';
+    }
+
+    async function initPlantDashboard(username) {
+      var updateForm = document.getElementById('updatePlantForm');
+      var noteForm = document.getElementById('addNoteFormDash');
+
+      updateForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var plantId = getCurrentPlantId(username);
+        var plants = await getPlantsForUser();
+        var plant = null;
+        for (var i = 0; i < plants.length; i++) {
+          if (String(plants[i].id) === String(plantId)) {
+            plant = plants[i];
+            break;
+          }
+        }
+        if (!plant) { alert('No plant selected from library.'); return; }
+
+        var updatedPlant = {
+          ...plant,
+          name: document.getElementById('plantNameDash').value.trim() || plant.name,
+          type: document.getElementById('plantTypeDash').value.trim() || plant.type,
+          growthStage: document.getElementById('growthStageDash').value.trim() || plant.growthStage,
+          imageUrl: document.getElementById('plantImageUrlDash').value.trim() || plant.imageUrl,
+          history: [...(plant.history || []), { action: 'Plant details updated', date: todayStr() }]
+        };
+
+        try {
+          await updatePlant(plantId, updatedPlant);
+          alert('Plant updated!');
+          await renderPlantLibrary(username);
+          await renderPlantDashboard(username);
+          await renderTracer(username);
+          await renderProfile(username);
+        } catch (error) {
+          console.error('Error updating plant:', error);
+          alert('Error updating plant. Please try again.');
+        }
+      });
+
+      noteForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var text = document.getElementById('noteTextDash').value.trim();
+        if (!text) { alert('Enter a note.'); return; }
+        var plantId = getCurrentPlantId(username);
+        var plants = await getPlantsForUser();
+        var plant = null;
+        for (var i = 0; i < plants.length; i++) {
+          if (String(plants[i].id) === String(plantId)) {
+            plant = plants[i];
+            break;
+          }
+        }
+        if (!plant) { alert('No plant selected.'); return; }
+        var today = todayStr();
+        var updatedPlant = {
+          ...plant,
+          notes: [...(plant.notes || []), { text: text, date: today }],
+          history: [...(plant.history || []), { action: 'Information / care note added', date: today }]
+        };
+
+        try {
+          await updatePlant(plantId, updatedPlant);
+          document.getElementById('noteTextDash').value = '';
+          await renderPlantDashboard(username);
+          await renderTracer(username);
+          await renderProfile(username);
+        } catch (error) {
+          console.error('Error adding note:', error);
+          alert('Error adding note. Please try again.');
+        }
+      });
+    }
+
+    /* ---------- CARE TRACKER ---------- */
+    async function fillTaskPlantDropdown(username) {
+      var select = document.getElementById('taskPlant');
+      var timerSelect = document.getElementById('timerPlantSelect');
+      var plants = await getPlantsForUser();
+      if (select) {
+        select.innerHTML = '<option value="">Select a plant</option>';
+        plants.forEach(function (p) {
+          var opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = p.name;
+          select.appendChild(opt);
+        });
+      }
+      if (timerSelect) {
+        timerSelect.innerHTML = '<option value="">Select a plant</option>';
+        plants.forEach(function (p) {
+          var opt2 = document.createElement('option');
+          opt2.value = p.id;
+          opt2.textContent = p.name;
+          timerSelect.appendChild(opt2);
+        });
+      }
+      var calSelect = document.getElementById('calendarPlantSelect');
+      if (calSelect) {
+        calSelect.innerHTML = '<option value="">Select a plant</option>';
+        plants.forEach(function (p) {
+          var optc = document.createElement('option'); optc.value = p.id; optc.textContent = p.name; calSelect.appendChild(optc);
+        });
+        calSelect.addEventListener('change', async function () {
+          var sel = calSelect.value || (plants[0] && plants[0].id);
+          var tasks = await getTasksForUser() || [];
+          var filtered = tasks.filter(function(t){ return String(t.plantId) === String(sel); });
+          renderCalendar(filtered);
+        });
+      }
+    }
+
+    async function renderWaterFertLists(username) {
+      var tasks = await getTasksForUser();
+      var plants = await getPlantsForUser();
+      var waterList = document.getElementById('waterDatesList');
+      var fertList = document.getElementById('fertDatesList');
+      if (!waterList || !fertList) return;
+      waterList.innerHTML = '';
+      fertList.innerHTML = '';
+
+      function plantNameById(id) {
+        for (var i = 0; i < plants.length; i++) {
+          if (String(plants[i].id) === String(id)) return plants[i].name;
+        }
+        return 'Unknown plant';
+      }
+
+      var waterTasks = [];
+      var fertTasks = [];
+
+      tasks.forEach(function (t) {
+        if (/water/i.test(t.title)) waterTasks.push(t);
+        if (/(fertil|feed)/i.test(t.title)) fertTasks.push(t);
+      });
+
+      waterTasks.sort(function(a,b){return a.date.localeCompare(b.date);});
+      fertTasks.sort(function(a,b){return a.date.localeCompare(b.date);});
+
+      if (!waterTasks.length) {
+        waterList.innerHTML = '<li>No watering tasks yet.</li>';
+      } else {
+        waterTasks.forEach(function (w) {
+          var li = document.createElement('li');
+          li.className = 'task-water';
+          li.textContent = w.date + ' — ' + plantNameById(w.plantId) + ' — ' + w.title;
+          waterList.appendChild(li);
+        });
+      }
+
+      if (!fertTasks.length) {
+        fertList.innerHTML = '<li>No fertilizer tasks yet.</li>';
+      } else {
+        fertTasks.forEach(function (f) {
+          var li2 = document.createElement('li');
+          li2.className = 'task-fert';
+          li2.textContent = f.date + ' — ' + plantNameById(f.plantId) + ' — ' + f.title;
+          fertList.appendChild(li2);
+        });
+      }
+    }
+
+    function getScheduleForPlant(plant) {
+      // Indoor: water 5d, fertilize 30d; Outdoor: 3d / 20d
+      if (!plant || plant.type === 'Outdoor') {
+        return { water: 3, fert: 20 };
+      }
+      return { water: 5, fert: 30 };
+    }
+
+    function updateTimerForPlant(username) {
+      var timerSelect = document.getElementById('timerPlantSelect');
+      if (!timerSelect) return;
+      var plants = getPlantsForUser(username);
+      var tasks = getTasksForUser(username);
+      var timerInfo = document.getElementById('timerInfo');
+      var timerDetails = document.getElementById('timerDetails');
+      timerDetails.innerHTML = '';
+
+      if (!plants.length) {
+        timerInfo.textContent = 'Add plants first to see timer details.';
+        return;
+      }
+
+      var plantId = timerSelect.value || plants[0].id;
+      timerSelect.value = plantId;
+
+      var plant = null;
+      for (var i = 0; i < plants.length; i++) {
+        if (String(plants[i].id) === String(plantId)) { plant = plants[i]; break; }
+      }
+      if (!plant) return;
+
+      var schedule = getScheduleForPlant(plant);
+      timerInfo.textContent = 'Selected plant: ' + plant.name +
+        ' (' + plant.type + '). Water every ' + schedule.water +
+        ' days, fertilize every ' + schedule.fert + ' days.';
+
+      var tasksForPlant = tasks.filter(function (t) {
+        return Number(t.plantId) === Number(plant.id);
+      });
+      var waterTasks = tasksForPlant.filter(function (t) {
+        return /water/i.test(t.title);
+      }).sort(function(a,b){return a.date.localeCompare(b.date);});
+      var fertTasks = tasksForPlant.filter(function (t) {
+        return /(fertil|feed)/i.test(t.title);
+      }).sort(function(a,b){return a.date.localeCompare(b.date);});
+
+      var today = todayStr();
+      var lastWater = null;
+      for (var i2 = waterTasks.length - 1; i2 >= 0; i2--) {
+        if (waterTasks[i2].date <= today) { lastWater = waterTasks[i2]; break; }
+      }
+      if (!lastWater) lastWater = waterTasks[waterTasks.length - 1] || null;
+
+      var lastFert = null;
+      for (var j = fertTasks.length - 1; j >= 0; j--) {
+        if (fertTasks[j].date <= today) { lastFert = fertTasks[j]; break; }
+      }
+      if (!lastFert) lastFert = fertTasks[fertTasks.length - 1] || null;
+
+      var nextWaterDate = lastWater ? addDays(lastWater.date, schedule.water) : addDays(today, schedule.water);
+      var nextFertDate = lastFert ? addDays(lastFert.date, schedule.fert) : addDays(today, schedule.fert);
+
+      var li1 = document.createElement('li');
+      li1.textContent = 'Last watering: ' +
+        (lastWater ? lastWater.date + ' (' + lastWater.title + ')' : 'not recorded') +
+        ' | Next watering: ' + nextWaterDate +
+        ' (in ' + Math.max(0, daysBetween(today, nextWaterDate)) + ' days).';
+      timerDetails.appendChild(li1);
+
+      var li2 = document.createElement('li');
+      li2.textContent = 'Last fertilizer: ' +
+        (lastFert ? lastFert.date + ' (' + lastFert.title + ')' : 'not recorded') +
+        ' | Next fertilizer: ' + nextFertDate +
+        ' (in ' + Math.max(0, daysBetween(today, nextFertDate)) + ' days).';
+      timerDetails.appendChild(li2);
+    }
+
+    function renderCalendar(tasksArr) {
+      var monthLabel = document.getElementById('calendarMonth');
+      var calendarGrid = document.getElementById('calendarGrid');
+      if (!monthLabel || !calendarGrid) return;
+
+      var today = new Date();
+      var year = today.getFullYear();
+      var month = today.getMonth();
+      var firstDay = new Date(year, month, 1).getDay();
+      var daysInMonth = new Date(year, month + 1, 0).getDate();
+      var monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      monthLabel.textContent = monthNames[month] + ' ' + year;
+      calendarGrid.innerHTML = '';
+
+      // Map tasks by day for this month
+      var dayTypes = {}; // {day: {water:bool,fert:bool}}
+      tasksArr.forEach(function (t) {
+        if (!t.date) return;
+        var d = new Date(t.date);
+        if (d.getMonth() === month && d.getFullYear() === year) {
+          var day = d.getDate();
+          if (!dayTypes[day]) dayTypes[day] = { water: false, fert: false };
+          if (/water/i.test(t.title)) dayTypes[day].water = true;
+          if (/(fertil|feed)/i.test(t.title)) dayTypes[day].fert = true;
+        }
+      });
+
+      // Empty cells before 1st
+      for (var i = 0; i < firstDay; i++) {
+        var emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-cell';
+        calendarGrid.appendChild(emptyCell);
+      }
+
+      // Actual days
+      for (var dayNum = 1; dayNum <= daysInMonth; dayNum++) {
+        var cell = document.createElement('div');
+        cell.className = 'calendar-cell';
+        var span = document.createElement('span');
+        span.textContent = dayNum;
+        cell.appendChild(span);
+
+        var info = dayTypes[dayNum];
+        if (info) {
+          if (info.water && info.fert) {
+            cell.classList.add('both-task');
+          } else if (info.water) {
+            cell.classList.add('water-task');
+          } else if (info.fert) {
+            cell.classList.add('fert-task');
+          }
+        }
+        calendarGrid.appendChild(cell);
+      }
+    }
+
+    async function renderTasksAndCalendar(username) {
+      var tasks = await getTasksForUser();
+      var plants = await getPlantsForUser();
+      var upcomingList = document.getElementById('upcomingTasks');
+      var pastList = document.getElementById('pastTasks');
+      if (!upcomingList || !pastList) return;
+
+      upcomingList.innerHTML = '';
+      pastList.innerHTML = '';
+
+      function plantNameById(id) {
+        for (var i = 0; i < plants.length; i++) {
+          if (String(plants[i].id) === String(id)) return plants[i].name;
+        }
+        return 'Unknown plant';
+      }
+
+      var today = todayStr();
+      tasks.sort(function (a, b) { return a.date.localeCompare(b.date); });
+
+      tasks.forEach(function (t) {
+        var li = document.createElement('li');
+        var isWater = /water/i.test(t.title);
+        var isFert = /(fertil|feed)/i.test(t.title);
+        if (isWater) li.className = 'task-water';
+        else if (isFert) li.className = 'task-fert';
+        else li.className = 'task-other';
+
+        li.textContent = t.date + ' — ' + plantNameById(t.plantId) + ' — ' + t.title;
+
+        if (t.date >= today) {
+          upcomingList.appendChild(li);
+        } else {
+          pastList.appendChild(li);
+        }
+      });
+
+      if (!upcomingList.children.length) {
+        upcomingList.innerHTML = '<li class="task-other">No upcoming tasks.</li>';
+      }
+      if (!pastList.children.length) {
+        pastList.innerHTML = '<li class="task-other">No past activities yet.</li>';
+      }
+
+      await renderWaterFertLists(username);
+      // Render calendar for selected plant (or all tasks if none selected)
+      var calSelectEl = document.getElementById('calendarPlantSelect');
+      if (calSelectEl && calSelectEl.options.length) {
+        var selId = calSelectEl.value || (plants[0] && plants[0].id);
+        if (selId) {
+          var tasksForCal = tasks.filter(function(t){ return String(t.plantId) === String(selId); });
+          renderCalendar(tasksForCal);
+        } else {
+          renderCalendar(tasks);
+        }
+      } else {
+        renderCalendar(tasks);
+      }
+
+    }
+
+    async function initCareTracker() {
+      await fillTaskPlantDropdown();
+      // ensure calendar select has a default and triggers initial render
+      setTimeout(function(){
+        var cs = document.getElementById("calendarPlantSelect");
+        if (cs && cs.options.length) {
+          if (!cs.value) cs.value = cs.options[0].value || cs.options[0].value;
+          var evt = new Event("change");
+          cs.dispatchEvent(evt);
+        }
+      }, 50);
+
+
+      var taskForm = document.getElementById('taskForm');
+      var timerSelect = document.getElementById('timerPlantSelect');
+
+      if (taskForm) {
+        taskForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var plantId = document.getElementById('taskPlant').value;
+          var title = document.getElementById('taskTitle').value.trim();
+          var date = document.getElementById('taskDate').value;
+
+          if (!plantId || !title || !date) {
+            alert('Please select a plant, task and date.');
+            return;
+          }
+
+          var task = {
+            plantId: plantId,
+            title: title,
+            date: date
+          };
+
+          try {
+            await saveTask(task);
+            alert('Task added!');
+            taskForm.reset();
+
+            await refreshHeaderStats();
+            await renderTracer();
+            await renderProfile();
+          } catch (error) {
+            console.error('Error adding task:', error);
+            alert('Error adding task: ' + error.message);
+          }
+        });
+      }
+
+      if (timerSelect) {
+        timerSelect.addEventListener('change', function () {
+
+        });
+      }
+    }
+
+    /* ---------- TRACER (Overview + Growth + Exact dates) ---------- */
+    async function initTracerDropdown() {
+      var select = document.getElementById('tracerPlantSelect');
+      var plants = await getPlantsForUser();
+      if (!select) return;
+
+      select.innerHTML = '<option value="">Select a plant</option>';
+      plants.forEach(function (p) {
+        var opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.name;
+        select.appendChild(opt);
+      });
+
+      select.addEventListener('change', async function () {
+        await renderTracer();
+      });
+    }
+
+    async function renderTracer() {
+      var plants = await getPlantsForUser();
+      var tasks = await getTasksForUser();
+      var select = document.getElementById('tracerPlantSelect');
+
+      var imageBox = document.getElementById('tracerPlantImageBox');
+      var headerBox = document.getElementById('tracerPlantHeader');
+      var metaBox = document.getElementById('tracerPlantMeta');
+      var waterList = document.getElementById('tracerWaterDates');
+      var fertList = document.getElementById('tracerFertilizerDates');
+      var nextInfo = document.getElementById('tracerNextInfo');
+      var growthChart = document.getElementById('growthChart');
+
+      if (!select || !imageBox || !headerBox || !metaBox ||
+          !waterList || !fertList || !nextInfo || !growthChart) return;
+
+      if (!plants.length) {
+        imageBox.textContent = 'Add plants first to use Growth Tracking.';
+        headerBox.innerHTML = '';
+        metaBox.innerHTML = '';
+        waterList.innerHTML = '';
+        fertList.innerHTML = '';
+        growthChart.innerHTML = '';
+        nextInfo.textContent = '';
+        return;
+      }
+
+      var plantId = select.value || plants[0].id;
+      select.value = plantId;
+
+      var plant = null;
+      for (var i = 0; i < plants.length; i++) {
+        if (String(plants[i].id) === String(plantId)) { plant = plants[i]; break; }
+      }
+      if (!plant) return;
+
+      var src = plant.imageData || plant.imageUrl ||
+        'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600';
+      imageBox.innerHTML = '<img src="' + src + '" alt="' + plant.name + '">';
+
+      headerBox.innerHTML =
+        '<h2>' + plant.name + '</h2>' +
+        '<p><span class="badge">Type: ' + plant.type + '</span>' +
+        '<span class="badge">Growth: ' + plant.growthStage + '</span>' +
+        '<span class="badge">Started: ' + (plant.createdAt || '-') + '</span></p>';
+
+      var notesCount = (plant.notes && plant.notes.length) ? plant.notes.length : 0;
+      metaBox.innerHTML =
+        '<p class="tracer-label">Total notes:</p><p>' + notesCount + ' information / care notes saved.</p>' +
+        '<p class="tracer-label">History entries:</p><p>' +
+        ((plant.history && plant.history.length) ? plant.history.length : 0) +
+        ' actions recorded for this plant.</p>';
+
+      // Tasks for this plant
+      var tasksForPlant = tasks.filter(function (t) {
+        return Number(t.plantId) === Number(plant.id);
+      });
+      var waterTasks = tasksForPlant.filter(function (t) {
+        return /water/i.test(t.title);
+      }).sort(function (a, b) { return a.date.localeCompare(b.date); });
+      var fertTasks = tasksForPlant.filter(function (t) {
+        return /(fertil|feed)/i.test(t.title);
+      }).sort(function (a, b) { return a.date.localeCompare(b.date); });
+
+      waterList.innerHTML = '';
+      fertList.innerHTML = '';
+
+      if (!waterTasks.length) {
+        waterList.innerHTML = '<li>No watering tasks recorded yet.</li>';
+      } else {
+        waterTasks.forEach(function (w) {
+          var li = document.createElement('li');
+          li.textContent = w.date + ' — ' + w.title;
+          waterList.appendChild(li);
+        });
+      }
+
+      if (!fertTasks.length) {
+        fertList.innerHTML = '<li>No fertilizer tasks recorded yet.</li>';
+      } else {
+        fertTasks.forEach(function (f) {
+          var li2 = document.createElement('li');
+          li2.textContent = f.date + ' — ' + f.title;
+          fertList.appendChild(li2);
+        });
+      }
+
+      // Next watering / fertilizing info
+      var schedule = getScheduleForPlant(plant);
+      var today = todayStr();
+
+      var lastWater = null;
+      for (var i2 = waterTasks.length - 1; i2 >= 0; i2--) {
+        if (waterTasks[i2].date <= today) { lastWater = waterTasks[i2]; break; }
+      }
+      if (!lastWater) lastWater = waterTasks[waterTasks.length - 1] || null;
+
+      var lastFert = null;
+      for (var j = fertTasks.length - 1; j >= 0; j--) {
+        if (fertTasks[j].date <= today) { lastFert = fertTasks[j]; break; }
+      }
+      if (!lastFert) lastFert = fertTasks[fertTasks.length - 1] || null;
+
+      var nextWaterDate = lastWater ? addDays(lastWater.date, schedule.water) : addDays(today, schedule.water);
+      var nextFertDate = lastFert ? addDays(lastFert.date, schedule.fert) : addDays(today, schedule.fert);
+
+      nextInfo.textContent =
+        'For ' + plant.name + ' (' + plant.type +
+        '): next watering is on ' + nextWaterDate +
+        ' and next fertilizer date is ' + nextFertDate + '.';
+
+      // Growth phase diagram (4 phases based on plant age)
+      // Growth phase diagram (4 phases based on plant age)
+growthChart.innerHTML = '';
+
+var phases = ['Seedling', 'Young', 'Growing', 'Mature'];
+var maxHeight = 130;
+var created = plant.createdAt ? new Date(plant.createdAt) : new Date();
+var ageDays = Math.max(0, daysBetween(formatDate(created), todayStr()));
+
+var plantStage = (plant.growthStage || "").toLowerCase();
+
+for (var k = 0; k < phases.length; k++) {
+
+  var wrapper = document.createElement('div');
+  wrapper.className = 'growth-bar-wrapper';
+
+  var bar = document.createElement('div');
+  bar.className = 'growth-bar';
+
+  // height increases with phase and age
+  var base = 30 + k * 15;
+  var extra = Math.min(60, Math.floor(ageDays / 3));
+  var height = Math.min(maxHeight, base + extra);
+  bar.style.height = height + 'px';
+
+  // ⭐ COLOR LOGIC (THIS IS YOUR FEATURE)
+  var phaseName = phases[k].toLowerCase();
+
+var plantStageClean = (plantStage || "")
+    .toString()
+    .toLowerCase()
+    .trim();
+
+var phaseNameClean = (phases[k] || "")
+    .toString()
+    .toLowerCase()
+    .trim();
+
+bar.style.background = "linear-gradient(180deg,#004d33,#001a12)";
+bar.style.opacity = "0.5";
+bar.style.boxShadow = "none";
+
+if (plantStageClean === phaseNameClean) {
+
+    bar.style.background = "linear-gradient(180deg,#ffe066,#ffb300)";
+    bar.style.boxShadow = "0 0 20px #ffd54f";
+    bar.style.opacity = "1";
+
+}
+
+
+  var label = document.createElement('div');
+  label.textContent = phases[k];
+
+  wrapper.appendChild(bar);
+  wrapper.appendChild(label);
+
+  growthChart.appendChild(wrapper);
+}
+
+    }
+
+    /* ---------- CHATBOT ---------- */
+    function addChatMessage(type, text) {
+      var chatWindow = document.getElementById('chatWindow');
+      if (!chatWindow) return;
+      var div = document.createElement('div');
+      div.className = type === 'user' ? 'chat-msg-user' : 'chat-msg-bot';
+      var span = document.createElement('span');
+      span.textContent = text;
+      div.appendChild(span);
+      chatWindow.appendChild(div);
+      chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
+    async function handleChat(username) {
+      var input = document.getElementById('chatInput');
+      if (!input) return;
+      var question = input.value.trim();
+      if (!question) return;
+      addChatMessage('user', question);
+      input.value = '';
+
+      var plants = await getPlantsForUser();
+      var tasks = await getTasksForUser();
+      var schedulePlant = plants[0] || null; // use first plant for schedule answers if needed
+      var today = todayStr();
+      var reply = '';
+
+      var q = question.toLowerCase();
+
+      // ===== UNIVERSAL PLANT ANSWERS =====
+
+if (plants && plants.length) {
+
+  let plant = plants[0]; // takes first plant user added
+
+  if (q.includes("sun") || q.includes("light")) {
+    reply = plant.name + " needs bright indirect sunlight if indoor. If outdoor, give morning sunlight.";
+  }
+
+  else if (q.includes("cut") || q.includes("prune") || q.includes("leaf")) {
+    reply = "For " + plant.name + ", remove yellow, dry or damaged leaves using clean scissors.";
+  }
+
+  else if (q.includes("info") || q.includes("about")) {
+    reply = plant.name + " is a plant that needs proper watering, sunlight and fertilizer to grow healthy.";
+  }
+
+}
+
+
+      /* 1) Guess which plant it might be (from words) */
+      var guesses = [];
+      var qClean = q.replace(/[^\w\s]/g, ' ');
+      plantCatalog.forEach(function (p) {
+        var nameLower = p.name.toLowerCase();
+        var mainWord = nameLower.split('(')[0].trim();
+        if (qClean.indexOf(mainWord.split(' ')[0]) !== -1 || qClean.indexOf(mainWord) !== -1) {
+          guesses.push(p.name);
+        }
+      });
+
+      /* 2) Detect if user is asking about website usage / usefulness */
+      var asksWebsite =
+        q.indexOf('how to use') !== -1 ||
+        q.indexOf('how do i use') !== -1 ||
+        q.indexOf('use this website') !== -1 ||
+        q.indexOf('use this web') !== -1 ||
+        q.indexOf('what is this website') !== -1 ||
+        q.indexOf('why is this website') !== -1 ||
+        q.indexOf('how this web is useful') !== -1 ||
+        q.indexOf('how is this site useful') !== -1 ||
+        (q.indexOf('useful') !== -1 && q.indexOf('website') !== -1);
+
+      if (asksWebsite) {
+        reply =
+          'Plant Care Tracker keeps all your plant details in one place:\n' +
+          '- Add each plant with photo, type and growth stage in “Add Plants”.\n' +
+          '- See notes, images and history in “Plant Gallery” and “Plant Dashboard”.\n' +
+          '- Use “Care Tracker” to plan watering and fertilizer and see them in a calendar.\n' +
+          '- “Growth Tracking” shows exact watering / fertilizer dates and growth phases.\n' +
+          '- This floating AI Assistant helps you whenever you are confused or want quick tips.';
+        addChatMessage('bot', reply);
+        return;
+      }
+
+      /* 3) If user asks schedule questions, use first plant or guessed plant if possible */
+      var plantForAnswer = schedulePlant;
+      if (guesses.length && plants.length) {
+        for (var gi = 0; gi < guesses.length; gi++) {
+          for (var pi = 0; pi < plants.length; pi++) {
+            if (plants[pi].name.toLowerCase().indexOf(guesses[gi].toLowerCase().split('(')[0].trim()) !== -1) {
+              plantForAnswer = plants[pi];
+              break;
+            }
+          }
+        }
+      }
+
+      var schedule = plantForAnswer ? getScheduleForPlant(plantForAnswer) : { water: 5, fert: 30 };
+
+      var tasksForPlant = plantForAnswer ? tasks.filter(function (t) {
+        return Number(t.plantId) === Number(plantForAnswer.id);
+      }) : [];
+
+      var waterTasks = tasksForPlant.filter(function (t) { return /water/i.test(t.title); })
+        .sort(function (a, b) { return a.date.localeCompare(b.date); });
+      var fertTasks = tasksForPlant.filter(function (t) { return /(fertil|feed)/i.test(t.title); })
+        .sort(function (a, b) { return a.date.localeCompare(b.date); });
+
+      var lastWater = null;
+      for (var i2 = waterTasks.length - 1; i2 >= 0; i2--) {
+        if (waterTasks[i2].date <= today) { lastWater = waterTasks[i2]; break; }
+      }
+      if (!lastWater) lastWater = waterTasks[waterTasks.length - 1] || null;
+      var nextWaterDate = lastWater ? addDays(lastWater.date, schedule.water) : addDays(today, schedule.water);
+
+      var lastFert = null;
+      for (var j = fertTasks.length - 1; j >= 0; j--) {
+        if (fertTasks[j].date <= today) { lastFert = fertTasks[j]; break; }
+      }
+      if (!lastFert) lastFert = fertTasks[fertTasks.length - 1] || null;
+      var nextFertDate = lastFert ? addDays(lastFert.date, schedule.fert) : addDays(today, schedule.fert);
+
+      /* 4) Smart replies – ALWAYS answer something */
+      if (q.indexOf('water') !== -1 && plantForAnswer) {
+        reply = 'For ' + plantForAnswer.name + ' (' + plantForAnswer.type +
+          '), water roughly every ' + schedule.water + ' days. Based on your data, the next watering date is ' +
+          nextWaterDate + '.';
+      } else if (
+        (q.indexOf('fert') !== -1 ||
+         q.indexOf('manure') !== -1 ||
+         q.indexOf('feed') !== -1) && plantForAnswer
+      ) {
+        reply = 'For ' + plantForAnswer.name + ' (' + plantForAnswer.type +
+          '), add fertilizer about every ' + schedule.fert +
+          ' days. Based on your data, the next fertilizer date is ' + nextFertDate + '.';
+      } else if (guesses.length) {
+        reply =
+          'I think you are talking about: ' + guesses.join(', ') + '.\n' +
+          'Add this plant in “Add Plants” and use “Care Tracker” to create watering / fertilizer tasks.';
+      } else if (!plants.length) {
+        reply =
+          'You have not added any plants yet, but your question is still valid.\n' +
+          'General tip: most indoor plants like slightly moist soil (not fully wet) and bright indirect light.\n' +
+          'Add at least one plant in “Add Plants” so I can give you more exact dates and schedules based on your data.';
+      } else {
+        // Generic fallback – answer anything in a helpful way
+        reply =
+          'Here is a helpful answer for you:\n' +
+          '- Your question: "' + question + '"\n' +
+          '- My suggestion: keep checking the “Add Plants”, “Care Tracker” and “Growth Tracking” tabs for your plants.\n' +
+          'I may not fully understand every detail, but I will always try to give a useful reply.\n' +
+          'You can also ask directly: “When to water my ' + plants[0].name +
+          '?” or “How is this website useful for project?”.';
+      }
+
+      addChatMessage('bot', reply);
+    }
+
+    /* ---------- PROFILE RENDER ---------- */
+    async function renderProfile() {
+      var user = currentUser;
+      var plants = await getPlantsForUser();
+
+      var userData = null;
+      if (user) {
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          if (doc.exists) {
+            userData = doc.data();
+          }
+        } catch (error) {
+          console.error('Error getting user data:', error);
+        }
+      }
+
+      var fullName = userData && userData.name ? userData.name : 'User';
+
+      var avatarEl = document.getElementById('profileAvatar');
+      if (avatarEl) {
+        avatarEl.textContent = (fullName || 'U').charAt(0).toUpperCase();
+      }
+
+      var displayNameEl = document.getElementById('profileDisplayName');
+      if (displayNameEl) {
+        displayNameEl.textContent = fullName || 'Plant lover';
+      }
+
+      function setText(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = (value !== undefined && value !== null && value !== '') ? value : '-';
+      }
+
+      setText('profileNameView', fullName);
+      setText('profileUsernameView', userData && userData.username);
+      setText('profileEmailView', user && user.email);
+      setText('profilePhoneView', userData && userData.phone);
+      setText('profileMemberSince', userData && userData.createdAt ? userData.createdAt : '-');
+
+      var total = plants.length;
+      var indoor = 0;
+      var outdoor = 0;
+      for (var i = 0; i < plants.length; i++) {
+        if (plants[i].type === 'Indoor') indoor++;
+        else if (plants[i].type === 'Outdoor') outdoor++;
+      }
+
+      setText('profilePlantsMain', total);
+      setText('profilePlantsCount', total);
+      setText('profileIndoorCount', indoor);
+      setText('profileOutdoorCount', outdoor);
+      setText('profileLastPlant', total ? plants[plants.length - 1].name : '-');
+    }
+
+    /* ---------- PROFILE EDIT UI ---------- */
+    async function initProfileUI() {
+      var editBtn = document.getElementById('editProfileBtn');
+      var cancelBtn = document.getElementById('cancelEditProfileBtn');
+      var editCard = document.getElementById('profileEditCard');
+      var form = document.getElementById('editProfileForm');
+
+      if (!editBtn || !cancelBtn || !editCard || !form) return;
+
+      editBtn.addEventListener('click', async function () {
+        var user = getCurrentUser();
+        if (!user) return;
+
+        // Get current user data from Firestore
+        var userData = null;
+        try {
+          const doc = await db.collection('users').doc(user.uid).get();
+          if (doc.exists) {
+            userData = doc.data();
+          }
+        } catch (error) {
+          console.error('Error getting user data:', error);
+          return;
+        }
+
+        var fullNameInput = document.getElementById('editFullName');
+        var emailInput = document.getElementById('editEmail');
+        var phoneInput = document.getElementById('editPhone');
+        var passInput = document.getElementById('editPassword');
+
+        if (fullNameInput) fullNameInput.value = userData.name || '';
+        if (emailInput) emailInput.value = userData.email || '';
+        if (phoneInput) phoneInput.value = userData.phone || '';
+        if (passInput) passInput.value = '';
+
+        editCard.classList.remove('hidden');
+        cancelBtn.classList.remove('hidden');
+      });
+
+      cancelBtn.addEventListener('click', function () {
+        editCard.classList.add('hidden');
+        cancelBtn.classList.add('hidden');
+      });
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var user = getCurrentUser();
+        if (!user) return;
+
+        var fullNameInput = document.getElementById('editFullName');
+        var emailInput = document.getElementById('editEmail');
+        var phoneInput = document.getElementById('editPhone');
+        var passInput = document.getElementById('editPassword');
+
+        var updatedData = {};
+        if (fullNameInput && fullNameInput.value.trim()) updatedData.name = fullNameInput.value.trim();
+        if (emailInput && emailInput.value.trim()) updatedData.email = emailInput.value.trim();
+        if (phoneInput && phoneInput.value.trim()) updatedData.phone = phoneInput.value.trim();
+
+        // Update password if provided
+        if (passInput && passInput.value.trim()) {
+          try {
+            await user.updatePassword(passInput.value.trim());
+          } catch (error) {
+            console.error('Error updating password:', error);
+            alert('Error updating password: ' + error.message);
+            return;
+          }
+        }
+
+        // Update other data in Firestore
+        try {
+          await db.collection('users').doc(user.uid).update(updatedData);
+          editCard.classList.add('hidden');
+          cancelBtn.classList.add('hidden');
+          await renderProfile();
+          alert('Profile updated successfully!');
+        } catch (error) {
+          console.error('Error updating profile:', error);
+          alert('Error updating profile: ' + error.message);
+        }
+      });
+    }
+
+    /* ---------- APP INIT FOR USER ---------- */
+    async function initAppForUser(user) {
+      var authWrapper = document.getElementById('authWrapper');
+      var appWrapper = document.getElementById('appWrapper');
+      if (authWrapper) authWrapper.classList.add('hidden');
+      if (appWrapper) appWrapper.classList.remove('hidden');
+
+      var headerName = document.getElementById('usernameDisplay');
+      if (headerName) {
+        headerName.textContent = user.displayName || user.email || 'User';
+      }
+
+      await initDashboardMain();
+      await initPlantDashboard();
+
+      await initTracerDropdown();
+
+      await renderPlantLibrary();
+      await renderPlantDashboard();
+
+      await renderTracer();
+      await renderProfile();
+      await refreshHeaderStats();
+
+
+      showAppSection('homeSection');
+    }
+
+    /* ---------- NAVIGATION ---------- */
+    async function initNav() {
+      var links = document.querySelectorAll('.nav-link');
+      links.forEach(function (link) {
+        link.addEventListener('click', async function (e) {
+          e.preventDefault();
+          var section = this.getAttribute('data-section');
+          if (section) showAppSection(section);
+
+          var username = getCurrentUser();
+          if (!username) return;
+
+          if (section === 'librarySection') {
+            await renderPlantLibrary(username);
+          } else if (section === 'plantDashboardSection') {
+            await renderPlantDashboard(username);
+          }  else if (section === 'tracerSection') {
+            await initTracerDropdown(username);
+            await renderTracer(username);
+          } else if (section === 'profileSection') {
+            await renderProfile(username);
+          }
+        });
+      });
+    }
+
+    /* ---------- CHATBOT FLOATING UI ---------- */
+    function initChatbotUI() {
+      var btn = document.getElementById('chatSendBtn');
+      var input = document.getElementById('chatInput');
+      var fab = document.getElementById('chatFab');
+      var popup = document.getElementById('chatbotSection');
+      var closeBtn = document.getElementById('chatCloseBtn');
+
+      if (fab && popup) {
+        fab.addEventListener('click', function () {
+          popup.classList.toggle('hidden');
+        });
+      }
+
+      if (closeBtn && popup) {
+        closeBtn.addEventListener('click', function () {
+          popup.classList.add('hidden');
+        });
+      }
+
+      if (btn && input) {
+        btn.addEventListener('click', function () {
+          var u = getCurrentUser();
+          if (!u) {
+            alert('Please login first.');
+            return;
+          }
+          handleChat(u);
+        });
+
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            var u2 = getCurrentUser();
+            if (!u2) {
+              alert('Please login first.');
+              return;
+            }
+            handleChat(u2);
+          }
+        });
+      }
+    }
+
+    /* ---------- CONTACT FORM (WhatsApp link) ---------- */
+    function initContactForm() {
+      var form = document.getElementById('contactForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = document.getElementById('yourName').value.trim();
+        var email = document.getElementById('yourEmail').value.trim();
+        var msg = document.getElementById('yourMessage').value.trim();
+
+        if (!name || !email || !msg) {
+          alert('Please fill all the fields before sending.');
+          return;
+        }
+
+        var fullMessage =
+          'Plant Care Tracker message:%0A' +
+          'Name: ' + encodeURIComponent(name) + '%0A' +
+          'Email: ' + encodeURIComponent(email) + '%0A' +
+          'Message: ' + encodeURIComponent(msg);
+
+        // Your WhatsApp number with country code
+        var waUrl = 'https://wa.me/918956676259?text=' + fullMessage;
+        window.open(waUrl, '_blank');
+      });
+    }
+
+    /* ---------- AUTH FORMS & INITIALISATION ---------- */
+    document.addEventListener('DOMContentLoaded', function () {
+      initHomeSlider();
+      initNav();
+      initProfileUI();
+      initChatbotUI();
+      initContactForm();
+
+      // Listen to Firebase auth state changes
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          setCurrentUser(user);
+          initAppForUser(user);
+        } else {
+          showLogin();
+        }
+      });
+
+      var showRegisterBtn = document.getElementById('showRegisterBtn');
+      var showLoginBtn = document.getElementById('showLoginBtn');
+      var loginForm = document.getElementById('loginForm');
+      var registerForm = document.getElementById('registerForm');
+      var logoutBtn = document.getElementById('logoutBtn');
+
+      if (showRegisterBtn) {
+        showRegisterBtn.addEventListener('click', function () {
+          showRegister();
+        });
+      }
+      if (showLoginBtn) {
+        showLoginBtn.addEventListener('click', function () {
+          showLogin();
+        });
+      }
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', async function () {
+          await auth.signOut();
+          var appWrapper = document.getElementById('appWrapper');
+          var authWrapper = document.getElementById('authWrapper');
+          if (appWrapper) appWrapper.classList.add('hidden');
+          if (authWrapper) authWrapper.classList.remove('hidden');
+          showLogin();
+        });
+      }
+
+      if (loginForm) {
+        loginForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var emailInput = document.getElementById('loginEmail');
+          var passwordInput = document.getElementById('loginPassword');
+          var msg = document.getElementById('loginMessage');
+
+          var email = emailInput ? emailInput.value.trim() : '';
+          var password = passwordInput ? passwordInput.value : '';
+
+          if (!email || !password) {
+            if (msg) {
+              msg.textContent = 'Please enter both email and password.';
+              msg.style.color = '#c62828';
+            }
+            return;
+          }
+
+          try {
+            await auth.signInWithEmailAndPassword(email, password);
+            if (msg) {
+              msg.textContent = '';
+            }
+          } catch (error) {
+            console.error('Login error:', error);
+            if (msg) {
+              msg.textContent = 'Invalid email or password.';
+              msg.style.color = '#c62828';
+            }
+          }
+        });
+      }
+
+      if (registerForm) {
+        registerForm.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          var uInput = document.getElementById('regUsername');
+          var nInput = document.getElementById('regName');
+          var pInput = document.getElementById('regPhone');
+          var eInput = document.getElementById('regEmail');
+          var pwInput = document.getElementById('regPassword');
+          var msg = document.getElementById('registerMessage');
+
+          var username = uInput ? uInput.value.trim() : '';
+          var name = nInput ? nInput.value.trim() : '';
+          var phone = pInput ? pInput.value.trim() : '';
+          var email = eInput ? eInput.value.trim() : '';
+          var password = pwInput ? pwInput.value : '';
+
+          if (!username || !name || !phone || !email || !password) {
+            if (msg) {
+              msg.textContent = 'Please fill all the fields.';
+              msg.style.color = '#c62828';
+            }
+            return;
+          }
+
+          try {
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            // Save additional user data to Firestore
+            await db.collection('users').doc(user.uid).set({
+              username: username,
+              name: name,
+              phone: phone,
+              email: email,
+              createdAt: todayStr()
+            });
+
+            if (msg) {
+              msg.textContent = '';
+            }
+          } catch (error) {
+            console.error('Registration error:', error);
+            if (msg) {
+              msg.textContent = 'Registration failed. Email may already be in use.';
+              msg.style.color = '#c62828';
+            }
+          }
+        });
+      }
+    });
+  
+// ===== DARK MODE TOGGLE =====
+const themeToggle = document.getElementById("themeToggle");
+if(themeToggle){
+  themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    themeToggle.textContent =
+      document.body.classList.contains("dark") ? "☀️" : "🌙";
+  });
+}
+
+
+
+
+
+/* ===== CARE TRACKER LOGIC (UPDATED TO USE FIREBASE) ===== */
+
+async function getTrackerTasks(){
+  try {
+    return await getTasksForUser();
+  } catch (error) {
+    console.error('Error getting tasks:', error);
+    return [];
+  }
+}
+
+async function saveTrackerTasks(tasks){
+  // Since we're using Firebase, save each task individually
+  for (let task of tasks) {
+    try {
+      await saveTask(task);
+    } catch (error) {
+      console.error('Error saving task:', error);
+      alert('Error saving task: ' + error.message);
+    }
+  }
+}
+
+// READ ONLY FROM PLANT GALLERY (pct_plants_<username>)
+async function getGalleryPlants(){
+  try {
+    return await getPlantsForUser();
+  } catch (error) {
+    console.error('Error getting plants:', error);
+    return [];
+  }
+}
+
+async function fillTrackerPlantSelect(){
+  var plants = await getGalleryPlants();
+  var sel = document.getElementById('trackerPlantSelect');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">Select Plant</option>';
+  plants.forEach(function(p){
+    var o=document.createElement('option');
+    o.value = p.id;
+    o.textContent = p.name;
+    sel.appendChild(o);
+  });
+  // Select the first plant by default if available
+  if (plants.length > 0) {
+    sel.value = plants[0].id;
+  }
+}
+
+async function addTrackerTask(){
+  var trackerPlantSelect = document.getElementById('trackerPlantSelect');
+  var trackerTaskType = document.getElementById('trackerTaskType');
+  var trackerTaskDate = document.getElementById('trackerTaskDate');
+  var pid = trackerPlantSelect.value;
+  var type = trackerTaskType.value;
+  var date = trackerTaskDate.value;
+  if(!pid||!type||!date){ alert('Please fill all fields'); return; }
+
+  var task = {
+    plantId: pid,
+    title: type === 'water' ? 'Watering' : type === 'fert' ? 'Fertilizing' : 'Cutting Leaf',
+    date: date
+  };
+
+  try {
+    await saveTask(task);
+    alert('Task added successfully!');
+    trackerTaskType.value='';
+    trackerTaskDate.value='';
+
+    await renderTrackerTasks();
+    await renderTrackerCalendar();
+  } catch (error) {
+    console.error('Error adding task:', error);
+    alert('Error adding task: ' + error.message);
+  }
+}
+
+async function renderTrackerTasks(){
+  var trackerPlantSelect = document.getElementById('trackerPlantSelect');
+  var trackerTaskList = document.getElementById('trackerTaskList');
+  var pid = trackerPlantSelect ? trackerPlantSelect.value : '';
+  var tasks = await getTrackerTasks();
+  var plants = await getGalleryPlants();
+  var filteredTasks = pid ? tasks.filter(t=>String(t.plantId)===String(pid)) : tasks;
+
+  if(trackerTaskList) trackerTaskList.innerHTML='';
+  filteredTasks.forEach(function(t){
+    var plant = plants.find(p=>String(p.id)===String(pid));
+    var li=document.createElement('li');
+    var cls = t.title.toLowerCase().includes('water')?'task-water':t.title.toLowerCase().includes('fert')?'task-fert':'task-other';
+    li.className = cls;
+    li.textContent = t.date+' - '+(plant? plant.name:'Plant')+' - '+t.title;
+    if(trackerTaskList) trackerTaskList.appendChild(li);
+  });
+}
+
+async function renderTrackerCalendar(){
+  var grid = document.getElementById('trackerCalendarGrid');
+  var trackerPlantSelect = document.getElementById('trackerPlantSelect');
+  if(!grid) return;
+  grid.innerHTML='';
+
+  var pid = trackerPlantSelect ? trackerPlantSelect.value : '';
+  var tasks = await getTrackerTasks();
+  var filteredTasks = pid ? tasks.filter(t=> String(t.plantId)===String(pid)) : tasks;
+
+  var now = new Date();
+  var y = now.getFullYear();
+  var m = String(now.getMonth()+1).padStart(2,'0');
+
+  for(var i=1;i<=31;i++){
+    var cell=document.createElement('div');
+    cell.className='calendar-cell';
+    cell.innerHTML='<span>'+i+'</span>';
+
+    var d = y+'-'+m+'-'+String(i).padStart(2,'0');
+    var dayTasks = filteredTasks.filter(t=>t.date===d);
+    var types = dayTasks.map(t=>t.title.toLowerCase());
+
+    if(types.some(t=>t.includes('water')) && types.some(t=>t.includes('fert'))) cell.classList.add('both-task');
+    else if(types.some(t=>t.includes('water'))) cell.classList.add('water-task');
+    else if(types.some(t=>t.includes('fert'))) cell.classList.add('fert-task');
+    else if(types.some(t=>t.includes('cut'))) cell.style.background = '#f8bbd0';
+
+    grid.appendChild(cell);
+  }
+}
+
+document.addEventListener('change', async function(e){
+  if(e.target && e.target.id==='trackerPlantSelect'){
+    await renderTrackerTasks();
+    await renderTrackerCalendar();
+  }
+});
+
+document.addEventListener('click', async function(e){
+  if(e.target && e.target.id==='trackerAddBtn'){
+    await addTrackerTask();
+  }
+});
+
+document.addEventListener('click', async function(e){
+  if(e.target && e.target.dataset && e.target.dataset.section==='trackerSection'){
+    await fillTrackerPlantSelect();
+    await renderTrackerTasks();
+    await renderTrackerCalendar();
+  }
+});
+// ===== DAILY TASK NOTIFICATION SYSTEM =====
+async function checkTodayNotifications(){
+
+  try {
+
+    var tasks = await getTrackerTasks();
+    var plants = await getGalleryPlants();
+    var today = todayStr();
+
+   var notifiedTasks = JSON.parse(localStorage.getItem("notifiedTasks") || "[]");
+
+tasks.forEach(function(t){
+
+  if(t.date === today){
+
+    var uniqueKey = t.id + "_" + t.date;
+
+    if(!notifiedTasks.includes(uniqueKey)){
+
+      var plant = plants.find(p => String(p.id) === String(t.plantId));
+
+      if(plant){
+
+        setTimeout(function(){
+
+          alert(
+            "🌿 Plant Care Reminder\n\n" +
+            "Plant: " + plant.name + "\n" +
+            "Task: " + t.title + "\n" +
+            "Date: " + t.date
+          );
+
+        }, 1500);
+
+        notifiedTasks.push(uniqueKey);
+        localStorage.setItem("notifiedTasks", JSON.stringify(notifiedTasks));
+
+      }
+
+    }
+
+  }
+
+});
+
+
+  } catch(e){
+    console.log("Notification check error", e);
+  }
+
+}
+
+setTimeout(function(){
+  checkTodayNotifications();
+}, 3000);
+
+updateAnalytics();
+
+
+/******** PLANT MOOD FINAL ********/
+
+async function loadPlantMoodPlants(){
+
+  try{
+
+    let plants = await getPlantsForUser() || [];
+    let select = document.getElementById("plantMoodSelect");
+
+    if(!select) return;
+
+    select.innerHTML = "<option value=''>Select Plant</option>";
+
+    plants.forEach(p=>{
+      select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+    });
+
+  }catch(e){
+    console.log("Mood plant load error", e);
+  }
+
+}
+
+async function showSelectedPlantMood(){
+
+  try{
+
+    let plantId = document.getElementById("plantMoodSelect").value;
+    if(!plantId) return;
+
+    let plants = await getPlantsForUser() || [];
+    let tasks = await getTasksForUser() || [];
+
+    let plant = plants.find(p=> p.id === plantId);
+    let plantTasks = tasks.filter(t=> t.plantId === plantId);
+
+    let totalTasks = plantTasks.length;
+
+    /* SCORE */
+    let score = 0;
+
+    if(totalTasks >= 5) score = 100;
+    else if(totalTasks === 4) score = 85;
+    else if(totalTasks === 3) score = 75;
+    else if(totalTasks === 2) score = 50;
+    else if(totalTasks === 1) score = 40;
+    else score = 20;
+
+    /* MOOD */
+    let mood="", reason="", tips="", moodClass="";
+
+    if(score >= 95){
+      mood="🌟 Divine Growth";
+      reason="Perfect care maintained";
+      tips="Keep same routine.";
+      moodClass="mood-divine";
+    }
+    else if(score >= 80){
+      mood="💚 Thriving";
+      reason="Plant is very healthy";
+      tips="Maintain watering schedule.";
+      moodClass="mood-thriving";
+    }
+    else if(score >= 70){
+      mood="🌱 Stable";
+      reason="Plant is stable";
+      tips="Monitor soil moisture.";
+      moodClass="mood-stable";
+    }
+    else if(score >= 40){
+      mood="🍂 Struggling";
+      reason="Plant needs attention";
+      tips="Check sunlight & watering.";
+      moodClass="mood-struggling";
+    }
+    else{
+      mood="🚨 Critical Survival";
+      reason="Plant needs urgent care";
+      tips="Water + fertilizer.";
+      moodClass="mood-critical";
+    }
+
+    let latestTask = plantTasks.sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
+
+    document.getElementById("plantMoodResult").innerHTML = `
+    <div class="mood-box ${moodClass}">
+
+      <h3>${plant.name}</h3>
+
+      <p><strong>${mood}</strong></p>
+      <p>${reason}</p>
+
+      <div class="progress-container">
+        <div class="progress-bar" id="moodProgressBar"></div>
+      </div>
+
+      <p style="margin-top:8px;">Health Score : ${score}%</p>
+
+      <p>💡 ${tips}</p>
+
+      <hr>
+
+      <p>🌱 Last Task: ${latestTask ? latestTask.title : "No tasks yet"}</p>
+      <p>📅 Last Date: ${latestTask ? latestTask.date : "N/A"}</p>
+      <p>📈 Total Tasks: ${totalTasks}</p>
+
+    </div>
+    `;
+
+    setTimeout(()=>{
+      document.getElementById("moodProgressBar").style.width = score + "%";
+    },200);
+
+  }
+  catch(e){
+    console.log("Mood error", e);
+  }
+}
+
+
+/* NAV SECTION LOAD HOOK */
+document.addEventListener("click", function(e){
+
+  if(e.target.matches('[data-section="plantMoodSection"]')){
+    setTimeout(()=>{
+      loadPlantMoodPlants();
+    },500);
+  }
+
+});
+
+/* SELECT CHANGE EVENT */
+document.addEventListener("change", function(e){
+  if(e.target.id === "plantMoodSelect"){
+    showSelectedPlantMood();
+  }
+});
+
+
+document.getElementById("plantDoctorFab").onclick = function(){
+  document.getElementById("plantDoctorPopup").classList.remove("hidden");
+}
+
+function closePlantDoctor(){
+  document.getElementById("plantDoctorPopup").classList.add("hidden");
+}
+
+
+
+
+function sendPlantDoctor(){
+
+  let input = document.getElementById("plantDoctorInput").value.toLowerCase();
+  let chat = document.getElementById("plantDoctorChatWindow");
+
+  if(!input) return;
+
+  chat.innerHTML += `<div class="chat-msg-user"><span>${input}</span></div>`;
+
+  let reply = "🌿 General Care: Check watering, sunlight and soil health.";
+
+  /* 🌿 10 UNIVERSAL SYMPTOMS */
+
+  if(input.includes("yellow")){
+    reply = "Yellow Leaves → Overwatering or nutrient deficiency.\nSolution: Reduce watering, check drainage, add fertilizer.";
+  }
+
+  else if(input.includes("brown")){
+    reply = "Brown Tips → Low humidity or too much sunlight.\nSolution: Mist leaves, move to indirect light.";
+  }
+
+  else if(input.includes("drooping") || input.includes("wilting")){
+    reply = "Drooping Plant → Underwatering OR root rot.\nSolution: Check soil moisture before watering.";
+  }
+
+  else if(input.includes("spots")){
+    reply = "Leaf Spots → Fungal or bacterial infection.\nSolution: Remove infected leaves, apply neem oil.";
+  }
+
+  else if(input.includes("fungus") || input.includes("mold")){
+    reply = "Fungus Issue → Too much moisture.\nSolution: Improve airflow and reduce watering.";
+  }
+
+  else if(input.includes("no growth") || input.includes("slow growth")){
+    reply = "Slow Growth → Low light or lack of nutrients.\nSolution: Increase sunlight and fertilize monthly.";
+  }
+
+  else if(input.includes("leaf falling") || input.includes("leaves falling")){
+    reply = "Leaf Drop → Stress from temperature or watering changes.\nSolution: Keep stable environment.";
+  }
+
+  else if(input.includes("pale")){
+    reply = "Pale Leaves → Nitrogen deficiency.\nSolution: Use balanced fertilizer.";
+  }
+
+  else if(input.includes("holes")){
+    reply = "Leaf Holes → Pest attack (caterpillars or insects).\nSolution: Use organic pest spray.";
+  }
+
+  else if(input.includes("root rot")){
+    reply = "Root Rot → Overwatering and poor drainage.\nSolution: Repot plant and remove rotten roots.";
+  }
+
+  chat.innerHTML += `<div class="chat-msg-bot"><span>${reply}</span></div>`;
+
+  document.getElementById("plantDoctorInput").value="";
+  chat.scrollTop = chat.scrollHeight;
+}
+
+
+
+</script>
+</body> 
+</html>
