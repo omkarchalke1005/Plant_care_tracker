@@ -555,6 +555,105 @@ document.addEventListener('click', async function(e){
   }
 });
 // ===== DAILY TASK NOTIFICATION SYSTEM =====
+var plantReminderToastTimer = null;
+
+function ensurePlantReminderStyles() {
+  if (document.getElementById('plantReminderStyles')) return;
+
+  var style = document.createElement('style');
+  style.id = 'plantReminderStyles';
+  style.textContent =
+    '.plant-reminder-wrap{' +
+      'position:fixed;top:22px;right:22px;z-index:9999;pointer-events:none;' +
+    '}' +
+    '.plant-reminder{' +
+      'width:min(360px,calc(100vw - 28px));' +
+      'background:linear-gradient(135deg,#f6fff7 0%,#e6f7ec 52%,#d9f0e1 100%);' +
+      'border:1px solid #b6dec4;border-radius:16px;box-shadow:0 12px 36px rgba(23,89,44,.24);' +
+      'padding:14px 14px 12px;color:#124227;font-family:Segoe UI,Tahoma,sans-serif;' +
+      'pointer-events:auto;transform:translateY(-12px) scale(.98);opacity:0;' +
+      'transition:all .28s ease;' +
+    '}' +
+    '.plant-reminder.show{' +
+      'transform:translateY(0) scale(1);opacity:1;' +
+    '}' +
+    '.plant-reminder-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}' +
+    '.plant-reminder-title{margin:0;font-size:17px;font-weight:700;letter-spacing:.2px;}' +
+    '.plant-reminder-sub{margin:4px 0 0 0;font-size:12px;opacity:.84;}' +
+    '.plant-reminder-close{' +
+      'border:0;background:#1d6d40;color:#fff;border-radius:999px;width:26px;height:26px;' +
+      'font-size:16px;line-height:1;cursor:pointer;display:grid;place-items:center;' +
+      'box-shadow:0 6px 14px rgba(18,66,39,.3);' +
+    '}' +
+    '.plant-reminder-body{margin-top:10px;font-size:15px;line-height:1.45;}' +
+    '.plant-reminder-row{margin:4px 0;}' +
+    '.plant-reminder-label{font-weight:700;margin-right:5px;}' +
+    '.plant-reminder-ok{' +
+      'margin-top:10px;border:0;background:#2f8f58;color:#fff;padding:8px 14px;border-radius:10px;' +
+      'font-weight:700;cursor:pointer;' +
+    '}';
+  document.head.appendChild(style);
+}
+
+function escapeReminderText(value) {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function showPlantReminderNotification(plantName, taskTitle, dateStr) {
+  ensurePlantReminderStyles();
+
+  var oldWrap = document.getElementById('plantReminderWrap');
+  if (oldWrap) oldWrap.remove();
+  if (plantReminderToastTimer) clearTimeout(plantReminderToastTimer);
+
+  var wrap = document.createElement('div');
+  wrap.id = 'plantReminderWrap';
+  wrap.className = 'plant-reminder-wrap';
+
+  var card = document.createElement('div');
+  card.className = 'plant-reminder';
+  card.innerHTML =
+    '<div class="plant-reminder-head">' +
+      '<div>' +
+        '<p class="plant-reminder-title">Plant Care Reminder</p>' +
+        '<p class="plant-reminder-sub">Your task is due today</p>' +
+      '</div>' +
+      '<button class="plant-reminder-close" type="button" aria-label="Close notification">&times;</button>' +
+    '</div>' +
+    '<div class="plant-reminder-body">' +
+      '<p class="plant-reminder-row"><span class="plant-reminder-label">Plant:</span>' + escapeReminderText(plantName) + '</p>' +
+      '<p class="plant-reminder-row"><span class="plant-reminder-label">Task:</span>' + escapeReminderText(taskTitle) + '</p>' +
+      '<p class="plant-reminder-row"><span class="plant-reminder-label">Date:</span>' + escapeReminderText(dateStr) + '</p>' +
+      '<button class="plant-reminder-ok" type="button">Got it</button>' +
+    '</div>';
+
+  wrap.appendChild(card);
+  document.body.appendChild(wrap);
+
+  requestAnimationFrame(function () {
+    card.classList.add('show');
+  });
+
+  function dismiss() {
+    card.classList.remove('show');
+    setTimeout(function () {
+      if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    }, 220);
+  }
+
+  var closeBtn = card.querySelector('.plant-reminder-close');
+  var okBtn = card.querySelector('.plant-reminder-ok');
+  if (closeBtn) closeBtn.addEventListener('click', dismiss);
+  if (okBtn) okBtn.addEventListener('click', dismiss);
+
+  plantReminderToastTimer = setTimeout(dismiss, 9000);
+}
+
 async function checkTodayNotifications(){
 
   try {
@@ -581,12 +680,7 @@ tasks.forEach(function(t){
 
         setTimeout(function(){
 
-          alert(
-            "🌿 Plant Care Reminder\n\n" +
-            "Plant: " + plant.name + "\n" +
-            "Task: " + t.title + "\n" +
-            "Date: " + t.date
-          );
+          showPlantReminderNotification(plant.name, t.title, t.date);
 
         }, 1500);
 
