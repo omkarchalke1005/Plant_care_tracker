@@ -119,6 +119,7 @@ async function addTrackerTask(){
 }
 
 var smartPlanCache = [];
+var sunlightCleanupDone = false;
 
 function getSeasonalModifiers() {
   var month = new Date().getMonth() + 1; // 1-12
@@ -158,21 +159,15 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
 
   var waterEvery = Math.max(2, baseSchedule.water + season.waterAdjust);
   var fertEvery = Math.max(10, baseSchedule.fert + season.fertAdjust);
-  var sunEvery = plant.type === 'Outdoor'
-    ? Math.max(2, season.sunlightCheckEvery + 1)
-    : Math.max(1, season.sunlightCheckEvery);
 
   var plantTasks = tasks.filter(function (t) { return String(t.plantId) === String(plantId); });
   var waterTasks = plantTasks.filter(function (t) { return /water/i.test(t.title); })
     .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
   var fertTasks = plantTasks.filter(function (t) { return /(fertil|feed|manure)/i.test(t.title); })
     .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
-  var sunTasks = plantTasks.filter(function (t) { return /sunlight/i.test(t.title); })
-    .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
 
   var nextWater = waterTasks.length ? addDays(waterTasks[waterTasks.length - 1].date, waterEvery) : today;
   var nextFert = fertTasks.length ? addDays(fertTasks[fertTasks.length - 1].date, fertEvery) : addDays(today, 1);
-  var nextSun = sunTasks.length ? addDays(sunTasks[sunTasks.length - 1].date, sunEvery) : today;
 
   var candidate = [];
   createDateSequence(nextWater, waterEvery, endDate).forEach(function (d) {
@@ -180,9 +175,6 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
   });
   createDateSequence(nextFert, fertEvery, endDate).forEach(function (d) {
     candidate.push({ plantId: plantId, title: 'Fertilizing', date: d, status: 'pending', createdAt: today });
-  });
-  createDateSequence(nextSun, sunEvery, endDate).forEach(function (d) {
-    candidate.push({ plantId: plantId, title: 'Sunlight Check', date: d, status: 'pending', createdAt: today });
   });
 
   var existingKeys = {};
@@ -208,14 +200,28 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
 
   var waterCount = unique.filter(function (t) { return t.title === 'Watering'; }).length;
   var fertCount = unique.filter(function (t) { return t.title === 'Fertilizing'; }).length;
-  var sunCount = unique.filter(function (t) { return t.title === 'Sunlight Check'; }).length;
 
   var summary =
     plant.name + ': ' + unique.length + ' new tasks (' +
-    waterCount + ' water, ' + fertCount + ' fertilizer, ' + sunCount +
-    ' sunlight checks). Skipped ' + skipped + ' duplicates.';
+    waterCount + ' water, ' + fertCount +
+    ' fertilizer). Skipped ' + skipped + ' duplicates.';
 
   return { tasks: unique, summary: summary, plantName: plant.name };
+}
+
+async function cleanupDeprecatedSunlightTasks() {
+  if (sunlightCleanupDone) return 0;
+  sunlightCleanupDone = true;
+  var tasks = await getTasksForUser();
+  var bad = tasks.filter(function (t) { return /sunlight\s*check/i.test(String(t.title || '')); });
+  for (var i = 0; i < bad.length; i++) {
+    try {
+      await deleteTask(bad[i].id);
+    } catch (e) {
+      console.error('Failed to delete deprecated sunlight task:', bad[i], e);
+    }
+  }
+  return bad.length;
 }
 
 function renderSmartPlanPreview(previewTasks, summaryText) {
@@ -243,6 +249,7 @@ function renderSmartPlanPreview(previewTasks, summaryText) {
 }
 
 async function previewSmartPlan() {
+  await cleanupDeprecatedSunlightTasks();
   var plantSel = document.getElementById('trackerPlantSelect');
   var rangeSel = document.getElementById('smartPlanRange');
   if (!plantSel || !rangeSel || !plantSel.value) {
@@ -256,6 +263,7 @@ async function previewSmartPlan() {
 }
 
 async function saveSmartPlan() {
+  await cleanupDeprecatedSunlightTasks();
   if (!smartPlanCache || !smartPlanCache.length) {
     await previewSmartPlan();
     if (!smartPlanCache.length) return;
@@ -449,11 +457,16 @@ document.addEventListener('click', async function(e){
 
 document.addEventListener('click', async function(e){
   if(e.target && e.target.dataset && e.target.dataset.section==='trackerSection'){
+    var removed = await cleanupDeprecatedSunlightTasks();
     await fillTrackerPlantSelect();
     smartPlanCache = [];
     renderSmartPlanPreview([], '');
     await renderTrackerTasks();
     await renderTrackerCalendar();
+    if (removed > 0) {
+      var summary = document.getElementById('smartPlanSummary');
+      if (summary) summary.textContent = 'Removed old Sunlight Check tasks: ' + removed + '.';
+    }
   }
 });
 
@@ -790,63 +803,74 @@ function closePlantDoctor(){
 
 
 
-function sendPlantDoctor(){
+function addPlantDoctorMessage(type, text){
+  var chat = document.getElementById("plantDoctorChatWindow");
+  if(!chat) return;
+  var cls = type === "user" ? "chat-msg-user" : "chat-msg-bot";
+  var safe = String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;")
+    .replace(/\n/g, "<br>");
+  chat.innerHTML += '<div class="' + cls + '"><span>' + safe + '</span></div>';
+  chat.scrollTop = chat.scrollHeight;
+}
 
-  let input = document.getElementById("plantDoctorInput").value.toLowerCase();
-  let chat = document.getElementById("plantDoctorChatWindow");
-
-  if(!input) return;
-
-  chat.innerHTML += `<div class="chat-msg-user"><span>${input}</span></div>`;
-
-  let reply = "🌿 General Care: Check watering, sunlight and soil health.";
-
-  /* 🌿 10 UNIVERSAL SYMPTOMS */
+function getPlantDoctorFallbackReply(symptomText){
+  var input = String(symptomText || "").toLowerCase();
+  var reason = "Stress from watering/light/nutrient imbalance.";
+  var change = "Check drainage, remove damaged leaves, and keep routine stable for 7 days.";
+  var water = "Water only when top 1-2 inches of soil feels dry.";
 
   if(input.includes("yellow")){
-    reply = "Yellow Leaves → Overwatering or nutrient deficiency.\nSolution: Reduce watering, check drainage, add fertilizer.";
+    reason = "Overwatering, poor drainage, or nutrient deficiency.";
+    change = "Reduce watering, ensure drainage holes, and add mild balanced fertilizer.";
+    water = "Water after top soil dries. Avoid daily watering.";
+  } else if(input.includes("brown")){
+    reason = "Low humidity, salt buildup, or sun scorch.";
+    change = "Shift to indirect light, flush soil once, and raise humidity.";
+    water = "Keep soil lightly moist, not soggy.";
+  } else if(input.includes("drooping") || input.includes("wilting")){
+    reason = "Either underwatering or root stress/rot.";
+    change = "Check soil before watering. If soggy, reduce water and improve airflow.";
+    water = "If dry, deep-water once. Then follow interval based watering.";
+  } else if(input.includes("spots") || input.includes("fungus") || input.includes("mold")){
+    reason = "Fungal/bacterial issue due to excess moisture.";
+    change = "Remove affected leaves and improve airflow.";
+    water = "Water at root only, avoid wet leaves.";
   }
 
-  else if(input.includes("brown")){
-    reply = "Brown Tips → Low humidity or too much sunlight.\nSolution: Mist leaves, move to indirect light.";
+  return "Possible reason:\n" + reason +
+    "\n\nWhat to change:\n" + change +
+    "\n\nWatering advice:\n" + water;
+}
+
+async function sendPlantDoctor(){
+  var inputEl = document.getElementById("plantDoctorInput");
+  var raw = inputEl ? inputEl.value.trim() : "";
+  if(!raw) return;
+
+  addPlantDoctorMessage("user", raw);
+  if(inputEl) inputEl.value = "";
+  addPlantDoctorMessage("bot", "Analyzing symptom...");
+
+  var chat = document.getElementById("plantDoctorChatWindow");
+  if(chat && chat.lastElementChild){
+    chat.lastElementChild.remove();
   }
+  addPlantDoctorMessage("bot", getPlantDoctorFallbackReply(raw));
+}
 
-  else if(input.includes("drooping") || input.includes("wilting")){
-    reply = "Drooping Plant → Underwatering OR root rot.\nSolution: Check soil moisture before watering.";
-  }
-
-  else if(input.includes("spots")){
-    reply = "Leaf Spots → Fungal or bacterial infection.\nSolution: Remove infected leaves, apply neem oil.";
-  }
-
-  else if(input.includes("fungus") || input.includes("mold")){
-    reply = "Fungus Issue → Too much moisture.\nSolution: Improve airflow and reduce watering.";
-  }
-
-  else if(input.includes("no growth") || input.includes("slow growth")){
-    reply = "Slow Growth → Low light or lack of nutrients.\nSolution: Increase sunlight and fertilize monthly.";
-  }
-
-  else if(input.includes("leaf falling") || input.includes("leaves falling")){
-    reply = "Leaf Drop → Stress from temperature or watering changes.\nSolution: Keep stable environment.";
-  }
-
-  else if(input.includes("pale")){
-    reply = "Pale Leaves → Nitrogen deficiency.\nSolution: Use balanced fertilizer.";
-  }
-
-  else if(input.includes("holes")){
-    reply = "Leaf Holes → Pest attack (caterpillars or insects).\nSolution: Use organic pest spray.";
-  }
-
-  else if(input.includes("root rot")){
-    reply = "Root Rot → Overwatering and poor drainage.\nSolution: Repot plant and remove rotten roots.";
-  }
-
-  chat.innerHTML += `<div class="chat-msg-bot"><span>${reply}</span></div>`;
-
-  document.getElementById("plantDoctorInput").value="";
-  chat.scrollTop = chat.scrollHeight;
+var plantDoctorInputEl = document.getElementById("plantDoctorInput");
+if (plantDoctorInputEl) {
+  plantDoctorInputEl.addEventListener("keydown", function(e){
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendPlantDoctor();
+    }
+  });
 }
 
 
