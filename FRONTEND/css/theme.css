@@ -1,0 +1,231 @@
+﻿body.dark {
+  background:#0e1b14;
+  color:#e8f5e9;
+}
+body.dark .card,
+body.dark .main-header {
+  background:#11261d;
+  color:#e8f5e9;
+}
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background:#0b1f16;
+  color:#e8f5e9;
+  border-color:#2e7d32;
+}
+
+
+
+body.dark {
+  background: #0b1511;
+  color: #e6f4ea;
+}
+
+body.dark .main-header,
+body.dark .card,
+body.dark .auth-card {
+  background: #111f19;
+  color: #e6f4ea;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5 {
+  color: #c8facc;
+}
+
+body.dark p,
+body.dark li,
+body.dark span,
+body.dark label {
+  color: #d4efe0;
+}
+
+body.dark nav a {
+  color: #c8facc;
+}
+body.dark nav a.active,
+body.dark nav a:hover {
+  background: #1f3d2f;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #0f1f18;
+  color: #e6f4ea;
+  border: 1px solid #2e7d32;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #9fd6b6;
+}
+
+body.dark .btn-primary {
+  background: linear-gradient(135deg,#43a047,#1b5e20);
+  color: #ffffff;
+}
+
+body.dark .btn-secondary {
+  background: #1f3d2f;
+  color: #c8facc;
+  border-color: #2e7d32;
+}
+
+body.dark .info-box,
+body.dark .profile-summary {
+  background: #13251d;
+  border-color: #2e7d32;
+}
+
+body.dark .task-list li {
+  background: #1a3328;
+  color: #e6f4ea;
+}
+
+body.dark .calendar-cell {
+  background: #1a3328;
+  color: #e6f4ea;
+}
+
+body.dark .plant-card {
+  background: #13251d;
+}
+
+body.dark .chat-fab {
+  background: linear-gradient(135deg,#43a047,#1b5e20);
+}
+
+body.dark .tracer-panel {
+  background: radial-gradient(circle at top, #04160d, #020b07);
+  border-color: #1f6b34;
+}
+
+
+/* ===== FINAL DARK MODE (FULL VISIBILITY â€“ EXAM SAFE) ===== */
+body.dark,
+body.dark * {
+  color: #eaf7ef !important;
+}
+
+body.dark {
+  background: #08130f !important;
+}
+
+body.dark .main-header,
+body.dark .card,
+body.dark .auth-card,
+body.dark .info-box,
+body.dark .profile-summary,
+body.dark .plant-card {
+  background: #0f1f19 !important;
+  border-color: #2e7d32 !important;
+}
+
+body.dark nav a {
+  color: #c8facc !important;
+}
+
+body.dark nav a.active,
+body.dark nav a:hover {
+  background: #1f3d2f !important;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #0b1f16 !important;
+  color: #eaf7ef !important;
+  border: 1px solid #43a047 !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #a8e6c3 !important;
+}
+
+body.dark button {
+  color: #ffffff !important;
+}
+
+body.dark .btn-primary {
+  background: linear-gradient(135deg,#43a047,#1b5e20) !important;
+}
+
+body.dark .btn-secondary {
+  background: #1f3d2f !important;
+  border-color: #43a047 !important;
+}
+
+body.dark .calendar-cell {
+  background: #1a3328 !important;
+}
+
+body.dark .task-list li {
+  background: #1a3328 !important;
+}
+
+body.dark .tracer-panel {
+  background: radial-gradient(circle at top,#04160d,#020b07) !important;
+  border-color: #1f6b34 !important;
+}
+
+
+/* ===== EXTRA DARK FIX FOR ABOUT & ADD PLANT ===== */
+body.dark #aboutSection,
+body.dark #dashboardSection {
+  background:#0f1f19 !important;
+}
+
+body.dark #aboutSection .card,
+body.dark #dashboardSection .card {
+  background:#13251d !important;
+  color:#eaf7ef !important;
+}
+
+
+/* ===== FINAL DARK MODE CONTRAST FIX ===== */
+body.dark {
+  background:#08130f;
+  color:#eafff2;
+}
+
+/* Headings */
+body.dark h1, body.dark h2, body.dark h3, body.dark h4 {
+  color:#c8facc;
+}
+
+/* Cards */
+body.dark .card,
+body.dark .info-box,
+body.dark .profile-summary {
+  background:#0f261c;
+  border:1px solid #1f6b34;
+  color:#eafff2;
+}
+
+/* About section pills */
+body.dark .about-pill {
+  background:#143d2b;
+  color:#c8facc;
+  border-color:#2e7d32;
+}
+
+/* Hero & highlight boxes */
+body.dark .hero-image,
+body.dark .about-highlight {
+  background:#123527;
+  color:#eafff2;
+}
+
+/* Stat boxes */
+body.dark .hero-stat {
+  background:#123527;
+  color:#eafff2;
+}
+

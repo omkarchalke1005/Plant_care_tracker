@@ -1,0 +1,567 @@
+﻿    /* HOME (NEW WELCOME PAGE) */
+    .home-hero-main {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 1.3rem;
+    }
+
+    .home-hero-text h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .home-hero-text p {
+      color: #4f6f52;
+      margin-bottom: 0.8rem;
+    }
+
+    .home-hero-text ul {
+      margin-left: 1rem;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+      color: #355b3e;
+    }
+
+    .home-hero-image {
+      border-radius: 1.1rem;
+      background: linear-gradient(135deg, #a5d6a7, #e8f5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .home-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 0.7rem;
+      margin-top: 0.6rem;
+    }
+
+    .home-gallery img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 0.9rem;
+    }
+
+    /* Home slider */
+    .home-slider {
+      margin-top: 0.7rem;
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    .home-slider img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+    }
+
+    .home-slider img.active {
+      opacity: 1;
+    }
+
+    /* DASHBOARD / ADD PLANTS */
+    .home-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 1.3rem;
+    }
+
+    .hero-text h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-text p {
+      color: #4f6f52;
+      margin-bottom: 1rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .hero-stat {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 0.9rem;
+      background: #e8f5e9;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .hero-image {
+      border-radius: 1.1rem;
+      background: linear-gradient(135deg, #a5d6a7, #e8f5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-box {
+      background: #f8fff8;
+      border-radius: 0.9rem;
+      padding: 1rem;
+      border: 1px solid #cde9ce;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .info-box h3 { margin-bottom: 0.4rem; }
+
+    /* Attractive Add Plant card */
+    .add-plant-card {
+      background: radial-gradient(circle at top left, #e8f5e9, #ffffff);
+      border: 1px solid #c8e6c9;
+      box-shadow: 0 14px 30px rgba(46, 125, 50, 0.12);
+    }
+    .add-plant-card h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .add-plant-card h2::before {
+      content: "âœ¨";
+      font-size: 1.1rem;
+    }
+
+    /* LIBRARY */
+    .plant-card {
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.03);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
+    }
+
+    .plant-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.07);
+    }
+
+    .plant-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .plant-card-body {
+      padding: 0.75rem 0.9rem 0.9rem;
+      position: relative;
+    }
+
+    .plant-name { font-weight: 600; margin-bottom: 0.25rem; }
+
+    .plant-meta { font-size: 0.85rem; color: #607d66; }
+
+    .plant-delete-wrapper {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+
+    /* DASHBOARD â€“ PLANT DETAILS */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+      gap: 1.2rem;
+    }
+
+    .plant-photo-placeholder {
+      width: 100%;
+      border-radius: 1rem;
+      height: 220px;
+      background: linear-gradient(135deg, #c8e6c9, #e8f5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      color: #355b3e;
+      overflow: hidden;
+    }
+
+    .plant-photo-placeholder img {
+      width: 100%;
+      height: 100%;
+      border-radius: inherit;
+      object-fit: cover;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      background: #e8f5e9;
+      font-size: 0.8rem;
+      margin-right: 0.25rem;
+    }
+
+    .item-list {
+      list-style: none;
+      margin-top: 0.5rem;
+    }
+
+    .item-list li {
+      padding: 0.35rem 0;
+      border-bottom: 1px dashed #e0e9e0;
+      font-size: 0.9rem;
+    }
+
+    .item-list li:last-child { border-bottom: none; }
+
+    /* CARE TRACKER (Plant Tracker page) */
+    .tracker-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
+      gap: 1.2rem;
+    }
+
+    .task-list {
+      list-style: none;
+      margin-top: 0.4rem;
+    }
+
+    .task-list li {
+      padding: 0.45rem 0.6rem;
+      border-radius: 0.75rem;
+      background: #f1f8e9;
+      font-size: 0.85rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .task-water {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+    }
+
+    .task-fert {
+      background: #e8f5e9;
+      border-left: 4px solid #43a047;
+    }
+
+    .task-other {
+      background: #f5f5f5;
+      border-left: 4px solid #9e9e9e;
+    }
+
+    .calendar { margin-top: 0.5rem; }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.25rem;
+    }
+
+    .calendar-cell {
+      background: #f5f5f5;
+      border-radius: 0.5rem;
+      padding: 0.25rem;
+      min-height: 45px;
+      font-size: 0.75rem;
+      text-align: right;
+    }
+
+    .calendar-cell span { font-weight: 600; }
+
+    .calendar-cell.water-task { background: #bbdefb; }
+    .calendar-cell.fert-task { background: #c8e6c9; }
+    .calendar-cell.both-task { background: #fff9c4; }
+
+    /* PLANT TRACER (dark panel) */
+    .tracer-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 3fr);
+      gap: 1.2rem;
+    }
+
+    .tracer-panel {
+      background: radial-gradient(circle at top, #062616, #020f0a);
+      border-radius: 1rem;
+      padding: 1rem 1.2rem;
+      border: 1px solid #0f3d27;
+      color: #c8facc;
+    }
+
+    .tracer-panel h3 { margin-bottom: 0.6rem; color: #8cffb5; }
+
+    .tracer-panel h2,
+    .tracer-panel h4 { color: #b4ffd8; }
+
+    .tracer-panel .badge {
+      background: rgba(0, 255, 120, 0.1);
+      color: #9bffca;
+    }
+
+    .tracer-panel .item-list li {
+      border-bottom-color: rgba(155, 255, 202, 0.2);
+    }
+
+    .tracer-meta {
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .tracer-meta p { margin-bottom: 0.3rem; }
+
+    .tracer-label { color: #81c995; }
+
+    .growth-chart-title { display:flex; justify-content:space-between; align-items:center; }
+
+    .growth-chart {
+      margin-top: 0.7rem;
+      display: flex;
+      align-items: flex-end;
+      gap: 0.9rem;
+      height: 150px;
+    }
+
+    .growth-bar-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 0.75rem;
+      color: #a5ffd2;
+    }
+
+    .growth-bar {
+      width: 100%;
+      border-radius: 0.5rem 0.5rem 0 0;
+      background: linear-gradient(180deg, #00ff88, #00784a);
+      margin-bottom: 0.2rem;
+    }
+
+    /* Chatbot messages */
+    #chatWindow {
+      background:#02150d;
+      border-radius:0.7rem;
+      padding:0.6rem;
+      height:200px;
+      overflow-y:auto;
+      font-size:0.8rem;
+      margin-bottom:0.6rem;
+      border:1px solid #0f3b23;
+    }
+
+    .chat-msg-user {
+      text-align:right;
+      margin-bottom:0.3rem;
+    }
+
+    .chat-msg-bot {
+      text-align:left;
+      margin-bottom:0.3rem;
+    }
+
+    .chat-msg-user span,
+    .chat-msg-bot span{
+      display:inline-block;
+      padding:0.25rem 0.5rem;
+      border-radius:0.7rem;
+      max-width:80%;
+    }
+
+    .chat-msg-user span{
+      background:#00c853;
+      color:#02140b;
+    }
+
+    .chat-msg-bot span{
+      background:#062616;
+      color:#c8facc;
+      border:1px solid #0f3b23;
+    }
+
+    /* CONTACT & ABOUT */
+    .contact-info {
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .contact-info p { margin-bottom: 0.4rem; }
+
+    /* --- NEW GLOWING ABOUT DESIGN --- */
+    #aboutSection {
+      background: radial-gradient(circle at top left, #e8fff3, #f5fff9, #e7fbe9);
+      border-radius: 1.3rem;
+      padding: 1.2rem;
+      box-shadow: 0 20px 50px rgba(46,125,50,0.18);
+    }
+
+    #aboutSection .card {
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(150, 220, 170, 0.7);
+      box-shadow: 0 14px 30px rgba(60, 140, 80, 0.18);
+    }
+
+    .about-text p {
+      margin-bottom: 0.7rem;
+      line-height: 1.4;
+    }
+
+    .about-pill {
+      display:inline-block;
+      padding:0.35rem 0.9rem;
+      border-radius:999px;
+      background:linear-gradient(135deg,#d5ffe4,#f4fff9);
+      font-size:0.8rem;
+      margin-right:0.35rem;
+      margin-bottom:0.3rem;
+      color:#1f6b34;
+      border:1px solid #bdeecf;
+      box-shadow:0 0 15px rgba(120,255,170,0.5);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+
+    .about-pill:hover{
+      transform:translateY(-2px) scale(1.03);
+      box-shadow:0 0 20px rgba(90,220,140,0.9);
+    }
+
+    .about-highlight {
+      background:linear-gradient(135deg,#f6fff8,#e7ffe9);
+      border-radius:0.9rem;
+      border:1px solid #bfeacc;
+      padding:0.9rem 1rem;
+      margin-top:0.6rem;
+      font-size:0.9rem;
+      box-shadow:0 10px 25px rgba(46,125,50,0.12);
+    }
+
+    .about-highlight h3{
+      color:#1f6b34;
+    }
+
+    .team-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:0.8rem;
+      margin-top:0.7rem;
+    }
+
+    .team-card {
+      background:linear-gradient(135deg,#f6fff9,#e9fff0);
+      border-radius:0.9rem;
+      padding:0.8rem 0.9rem;
+      border:1px solid #c7eed2;
+      box-shadow:0 8px 18px rgba(46,125,50,0.15);
+      transition:transform 0.2s, box-shadow 0.2s;
+    }
+
+    .team-card:hover{
+      transform:translateY(-4px);
+      box-shadow:0 12px 28px rgba(46,125,50,0.22);
+    }
+
+    .team-name {
+      font-weight:600;
+      margin-bottom:0.2rem;
+      color:#1c5f2c;
+    }
+
+    .team-role {
+      font-size:0.85rem;
+      color:#4f6f52;
+    }
+
+    /* PROFILE */
+    .profile-grid {
+      display:grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 2fr);
+      gap:1rem;
+      margin-top:0.5rem;
+    }
+
+    .profile-summary {
+      background:#f8fff8;
+      border-radius:0.9rem;
+      border:1px solid #cde9ce;
+      padding:1rem;
+      font-size:0.95rem;
+    }
+
+    .profile-summary p {
+      margin-bottom:0.4rem;
+    }
+
+    .profile-header {
+      display:flex;
+      align-items:center;
+      gap:0.75rem;
+      margin-bottom:0.8rem;
+    }
+
+    .profile-avatar {
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#4caf50,#2e7d32);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#ffffff;
+      font-weight:700;
+      font-size:1.3rem;
+    }
+
+    .profile-fields {
+      margin-top:0.35rem;
+    }
+
+    .profile-field {
+      display:flex;
+      justify-content:space-between;
+      gap:0.5rem;
+      margin-bottom:0.35rem;
+      font-size:0.9rem;
+    }
+
+    .profile-field-label {
+      color:#607d66;
+    }
+
+    .profile-actions {
+      margin-top:0.6rem;
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.5rem;
+    }
+
+    .profile-edit {
+      margin-top:0.8rem;
+    }
+
