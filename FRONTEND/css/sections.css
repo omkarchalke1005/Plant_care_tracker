@@ -1123,6 +1123,139 @@
       margin-bottom: 0.2rem;
     }
 
+    .timeline-gallery {
+      margin-top: 0.9rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .timeline-item {
+      border: 1px solid #b5dcc8;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      background: linear-gradient(165deg, #f8fffb, #edf7f1);
+      box-shadow: 0 8px 18px rgba(22, 72, 44, 0.14);
+    }
+
+    .timeline-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .timeline-meta {
+      padding: 0.5rem 0.6rem 0.6rem;
+      font-size: 0.8rem;
+      color: #1d4934;
+    }
+
+    .timeline-date {
+      font-weight: 700;
+      color: #0f7a52;
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-hub {
+      background:
+        radial-gradient(circle at 10% -10%, rgba(144, 233, 186, 0.42), rgba(255, 255, 255, 0)),
+        radial-gradient(circle at 90% 0%, rgba(255, 223, 170, 0.32), rgba(255, 255, 255, 0)),
+        linear-gradient(145deg, #f7fff8, #eef9f2 52%, #fdf6e8);
+      border: 1px solid #b8ddc4;
+      box-shadow: 0 16px 34px rgba(33, 95, 63, 0.16);
+      color: #173d2c;
+    }
+
+    .timeline-hub h2 {
+      color: #0f6a47;
+      letter-spacing: 0.2px;
+    }
+
+    .timeline-hub .card-subtitle,
+    .timeline-hub label {
+      color: #2c5f46;
+    }
+
+    .timeline-toolbar {
+      margin-bottom: 0.65rem;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+      gap: 0.75rem;
+    }
+
+    .timeline-upload-panel {
+      border: 1px solid #c7e6d4;
+      border-radius: 0.9rem;
+      background:
+        radial-gradient(circle at 85% 20%, rgba(183, 237, 208, 0.35), rgba(255, 255, 255, 0)),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(243, 251, 247, 0.88));
+      padding: 0.85rem 0.9rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .timeline-gallery-main .timeline-item {
+      border-color: #abd8bf;
+      box-shadow: 0 10px 22px rgba(18, 70, 41, 0.16);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .timeline-gallery-main .timeline-item:hover {
+      transform: translateY(-2px);
+      border-color: #6db991;
+      box-shadow: 0 16px 30px rgba(23, 84, 52, 0.2);
+    }
+
+    .seasonal-toggle-row {
+      margin: 0.2rem 0 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #6c7f72;
+      transition: .2s;
+      border-radius: 999px;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: .2s;
+    }
+
+    .switch input:checked + .slider {
+      background: #2da35b;
+    }
+
+    .switch input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
     /* Chatbot messages */
     #chatWindow {
       background:#02150d;

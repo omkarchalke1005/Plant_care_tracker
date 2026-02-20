@@ -111,6 +111,7 @@ form.onsubmit = async function (e) {
     growthStage: growth || 'Seedling',
     notes: [],
     history: [],
+    progressPhotos: [],
     createdAt: todayStr()
   };
 
@@ -124,6 +125,12 @@ form.onsubmit = async function (e) {
       var reader = new FileReader();
       reader.onload = async function (evt) {
         plant.imageData = evt.target.result;
+        plant.progressPhotos.push({
+          date: plant.createdAt,
+          caption: 'Initial photo',
+          imageData: plant.imageData,
+          imageUrl: ''
+        });
         await savePlant(plant);
         alert('Plant added!');
         form.reset();
@@ -131,6 +138,14 @@ form.onsubmit = async function (e) {
       };
       reader.readAsDataURL(file);
     } else {
+      if (plant.imageUrl) {
+        plant.progressPhotos.push({
+          date: plant.createdAt,
+          caption: 'Initial photo',
+          imageData: '',
+          imageUrl: plant.imageUrl
+        });
+      }
       await savePlant(plant);
       alert('Plant added!');
       form.reset();
@@ -328,6 +343,7 @@ form.onsubmit = async function (e) {
           alert('Plant updated!');
           await renderPlantLibrary(username);
           await renderPlantDashboard(username);
+          await renderGrowthTimelineSection();
           await renderTracer(username);
           await renderProfile(username);
         } catch (error) {
@@ -361,11 +377,146 @@ form.onsubmit = async function (e) {
           await updatePlant(plantId, updatedPlant);
           document.getElementById('noteTextDash').value = '';
           await renderPlantDashboard(username);
+          await renderGrowthTimelineSection();
           await renderTracer(username);
           await renderProfile(username);
         } catch (error) {
           console.error('Error adding note:', error);
           alert('Error adding note. Please try again.');
+        }
+      });
+    }
+
+    var growthTimelineInitDone = false;
+
+    async function renderGrowthTimelineSection() {
+      var select = document.getElementById('timelinePlantSelectMain');
+      var gallery = document.getElementById('timelineGalleryMain');
+      if (!select || !gallery) return;
+
+      var plants = await getPlantsForUser();
+      if (!plants.length) {
+        select.innerHTML = '<option value="">No plants found</option>';
+        gallery.innerHTML = '<p class="small-text">Add plants first to start a visual growth timeline.</p>';
+        return;
+      }
+
+      var previous = select.value;
+      select.innerHTML = '';
+      plants.forEach(function (p) {
+        var opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.name;
+        select.appendChild(opt);
+      });
+      select.value = previous || plants[0].id;
+
+      var plant = plants.find(function (p) { return String(p.id) === String(select.value); }) || plants[0];
+      if (!plant) return;
+
+      var photos = (plant.progressPhotos || []).slice().sort(function (a, b) {
+        return String(b.date || '').localeCompare(String(a.date || ''));
+      });
+
+      if (!photos.length) {
+        gallery.innerHTML = '<p class="small-text">No timeline photos yet for <strong>' + plant.name + '</strong>. Add your first one above.</p>';
+        return;
+      }
+
+      gallery.innerHTML = '';
+      photos.forEach(function (entry) {
+        var card = document.createElement('div');
+        card.className = 'timeline-item';
+        var src = entry.imageData || entry.imageUrl || '';
+        var img = document.createElement('img');
+        img.src = src;
+        img.alt = plant.name + ' timeline photo';
+        img.onerror = function () { this.style.display = 'none'; };
+        card.appendChild(img);
+
+        var meta = document.createElement('div');
+        meta.className = 'timeline-meta';
+        var dt = document.createElement('div');
+        dt.className = 'timeline-date';
+        dt.textContent = entry.date || '-';
+        var cap = document.createElement('div');
+        cap.textContent = entry.caption || 'Progress update';
+        meta.appendChild(dt);
+        meta.appendChild(cap);
+        card.appendChild(meta);
+        gallery.appendChild(card);
+      });
+    }
+
+    async function initGrowthTimelineSection() {
+      if (growthTimelineInitDone) return;
+      growthTimelineInitDone = true;
+
+      var select = document.getElementById('timelinePlantSelectMain');
+      var form = document.getElementById('growthTimelineFormMain');
+      var dateInput = document.getElementById('timelineDateMain');
+      if (dateInput) dateInput.value = todayStr();
+
+      if (select) {
+        select.addEventListener('change', async function () {
+          await renderGrowthTimelineSection();
+        });
+      }
+
+      if (!form) return;
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var plants = await getPlantsForUser();
+        var plantId = select ? select.value : '';
+        var plant = plants.find(function (p) { return String(p.id) === String(plantId); });
+        if (!plant) { alert('Please select a valid plant first.'); return; }
+
+        var photoDate = (document.getElementById('timelineDateMain').value || todayStr()).trim();
+        var caption = document.getElementById('timelineCaptionMain').value.trim() || 'Progress update';
+        var fileInput = document.getElementById('timelineImageFileMain');
+        var urlInput = document.getElementById('timelineImageUrlMain');
+        var imageUrl = (urlInput && urlInput.value ? urlInput.value.trim() : '');
+        var file = fileInput && fileInput.files ? fileInput.files[0] : null;
+
+        if (!file && !imageUrl) {
+          alert('Upload an image file or provide an image URL.');
+          return;
+        }
+
+        async function saveTimeline(imageData) {
+          var updatedPlant = {
+            ...plant,
+            progressPhotos: [...(plant.progressPhotos || []), {
+              date: photoDate,
+              caption: caption,
+              imageData: imageData || '',
+              imageUrl: imageData ? '' : imageUrl
+            }],
+            history: [...(plant.history || []), { action: 'Timeline photo added', date: todayStr() }]
+          };
+          await updatePlant(plant.id, updatedPlant);
+          form.reset();
+          var dInput = document.getElementById('timelineDateMain');
+          if (dInput) dInput.value = todayStr();
+          await renderPlantDashboard();
+          await renderGrowthTimelineSection();
+          await renderTracer();
+        }
+
+        try {
+          if (file) {
+            var reader = new FileReader();
+            reader.onload = async function (evt) {
+              await saveTimeline(evt.target.result);
+            };
+            reader.readAsDataURL(file);
+          } else {
+            await saveTimeline('');
+          }
+        } catch (error) {
+          console.error('Timeline save error:', error);
+          alert('Error adding timeline photo.');
         }
       });
     }

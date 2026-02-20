@@ -147,6 +147,7 @@
   <button class="nav-link" data-section="trackerSection">Care Tracker</button>
   <button class="nav-link" data-section="librarySection">Plant Gallery</button>
   <button class="nav-link" data-section="tracerSection">Plant Analytics</button>
+  <button class="nav-link" data-section="growthTimelineSection">Growth Timeline</button>
   <button class="nav-link" data-section="plantMoodSection">🌿 Plant Mood</button>
   <button class="nav-link" data-section="profileSection">Dashboard</button>
   <button class="nav-link" data-section="contactSection">📞CONTACT</button>
@@ -480,6 +481,16 @@
               <button type="button" class="btn-primary" id="trackerAddBtn">Add Task</button>
 
               <div class="smart-planner">
+                <h3>Seasonal Care Mode</h3>
+                <div class="seasonal-toggle-row">
+                  <label class="switch">
+                    <input id="seasonalModeToggle" type="checkbox">
+                    <span class="slider"></span>
+                  </label>
+                  <span id="seasonalModeState">OFF</span>
+                </div>
+                <p id="seasonalModeInfo" class="small-text"></p>
+
                 <h3>Smart Auto Planner</h3>
                 <p class="small-text">Generate advanced care tasks (watering + fertilizing) automatically.</p>
                 <div class="form-group">
@@ -585,6 +596,50 @@
               <p id="tracerTrendMeta" class="tracer-trend-meta"></p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section id="growthTimelineSection" class="app-section">
+        <div class="card timeline-hub">
+          <h2>Growth Timeline Studio</h2>
+          <p class="card-subtitle">
+            Build a visual before/after story for each plant with dated photos and progress captions.
+          </p>
+
+          <div class="timeline-toolbar">
+            <div class="form-group" style="margin:0;">
+              <label for="timelinePlantSelectMain">Select Plant</label>
+              <select id="timelinePlantSelectMain"></select>
+            </div>
+          </div>
+
+          <form id="growthTimelineFormMain" class="timeline-upload-panel">
+            <div class="grid">
+              <div>
+                <div class="form-group">
+                  <label for="timelineDateMain">Photo Date</label>
+                  <input id="timelineDateMain" type="date">
+                </div>
+                <div class="form-group">
+                  <label for="timelineCaptionMain">Caption</label>
+                  <input id="timelineCaptionMain" type="text" placeholder="e.g. Week 4: strong new leaves">
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                  <label for="timelineImageFileMain">Upload Image</label>
+                  <input id="timelineImageFileMain" type="file" accept="image/*">
+                </div>
+                <div class="form-group">
+                  <label for="timelineImageUrlMain">Or Image URL</label>
+                  <input id="timelineImageUrlMain" type="text" placeholder="Paste image URL">
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">Add to Timeline</button>
+          </form>
+
+          <div id="timelineGalleryMain" class="timeline-gallery timeline-gallery-main"></div>
         </div>
       </section>
 

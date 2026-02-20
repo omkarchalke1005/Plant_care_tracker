@@ -8,6 +8,10 @@ if(themeToggle){
   });
 }
 
+if (typeof initSeasonalModeUI === 'function') {
+  initSeasonalModeUI();
+}
+
 
 
 
@@ -122,6 +126,9 @@ var smartPlanCache = [];
 var sunlightCleanupDone = false;
 
 function getSeasonalModifiers() {
+  if (typeof isSeasonalModeEnabled === 'function' && !isSeasonalModeEnabled()) {
+    return { waterAdjust: 0, fertAdjust: 0, sunlightCheckEvery: 2 };
+  }
   var month = new Date().getMonth() + 1; // 1-12
   if (month >= 3 && month <= 6) {
     return { waterAdjust: -1, fertAdjust: 0, sunlightCheckEvery: 2 };
@@ -152,13 +159,12 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
 
   var today = todayStr();
   var endDate = addDays(today, rangeDays);
-  var season = getSeasonalModifiers();
   var baseSchedule = (typeof getScheduleForPlant === 'function')
     ? getScheduleForPlant(plant)
     : (plant.type === 'Outdoor' ? { water: 3, fert: 20 } : { water: 5, fert: 30 });
 
-  var waterEvery = Math.max(2, baseSchedule.water + season.waterAdjust);
-  var fertEvery = Math.max(10, baseSchedule.fert + season.fertAdjust);
+  var waterEvery = Math.max(2, baseSchedule.water);
+  var fertEvery = Math.max(10, baseSchedule.fert);
 
   var plantTasks = tasks.filter(function (t) { return String(t.plantId) === String(plantId); });
   var waterTasks = plantTasks.filter(function (t) { return /water/i.test(t.title); })
@@ -204,7 +210,8 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
   var summary =
     plant.name + ': ' + unique.length + ' new tasks (' +
     waterCount + ' water, ' + fertCount +
-    ' fertilizer). Skipped ' + skipped + ' duplicates.';
+    ' fertilizer). Skipped ' + skipped + ' duplicates.' +
+    (baseSchedule.seasonal ? ' Seasonal mode: ' + baseSchedule.seasonLabel + '.' : '');
 
   return { tasks: unique, summary: summary, plantName: plant.name };
 }
@@ -900,6 +907,12 @@ document.addEventListener("click", function(e){
     },500);
   }
 
+  if(e.target.matches('[data-section="trackerSection"]')){
+    setTimeout(function(){
+      if (typeof initSeasonalModeUI === 'function') initSeasonalModeUI();
+    }, 200);
+  }
+
 });
 
 /* SELECT CHANGE EVENT */
@@ -1002,6 +1015,8 @@ if (plantDoctorInputEl) {
     }
   });
 }
+
+
 
 
 

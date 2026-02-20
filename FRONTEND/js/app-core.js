@@ -456,6 +456,7 @@
         'trackerSection',
         'librarySection',
         'tracerSection',
+        'growthTimelineSection',
         'taskHistorySection',
         'plantMoodSection',
         'profileSection',
@@ -489,6 +490,9 @@
       } else if (section === 'tracerSection') {
         await initTracerDropdown(username);
         await renderTracer(username);
+      } else if (section === 'growthTimelineSection') {
+        if (typeof initGrowthTimelineSection === 'function') await initGrowthTimelineSection();
+        if (typeof renderGrowthTimelineSection === 'function') await renderGrowthTimelineSection();
       } else if (section === 'profileSection') {
         await renderProfile(username);
       } else if (section === 'trackerSection') {

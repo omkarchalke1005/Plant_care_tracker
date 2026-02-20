@@ -536,7 +536,7 @@
 
       var headerName = document.getElementById('usernameDisplay');
       if (headerName) {
-        headerName.textContent = user.displayName || user.email || 'User';
+        headerName.textContent = '';
       }
 
       await initDashboardMain();
