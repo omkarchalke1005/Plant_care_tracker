@@ -118,6 +118,172 @@ async function addTrackerTask(){
   }
 }
 
+var smartPlanCache = [];
+
+function getSeasonalModifiers() {
+  var month = new Date().getMonth() + 1; // 1-12
+  if (month >= 3 && month <= 6) {
+    return { waterAdjust: -1, fertAdjust: 0, sunlightCheckEvery: 2 };
+  }
+  if (month >= 11 || month <= 1) {
+    return { waterAdjust: 1, fertAdjust: 5, sunlightCheckEvery: 3 };
+  }
+  return { waterAdjust: 0, fertAdjust: 0, sunlightCheckEvery: 2 };
+}
+
+function createDateSequence(firstDateStr, intervalDays, endDateStr) {
+  var dates = [];
+  var date = firstDateStr;
+  var guard = 0;
+  while (date <= endDateStr && guard < 365) {
+    dates.push(date);
+    date = addDays(date, intervalDays);
+    guard++;
+  }
+  return dates;
+}
+
+async function buildSmartPlanForPlant(plantId, rangeDays) {
+  var plants = await getGalleryPlants();
+  var tasks = await getTrackerTasks();
+  var plant = plants.find(function (p) { return String(p.id) === String(plantId); });
+  if (!plant) return { tasks: [], summary: 'Select a valid plant first.' };
+
+  var today = todayStr();
+  var endDate = addDays(today, rangeDays);
+  var season = getSeasonalModifiers();
+  var baseSchedule = (typeof getScheduleForPlant === 'function')
+    ? getScheduleForPlant(plant)
+    : (plant.type === 'Outdoor' ? { water: 3, fert: 20 } : { water: 5, fert: 30 });
+
+  var waterEvery = Math.max(2, baseSchedule.water + season.waterAdjust);
+  var fertEvery = Math.max(10, baseSchedule.fert + season.fertAdjust);
+  var sunEvery = plant.type === 'Outdoor'
+    ? Math.max(2, season.sunlightCheckEvery + 1)
+    : Math.max(1, season.sunlightCheckEvery);
+
+  var plantTasks = tasks.filter(function (t) { return String(t.plantId) === String(plantId); });
+  var waterTasks = plantTasks.filter(function (t) { return /water/i.test(t.title); })
+    .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+  var fertTasks = plantTasks.filter(function (t) { return /(fertil|feed|manure)/i.test(t.title); })
+    .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+  var sunTasks = plantTasks.filter(function (t) { return /sunlight/i.test(t.title); })
+    .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+
+  var nextWater = waterTasks.length ? addDays(waterTasks[waterTasks.length - 1].date, waterEvery) : today;
+  var nextFert = fertTasks.length ? addDays(fertTasks[fertTasks.length - 1].date, fertEvery) : addDays(today, 1);
+  var nextSun = sunTasks.length ? addDays(sunTasks[sunTasks.length - 1].date, sunEvery) : today;
+
+  var candidate = [];
+  createDateSequence(nextWater, waterEvery, endDate).forEach(function (d) {
+    candidate.push({ plantId: plantId, title: 'Watering', date: d, status: 'pending', createdAt: today });
+  });
+  createDateSequence(nextFert, fertEvery, endDate).forEach(function (d) {
+    candidate.push({ plantId: plantId, title: 'Fertilizing', date: d, status: 'pending', createdAt: today });
+  });
+  createDateSequence(nextSun, sunEvery, endDate).forEach(function (d) {
+    candidate.push({ plantId: plantId, title: 'Sunlight Check', date: d, status: 'pending', createdAt: today });
+  });
+
+  var existingKeys = {};
+  plantTasks.forEach(function (t) {
+    existingKeys[String(t.date) + '|' + String(t.title).toLowerCase()] = true;
+  });
+
+  var unique = [];
+  var skipped = 0;
+  candidate.forEach(function (t) {
+    var key = String(t.date) + '|' + String(t.title).toLowerCase();
+    if (existingKeys[key]) {
+      skipped++;
+      return;
+    }
+    existingKeys[key] = true;
+    unique.push(t);
+  });
+
+  unique.sort(function (a, b) {
+    return String(a.date).localeCompare(String(b.date)) || String(a.title).localeCompare(String(b.title));
+  });
+
+  var waterCount = unique.filter(function (t) { return t.title === 'Watering'; }).length;
+  var fertCount = unique.filter(function (t) { return t.title === 'Fertilizing'; }).length;
+  var sunCount = unique.filter(function (t) { return t.title === 'Sunlight Check'; }).length;
+
+  var summary =
+    plant.name + ': ' + unique.length + ' new tasks (' +
+    waterCount + ' water, ' + fertCount + ' fertilizer, ' + sunCount +
+    ' sunlight checks). Skipped ' + skipped + ' duplicates.';
+
+  return { tasks: unique, summary: summary, plantName: plant.name };
+}
+
+function renderSmartPlanPreview(previewTasks, summaryText) {
+  var list = document.getElementById('smartPlanPreviewList');
+  var summary = document.getElementById('smartPlanSummary');
+  if (!list || !summary) return;
+  list.innerHTML = '';
+  summary.textContent = summaryText || '';
+
+  if (!previewTasks || !previewTasks.length) {
+    list.innerHTML = '<li>No new smart tasks to add for selected range.</li>';
+    return;
+  }
+
+  previewTasks.slice(0, 20).forEach(function (t) {
+    var li = document.createElement('li');
+    li.textContent = t.date + ' - ' + t.title;
+    list.appendChild(li);
+  });
+  if (previewTasks.length > 20) {
+    var liMore = document.createElement('li');
+    liMore.textContent = '...and ' + (previewTasks.length - 20) + ' more tasks.';
+    list.appendChild(liMore);
+  }
+}
+
+async function previewSmartPlan() {
+  var plantSel = document.getElementById('trackerPlantSelect');
+  var rangeSel = document.getElementById('smartPlanRange');
+  if (!plantSel || !rangeSel || !plantSel.value) {
+    alert('Please select a plant first.');
+    return;
+  }
+  var rangeDays = parseInt(rangeSel.value, 10) || 30;
+  var result = await buildSmartPlanForPlant(plantSel.value, rangeDays);
+  smartPlanCache = result.tasks || [];
+  renderSmartPlanPreview(smartPlanCache, result.summary || '');
+}
+
+async function saveSmartPlan() {
+  if (!smartPlanCache || !smartPlanCache.length) {
+    await previewSmartPlan();
+    if (!smartPlanCache.length) return;
+  }
+
+  var saved = 0;
+  for (var i = 0; i < smartPlanCache.length; i++) {
+    try {
+      await saveTask(smartPlanCache[i]);
+      saved++;
+    } catch (e) {
+      console.error('Smart plan save failed for task:', smartPlanCache[i], e);
+    }
+  }
+
+  await renderTrackerTasks();
+  await renderTrackerCalendar();
+  await renderTaskHistory();
+  await refreshHeaderStats();
+  if (typeof renderTracer === 'function') await renderTracer();
+  if (typeof renderProfile === 'function') await renderProfile();
+
+  var summary = document.getElementById('smartPlanSummary');
+  if (summary) summary.textContent = 'Saved ' + saved + ' smart tasks successfully.';
+  alert('Smart plan generated and saved: ' + saved + ' tasks.');
+  smartPlanCache = [];
+}
+
 async function renderTrackerTasks(){
   var trackerPlantSelect = document.getElementById('trackerPlantSelect');
   var trackerTaskList = document.getElementById('trackerTaskList');
@@ -254,6 +420,8 @@ async function renderTrackerCalendar(){
 
 document.addEventListener('change', async function(e){
   if(e.target && e.target.id==='trackerPlantSelect'){
+    smartPlanCache = [];
+    renderSmartPlanPreview([], '');
     await renderTrackerTasks();
     await renderTrackerCalendar();
   }
@@ -271,11 +439,19 @@ document.addEventListener('click', async function(e){
     shiftTrackerCalendarMonth(1);
     await renderTrackerCalendar();
   }
+  if(e.target && e.target.id==='smartPlanPreviewBtn'){
+    await previewSmartPlan();
+  }
+  if(e.target && e.target.id==='smartPlanSaveBtn'){
+    await saveSmartPlan();
+  }
 });
 
 document.addEventListener('click', async function(e){
   if(e.target && e.target.dataset && e.target.dataset.section==='trackerSection'){
     await fillTrackerPlantSelect();
+    smartPlanCache = [];
+    renderSmartPlanPreview([], '');
     await renderTrackerTasks();
     await renderTrackerCalendar();
   }

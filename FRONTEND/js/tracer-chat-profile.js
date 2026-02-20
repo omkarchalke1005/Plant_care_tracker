@@ -253,137 +253,186 @@ if (plantStageClean === phaseNameClean) {
 
       var plants = await getPlantsForUser();
       var tasks = await getTasksForUser();
-      var schedulePlant = plants[0] || null; // use first plant for schedule answers if needed
       var today = todayStr();
+      var q = question.toLowerCase();
+      var qClean = q.replace(/[^\w\s]/g, ' ');
       var reply = '';
 
-      var q = question.toLowerCase();
+      function cleanPlantName(name) {
+        return String(name || '').toLowerCase().split('(')[0].trim();
+      }
 
-      // ===== UNIVERSAL PLANT ANSWERS =====
-
-if (plants && plants.length) {
-
-  let plant = plants[0]; // takes first plant user added
-
-  if (q.includes("sun") || q.includes("light")) {
-    reply = plant.name + " needs bright indirect sunlight if indoor. If outdoor, give morning sunlight.";
-  }
-
-  else if (q.includes("cut") || q.includes("prune") || q.includes("leaf")) {
-    reply = "For " + plant.name + ", remove yellow, dry or damaged leaves using clean scissors.";
-  }
-
-  else if (q.includes("info") || q.includes("about")) {
-    reply = plant.name + " is a plant that needs proper watering, sunlight and fertilizer to grow healthy.";
-  }
-
-}
-
-
-      /* 1) Guess which plant it might be (from words) */
-      var guesses = [];
-      var qClean = q.replace(/[^\w\s]/g, ' ');
-      plantCatalog.forEach(function (p) {
-        var nameLower = p.name.toLowerCase();
-        var mainWord = nameLower.split('(')[0].trim();
-        if (qClean.indexOf(mainWord.split(' ')[0]) !== -1 || qClean.indexOf(mainWord) !== -1) {
-          guesses.push(p.name);
+      function nextDates(startDateStr, count, stepDays) {
+        var out = [];
+        var base = startDateStr || today;
+        var step = stepDays || 1;
+        for (var i = 0; i < count; i++) {
+          out.push(addDays(base, i * step));
         }
-      });
+        return out;
+      }
 
-      /* 2) Detect if user is asking about website usage / usefulness */
+      function findCatalogEntryByName(name) {
+        var n = cleanPlantName(name);
+        for (var i = 0; i < plantCatalog.length; i++) {
+          if (cleanPlantName(plantCatalog[i].name) === n) return plantCatalog[i];
+        }
+        for (var j = 0; j < plantCatalog.length; j++) {
+          if (cleanPlantName(plantCatalog[j].name).indexOf(n) !== -1 || n.indexOf(cleanPlantName(plantCatalog[j].name)) !== -1) return plantCatalog[j];
+        }
+        return null;
+      }
+
+      function detectRequestedPlant() {
+        var best = null;
+        var bestScore = 0;
+        for (var i = 0; i < plants.length; i++) {
+          var pname = cleanPlantName(plants[i].name);
+          var words = pname.split(/\s+/).filter(function (w) { return w.length > 2; });
+          var score = 0;
+          if (qClean.indexOf(pname) !== -1) score += 5;
+          for (var j = 0; j < words.length; j++) {
+            if (qClean.indexOf(words[j]) !== -1) score += 1;
+          }
+          if (score > bestScore) {
+            bestScore = score;
+            best = plants[i];
+          }
+        }
+        return bestScore > 0 ? best : null;
+      }
+
+      function detectCatalogPlantFromQuestion() {
+        for (var i = 0; i < plantCatalog.length; i++) {
+          var cname = cleanPlantName(plantCatalog[i].name);
+          if (qClean.indexOf(cname) !== -1) return plantCatalog[i];
+          var words = cname.split(/\s+/).filter(function (w) { return w.length > 2; });
+          for (var j = 0; j < words.length; j++) {
+            if (qClean.indexOf(words[j]) !== -1) return plantCatalog[i];
+          }
+        }
+        return null;
+      }
+
+      function buildCareData(plant) {
+        var schedule = (typeof getScheduleForPlant === 'function')
+          ? getScheduleForPlant(plant)
+          : (plant && plant.type === 'Outdoor' ? { water: 3, fert: 20 } : { water: 5, fert: 30 });
+
+        var tasksForPlant = tasks.filter(function (t) {
+          return String(t.plantId) === String(plant.id);
+        });
+
+        var waterTasks = tasksForPlant.filter(function (t) { return /water/i.test(t.title); })
+          .sort(function (a, b) { return a.date.localeCompare(b.date); });
+        var fertTasks = tasksForPlant.filter(function (t) { return /(fertil|feed|manure)/i.test(t.title); })
+          .sort(function (a, b) { return a.date.localeCompare(b.date); });
+
+        var lastWater = null;
+        for (var i = waterTasks.length - 1; i >= 0; i--) {
+          if (waterTasks[i].date <= today) { lastWater = waterTasks[i]; break; }
+        }
+        if (!lastWater) lastWater = waterTasks[waterTasks.length - 1] || null;
+
+        var lastFert = null;
+        for (var j = fertTasks.length - 1; j >= 0; j--) {
+          if (fertTasks[j].date <= today) { lastFert = fertTasks[j]; break; }
+        }
+        if (!lastFert) lastFert = fertTasks[fertTasks.length - 1] || null;
+
+        var nextWaterDate = lastWater ? addDays(lastWater.date, schedule.water) : addDays(today, schedule.water);
+        var nextFertDate = lastFert ? addDays(lastFert.date, schedule.fert) : addDays(today, schedule.fert);
+
+        var sunlightStart = today;
+        var sunlightDates = nextDates(sunlightStart, 5, 1).join(', ');
+
+        var catalog = findCatalogEntryByName(plant.name);
+        var sunlightText = plant.type === 'Outdoor'
+          ? 'Full to partial direct sun (prefer morning sun 4-6 hours).'
+          : 'Bright indirect sunlight, avoid harsh noon direct sun.';
+        if (catalog && /full sun/i.test(catalog.info)) sunlightText = 'Needs full sun for better growth.';
+        else if (catalog && /low light|indirect light/i.test(catalog.info)) sunlightText = 'Performs best in bright indirect to medium light.';
+
+        return {
+          schedule: schedule,
+          nextWaterDate: nextWaterDate,
+          nextFertDate: nextFertDate,
+          sunlightDates: sunlightDates,
+          sunlightText: sunlightText
+        };
+      }
+
       var asksWebsite =
         q.indexOf('how to use') !== -1 ||
         q.indexOf('how do i use') !== -1 ||
         q.indexOf('use this website') !== -1 ||
-        q.indexOf('use this web') !== -1 ||
         q.indexOf('what is this website') !== -1 ||
         q.indexOf('why is this website') !== -1 ||
-        q.indexOf('how this web is useful') !== -1 ||
-        q.indexOf('how is this site useful') !== -1 ||
         (q.indexOf('useful') !== -1 && q.indexOf('website') !== -1);
 
       if (asksWebsite) {
         reply =
-          'Plant Care Tracker keeps all your plant details in one place:\n' +
-          '- Add each plant with photo, type and growth stage in “Add Plants”.\n' +
-          '- See notes, images and history in “Plant Gallery” and “Plant Dashboard”.\n' +
-          '- Use “Care Tracker” to plan watering and fertilizer and see them in a calendar.\n' +
-          '- “Growth Tracking” shows exact watering / fertilizer dates and growth phases.\n' +
-          '- This floating AI Assistant helps you whenever you are confused or want quick tips.';
+          'Use Plant Care Tracker like this: Add plants in Add Plants, create watering/fertilizer tasks in Care Tracker, review exact dates in Growth Tracking, and open Plant Gallery for each plant dashboard.';
         addChatMessage('bot', reply);
         return;
       }
 
-      /* 3) If user asks schedule questions, use first plant or guessed plant if possible */
-      var plantForAnswer = schedulePlant;
-      if (guesses.length && plants.length) {
-        for (var gi = 0; gi < guesses.length; gi++) {
-          for (var pi = 0; pi < plants.length; pi++) {
-            if (plants[pi].name.toLowerCase().indexOf(guesses[gi].toLowerCase().split('(')[0].trim()) !== -1) {
-              plantForAnswer = plants[pi];
-              break;
-            }
+      if (!plants.length) {
+        addChatMessage('bot',
+          'You have no plants added yet. Add at least one plant in Add Plants, then ask me: "water date for my rose", "sunlight needed for aloe", or "full care info for my money plant".');
+        return;
+      }
+
+      var wantsAllPlants = q.indexOf('all plants') !== -1 || q.indexOf('all my plants') !== -1;
+      var asksWater = q.indexOf('water') !== -1;
+      var asksFert = q.indexOf('fert') !== -1 || q.indexOf('manure') !== -1 || q.indexOf('feed') !== -1;
+      var asksSun = q.indexOf('sun') !== -1 || q.indexOf('light') !== -1;
+      var asksDates = q.indexOf('date') !== -1 || q.indexOf('when') !== -1 || q.indexOf('next') !== -1 || q.indexOf('schedule') !== -1;
+      var asksInfo = q.indexOf('info') !== -1 || q.indexOf('about') !== -1 || q.indexOf('required') !== -1 || q.indexOf('care') !== -1;
+
+      var targetPlants = [];
+      if (wantsAllPlants) {
+        targetPlants = plants.slice(0, 6);
+      } else {
+        var exactPlant = detectRequestedPlant();
+        if (exactPlant) {
+          targetPlants = [exactPlant];
+        } else {
+          var catalogPlant = detectCatalogPlantFromQuestion();
+          if (catalogPlant) {
+            addChatMessage('bot',
+              catalogPlant.name + ': ' + catalogPlant.info + ' Watering and fertilizer dates can be calculated after you add this plant in Add Plants and create tasks in Care Tracker.');
+            return;
           }
+          targetPlants = [plants[0]];
         }
       }
 
-      var schedule = plantForAnswer ? getScheduleForPlant(plantForAnswer) : { water: 5, fert: 30 };
+      var lines = [];
+      for (var t = 0; t < targetPlants.length; t++) {
+        var plant = targetPlants[t];
+        if (!plant) continue;
+        var care = buildCareData(plant);
+        var showFull = asksInfo || (!asksWater && !asksFert && !asksSun);
+        var parts = [];
+        parts.push(plant.name + ' (' + plant.type + '):');
 
-      var tasksForPlant = plantForAnswer ? tasks.filter(function (t) {
-        return Number(t.plantId) === Number(plantForAnswer.id);
-      }) : [];
-
-      var waterTasks = tasksForPlant.filter(function (t) { return /water/i.test(t.title); })
-        .sort(function (a, b) { return a.date.localeCompare(b.date); });
-      var fertTasks = tasksForPlant.filter(function (t) { return /(fertil|feed)/i.test(t.title); })
-        .sort(function (a, b) { return a.date.localeCompare(b.date); });
-
-      var lastWater = null;
-      for (var i2 = waterTasks.length - 1; i2 >= 0; i2--) {
-        if (waterTasks[i2].date <= today) { lastWater = waterTasks[i2]; break; }
+        if (showFull || asksWater || asksDates) {
+          parts.push('Water every ' + care.schedule.water + ' days, next watering date: ' + care.nextWaterDate + '.');
+        }
+        if (showFull || asksFert || asksDates) {
+          parts.push('Fertilize every ' + care.schedule.fert + ' days, next fertilizer date: ' + care.nextFertDate + '.');
+        }
+        if (showFull || asksSun || asksDates) {
+          parts.push('Sunlight: ' + care.sunlightText + ' Upcoming sunlight dates: ' + care.sunlightDates + '.');
+        }
+        lines.push(parts.join(' '));
       }
-      if (!lastWater) lastWater = waterTasks[waterTasks.length - 1] || null;
-      var nextWaterDate = lastWater ? addDays(lastWater.date, schedule.water) : addDays(today, schedule.water);
 
-      var lastFert = null;
-      for (var j = fertTasks.length - 1; j >= 0; j--) {
-        if (fertTasks[j].date <= today) { lastFert = fertTasks[j]; break; }
-      }
-      if (!lastFert) lastFert = fertTasks[fertTasks.length - 1] || null;
-      var nextFertDate = lastFert ? addDays(lastFert.date, schedule.fert) : addDays(today, schedule.fert);
-
-      /* 4) Smart replies – ALWAYS answer something */
-      if (q.indexOf('water') !== -1 && plantForAnswer) {
-        reply = 'For ' + plantForAnswer.name + ' (' + plantForAnswer.type +
-          '), water roughly every ' + schedule.water + ' days. Based on your data, the next watering date is ' +
-          nextWaterDate + '.';
-      } else if (
-        (q.indexOf('fert') !== -1 ||
-         q.indexOf('manure') !== -1 ||
-         q.indexOf('feed') !== -1) && plantForAnswer
-      ) {
-        reply = 'For ' + plantForAnswer.name + ' (' + plantForAnswer.type +
-          '), add fertilizer about every ' + schedule.fert +
-          ' days. Based on your data, the next fertilizer date is ' + nextFertDate + '.';
-      } else if (guesses.length) {
-        reply =
-          'I think you are talking about: ' + guesses.join(', ') + '.\n' +
-          'Add this plant in “Add Plants” and use “Care Tracker” to create watering / fertilizer tasks.';
-      } else if (!plants.length) {
-        reply =
-          'You have not added any plants yet, but your question is still valid.\n' +
-          'General tip: most indoor plants like slightly moist soil (not fully wet) and bright indirect light.\n' +
-          'Add at least one plant in “Add Plants” so I can give you more exact dates and schedules based on your data.';
+      if (!lines.length) {
+        reply = 'Please ask with a plant name, for example: "care details for aloe vera".';
       } else {
-        // Generic fallback – answer anything in a helpful way
-        reply =
-          'Here is a helpful answer for you:\n' +
-          '- Your question: "' + question + '"\n' +
-          '- My suggestion: keep checking the “Add Plants”, “Care Tracker” and “Growth Tracking” tabs for your plants.\n' +
-          'I may not fully understand every detail, but I will always try to give a useful reply.\n' +
-          'You can also ask directly: “When to water my ' + plants[0].name +
-          '?” or “How is this website useful for project?”.';
+        reply = lines.join('\n');
       }
 
       addChatMessage('bot', reply);

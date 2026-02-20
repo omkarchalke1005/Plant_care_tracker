@@ -396,6 +396,19 @@ body.dark #trackerSection .calendar-cell.cut-task {
   background: linear-gradient(135deg, #5d2a45, #482039) !important;
 }
 
+body.dark #trackerSection .smart-planner {
+  background:
+    radial-gradient(circle at 96% -30%, rgba(71, 153, 97, 0.32), rgba(0, 0, 0, 0)),
+    linear-gradient(150deg, #132c20, #10271d 60%, #11271e) !important;
+  border-color: #2f774c !important;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.dark #trackerSection .smart-plan-list {
+  background: rgba(10, 26, 19, 0.72) !important;
+  border-color: #2b6d45 !important;
+}
+
 body.dark #trackerSection .calendar-nav-btn {
   background: linear-gradient(135deg, #1c3e2e, #153025) !important;
   color: #d6ffe6 !important;
@@ -404,6 +417,55 @@ body.dark #trackerSection .calendar-nav-btn {
 
 body.dark #trackerSection #trackerCalMonthLabel {
   color: #c9ffde !important;
+}
+
+/* ===== Plant Gallery Dark Aggressive Style ===== */
+body.dark #librarySection .card {
+  background:
+    radial-gradient(circle at 8% -20%, rgba(52, 128, 78, 0.34), rgba(0, 0, 0, 0)) !important,
+    linear-gradient(150deg, #0d2219, #0f271d 52%, #0d2219) !important;
+  border-color: #2d7249 !important;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.42) !important;
+}
+
+body.dark .plant-card {
+  background: linear-gradient(165deg, #122a1f, #0e241b) !important;
+  border-color: #2e7a4c !important;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.dark .plant-card:hover {
+  border-color: #59b97b !important;
+  box-shadow:
+    0 20px 36px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(89, 185, 123, 0.22) inset !important;
+}
+
+body.dark .plant-card::before {
+  background: linear-gradient(145deg, rgba(56, 166, 92, 0.2), rgba(0, 0, 0, 0)) !important;
+}
+
+body.dark .plant-card-body {
+  background: linear-gradient(180deg, rgba(16, 39, 29, 0.95), rgba(14, 34, 26, 0.95)) !important;
+  border-top-color: rgba(79, 157, 106, 0.44) !important;
+}
+
+body.dark .plant-name {
+  color: #d9ffe8 !important;
+  text-shadow: none !important;
+}
+
+body.dark .plant-meta {
+  color: #bff4d3 !important;
+  background: #173d2b !important;
+  border-color: #2f7a4c !important;
+}
+
+body.dark .plant-card .btn-danger {
+  background: linear-gradient(135deg, #5d2030, #4d1a28) !important;
+  border-color: #a84f67 !important;
+  color: #ffdce5 !important;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35) !important;
 }
 
 /* ===== Dashboard Dark Mode Polish ===== */

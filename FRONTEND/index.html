@@ -479,6 +479,25 @@
 
               <button type="button" class="btn-primary" id="trackerAddBtn">Add Task</button>
 
+              <div class="smart-planner">
+                <h3>Smart Auto Planner</h3>
+                <p class="small-text">Generate advanced care tasks (watering, fertilizing, sunlight checks) automatically.</p>
+                <div class="form-group">
+                  <label for="smartPlanRange">Plan Range</label>
+                  <select id="smartPlanRange">
+                    <option value="14">14 Days</option>
+                    <option value="30" selected>30 Days</option>
+                    <option value="60">60 Days</option>
+                  </select>
+                </div>
+                <div class="smart-planner-actions">
+                  <button type="button" class="btn-secondary" id="smartPlanPreviewBtn">Preview Plan</button>
+                  <button type="button" class="btn-primary" id="smartPlanSaveBtn">Generate & Save</button>
+                </div>
+                <div id="smartPlanSummary" class="small-text"></div>
+                <ul id="smartPlanPreviewList" class="item-list smart-plan-list"></ul>
+              </div>
+
               <h3 style="margin-top:0.8rem;">Tasks</h3>
               <ul id="trackerTaskList" class="task-list"></ul>
             </div>
