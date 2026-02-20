@@ -15,31 +15,82 @@
 
     /* AUTH */
     .auth-wrapper {
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: radial-gradient(circle at top, #c8e6c9, #f3f7f2);
+      padding: 1.2rem;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(123, 206, 147, 0.35), rgba(255, 255, 255, 0)),
+        radial-gradient(circle at 88% 90%, rgba(167, 231, 185, 0.32), rgba(255, 255, 255, 0)),
+        linear-gradient(135deg, #e7f6ea, #d9eeda 55%, #edf8ef);
+    }
+
+    .auth-wrapper::before,
+    .auth-wrapper::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .auth-wrapper::before {
+      width: 380px;
+      height: 380px;
+      top: -150px;
+      left: -90px;
+      background: radial-gradient(circle, rgba(74, 169, 103, 0.22), rgba(74, 169, 103, 0));
+    }
+
+    .auth-wrapper::after {
+      width: 340px;
+      height: 340px;
+      right: -110px;
+      bottom: -140px;
+      background: radial-gradient(circle, rgba(104, 194, 130, 0.24), rgba(104, 194, 130, 0));
     }
 
     .auth-card {
-      background: white;
-      padding: 2rem 2.5rem;
-      border-radius: 1.2rem;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+      position: relative;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(152, 213, 169, 0.9);
+      padding: 2.1rem 2.35rem;
+      border-radius: 1.4rem;
+      box-shadow: 0 22px 46px rgba(24, 81, 43, 0.18);
       width: 100%;
-      max-width: 420px;
+      max-width: 530px;
+      animation: authCardIn 0.52s ease-out;
+      overflow: hidden;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      right: -86px;
+      top: -108px;
+      background: radial-gradient(circle, rgba(108, 198, 134, 0.28), rgba(108, 198, 134, 0));
+      pointer-events: none;
     }
 
     .auth-card h1 {
-      font-size: 1.9rem;
-      margin-bottom: 0.5rem;
-      color: #2e7d32;
+      font-size: clamp(2rem, 1.72rem + 0.9vw, 2.65rem);
+      margin-bottom: 0.65rem;
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+      color: #16502e;
     }
 
     .auth-card p {
-      margin-bottom: 1.5rem;
-      color: #4f6f52;
+      margin-bottom: 1.2rem;
+      color: #40644e;
+      font-size: 1.05rem;
+      line-height: 1.4;
     }
 
     .form-group { margin-bottom: 1rem; }
@@ -143,6 +194,95 @@
       font-size: 0.85rem;
       margin-top: 0.75rem;
       color: #4f6f52;
+    }
+
+    .auth-card .form-group {
+      margin-bottom: 1.05rem;
+    }
+
+    .auth-card label {
+      color: #20563a;
+      margin-bottom: 0.4rem;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .auth-card input[type="text"],
+    .auth-card input[type="password"],
+    .auth-card input[type="email"] {
+      min-height: 52px;
+      border-radius: 0.85rem;
+      border: 1px solid #aacfb2;
+      background: linear-gradient(180deg, #ffffff, #f2f9f4);
+      padding: 0.72rem 0.86rem;
+      font-size: 1.02rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    }
+
+    .auth-card input[type="text"]:focus,
+    .auth-card input[type="password"]:focus,
+    .auth-card input[type="email"]:focus {
+      border-color: #40a55d;
+      box-shadow: 0 0 0 3px rgba(64, 165, 93, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .auth-card .btn-primary {
+      width: 100%;
+      min-height: 52px;
+      font-size: 1.07rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      background: linear-gradient(135deg, #45b154, #2a8b3f);
+      box-shadow: 0 12px 24px rgba(42, 139, 63, 0.35);
+    }
+
+    .auth-card .btn-primary:hover {
+      box-shadow: 0 16px 28px rgba(42, 139, 63, 0.44);
+    }
+
+    .auth-card .small-text {
+      font-size: 0.92rem;
+      color: #486653;
+    }
+
+    .auth-card .btn-link {
+      font-weight: 700;
+      color: #1f7b38;
+      text-decoration: none;
+    }
+
+    .auth-card .btn-link:hover {
+      text-decoration: underline;
+      color: #146029;
+    }
+
+    @keyframes authCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .auth-wrapper {
+        padding: 0.75rem;
+      }
+
+      .auth-card {
+        max-width: 100%;
+        border-radius: 1.1rem;
+        padding: 1.55rem 1.15rem;
+      }
+
+      .auth-card h1 {
+        font-size: 1.95rem;
+      }
     }
 
     /* APP LAYOUT */

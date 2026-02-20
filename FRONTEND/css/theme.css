@@ -338,3 +338,53 @@ body.dark #trackerSection .calendar-cell.both-task {
   background: linear-gradient(135deg, #5f5a20, #454118) !important;
 }
 
+/* ===== Dashboard Dark Mode Polish ===== */
+body.dark #profileSection {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(55, 128, 80, 0.32), rgba(9, 24, 16, 0)),
+    linear-gradient(140deg, #0e241a, #10271d 58%, #0f2219) !important;
+  border-color: #2b7046 !important;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.dark #profileSection .profile-summary {
+  background: rgba(15, 38, 28, 0.9) !important;
+  border-color: #2a6f45 !important;
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+body.dark #profileSection .profile-field {
+  border-bottom-color: rgba(122, 201, 147, 0.3) !important;
+}
+
+body.dark #profileSection .profile-actions .btn-primary {
+  background: linear-gradient(135deg, #42cf6a, #2f9e4f) !important;
+  color: #082013 !important;
+  border-color: #7de8a0 !important;
+}
+
+body.dark #profileSection .profile-edit {
+  background: linear-gradient(145deg, #10271d, #112a1f) !important;
+  border-color: #2a6f45 !important;
+}
+
+/* ===== Home Dark Mode Polish ===== */
+body.dark #homeSection > .card {
+  border-color: #2a6842 !important;
+  background:
+    radial-gradient(circle at 10% -20%, rgba(64, 133, 88, 0.26), rgba(0, 0, 0, 0)),
+    linear-gradient(145deg, #0f261b, #112a1f 58%, #10241b) !important;
+}
+
+body.dark .home-hero-main {
+  border-color: #2a6842 !important;
+  background:
+    radial-gradient(circle at top left, rgba(71, 143, 96, 0.34), rgba(0, 0, 0, 0)),
+    linear-gradient(145deg, #0f261b, #112a1f 52%, #0f231a) !important;
+}
+
+body.dark .home-hero-image {
+  border-color: #2f7b4e !important;
+  background: linear-gradient(165deg, #1a3d2b, #184130 52%, #1a4330) !important;
+}
+

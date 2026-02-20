@@ -465,27 +465,51 @@ async function showSelectedPlantMood(){
 
     document.getElementById("plantMoodResult").innerHTML = `
     <div class="mood-box ${moodClass}">
+      <div class="mood-header">
+        <h3 class="mood-plant-name">${plant.name}</h3>
+        <span class="mood-pill">LIVE STATUS</span>
+      </div>
 
-      <h3>${plant.name}</h3>
-
-      <p><strong>${mood}</strong></p>
-      <p>${reason}</p>
+      <p class="mood-main"><strong>${mood}</strong></p>
+      <p class="mood-reason">${reason}</p>
 
       <div class="progress-container">
         <div class="progress-bar" id="moodProgressBar"></div>
       </div>
 
-      <p style="margin-top:8px;">Health Score : ${score}%</p>
+      <div class="mood-score-row">
+        <span>Health Score</span>
+        <span class="mood-score-value">${score}%</span>
+      </div>
 
-      <p>💡 ${tips}</p>
+      <p class="mood-tip">💡 ${tips}</p>
 
-      <hr>
+      <hr class="mood-divider">
 
-      <p>🌱 Last Task: ${latestTask ? latestTask.title : "No tasks yet"}</p>
-      <p>📅 Last Date: ${latestTask ? latestTask.date : "N/A"}</p>
-      <p>📈 Total Tasks: ${totalTasks}</p>
-      <p>✅ Done: ${doneTasks} | ❌ Missed: ${missedTasks} | ⏳ Pending: ${pendingTasks}</p>
+      <div class="mood-stats">
+        <div class="mood-stat">
+          <span class="mood-stat-label">Last Task</span>
+          <span class="mood-stat-value">${latestTask ? latestTask.title : "No tasks yet"}</span>
+        </div>
+        <div class="mood-stat">
+          <span class="mood-stat-label">Last Date</span>
+          <span class="mood-stat-value">${latestTask ? latestTask.date : "N/A"}</span>
+        </div>
+        <div class="mood-stat">
+          <span class="mood-stat-label">Total Tasks</span>
+          <span class="mood-stat-value">${totalTasks}</span>
+        </div>
+        <div class="mood-stat">
+          <span class="mood-stat-label">Completion Rate</span>
+          <span class="mood-stat-value">${totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0}%</span>
+        </div>
+      </div>
 
+      <div class="mood-quick-counts">
+        <span class="mood-count-pill">✅ Done: ${doneTasks}</span>
+        <span class="mood-count-pill">❌ Missed: ${missedTasks}</span>
+        <span class="mood-count-pill">⏳ Pending: ${pendingTasks}</span>
+      </div>
     </div>
     `;
 
