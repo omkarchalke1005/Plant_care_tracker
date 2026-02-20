@@ -519,3 +519,85 @@ body.dark .home-hero-image {
 }
 
 
+
+/* ===== Dark Mode Refresh (Less Green, More Premium) ===== */
+body.dark {
+  background: #0d1117 !important;
+  color: #e6edf3 !important;
+}
+
+body.dark .main-header,
+body.dark .card,
+body.dark .auth-card,
+body.dark .info-box,
+body.dark .profile-summary,
+body.dark .plant-card {
+  background: #111821 !important;
+  border: 1px solid #273445 !important;
+  color: #e6edf3 !important;
+}
+
+body.dark .main-header nav {
+  background: linear-gradient(135deg, #111c27, #0f1722) !important;
+  border-color: #2a3b50 !important;
+}
+
+body.dark .main-header nav button {
+  color: #dbe7f5 !important;
+}
+
+body.dark .main-header nav button.active,
+body.dark .main-header nav button:hover {
+  background: #1b2a3b !important;
+  border-color: #3b5875 !important;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #0f1824 !important;
+  border: 1px solid #33485f !important;
+  color: #e6edf3 !important;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #9fb2c6 !important;
+}
+
+body.dark .btn-primary {
+  background: linear-gradient(135deg, #3ea6ff, #1f6feb) !important;
+  border-color: #4ba8ff !important;
+  color: #f7fbff !important;
+}
+
+body.dark .btn-secondary {
+  background: #1a2432 !important;
+  border-color: #3b5875 !important;
+  color: #dbe7f5 !important;
+}
+
+body.dark .chat-fab {
+  background: linear-gradient(135deg, #2b8bd8, #1f6feb) !important;
+  border-color: #4ba8ff !important;
+  color: #f5fbff !important;
+}
+
+body.dark .tracer-panel,
+body.dark .home-hero-main,
+body.dark #trackerSection .card,
+body.dark #librarySection .card,
+body.dark #profileSection,
+body.dark #contactSection,
+body.dark #aboutSection,
+body.dark #dashboardSection {
+  background: linear-gradient(145deg, #111a25, #0f1722 55%, #111b28) !important;
+  border-color: #2d4056 !important;
+}
+
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4 {
+  color: #e8f1fb !important;
+}
