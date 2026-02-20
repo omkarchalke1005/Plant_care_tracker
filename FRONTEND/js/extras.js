@@ -178,35 +178,75 @@ async function renderTrackerTasks(){
   });
 }
 
+var trackerCalendarDate = new Date();
+trackerCalendarDate.setDate(1);
+
+function shiftTrackerCalendarMonth(delta) {
+  trackerCalendarDate.setMonth(trackerCalendarDate.getMonth() + delta);
+}
+
+function getTaskTypeFlags(task) {
+  var title = String(task && task.title ? task.title : '').toLowerCase();
+  return {
+    water: title.indexOf('water') !== -1,
+    fert: title.indexOf('fertil') !== -1 || title.indexOf('feed') !== -1,
+    cut: title.indexOf('cut') !== -1
+  };
+}
+
 async function renderTrackerCalendar(){
   var grid = document.getElementById('trackerCalendarGrid');
+  var monthLabel = document.getElementById('trackerCalMonthLabel');
   var trackerPlantSelect = document.getElementById('trackerPlantSelect');
-  if(!grid) return;
+  if(!grid || !monthLabel) return;
   grid.innerHTML='';
 
   var pid = trackerPlantSelect ? trackerPlantSelect.value : '';
   var tasks = await getTrackerTasks();
   var filteredTasks = pid ? tasks.filter(t=> String(t.plantId)===String(pid)) : tasks;
 
-  var now = new Date();
-  var y = now.getFullYear();
-  var m = String(now.getMonth()+1).padStart(2,'0');
+  var y = trackerCalendarDate.getFullYear();
+  var monthIndex = trackerCalendarDate.getMonth();
+  var monthNumber = String(monthIndex + 1).padStart(2,'0');
+  var firstDay = new Date(y, monthIndex, 1).getDay();
+  var daysInMonth = new Date(y, monthIndex + 1, 0).getDate();
+  var monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
 
-  for(var i=1;i<=31;i++){
+  monthLabel.textContent = monthNames[monthIndex] + ' ' + y;
+
+  for(var blank=0; blank<firstDay; blank++){
+    var blankCell = document.createElement('div');
+    blankCell.className = 'calendar-cell';
+    grid.appendChild(blankCell);
+  }
+
+  for(var i=1;i<=daysInMonth;i++){
     var cell=document.createElement('div');
     cell.className='calendar-cell';
     cell.innerHTML='<span>'+i+'</span>';
 
-    var d = y+'-'+m+'-'+String(i).padStart(2,'0');
+    var d = y+'-'+monthNumber+'-'+String(i).padStart(2,'0');
     var dayTasks = filteredTasks.filter(function(t){
       return t.date===d && normalizeTaskStatus(t) !== 'done' && normalizeTaskStatus(t) !== 'missed';
     });
-    var types = dayTasks.map(t=>t.title.toLowerCase());
+    var hasWater = false;
+    var hasFert = false;
+    var hasCut = false;
 
-    if(types.some(t=>t.includes('water')) && types.some(t=>t.includes('fert'))) cell.classList.add('both-task');
-    else if(types.some(t=>t.includes('water'))) cell.classList.add('water-task');
-    else if(types.some(t=>t.includes('fert'))) cell.classList.add('fert-task');
-    else if(types.some(t=>t.includes('cut'))) cell.style.background = '#f8bbd0';
+    dayTasks.forEach(function(t){
+      var flags = getTaskTypeFlags(t);
+      hasWater = hasWater || flags.water;
+      hasFert = hasFert || flags.fert;
+      hasCut = hasCut || flags.cut;
+    });
+
+    if(hasWater && hasFert) cell.classList.add('both-task');
+    else if(hasWater) cell.classList.add('water-task');
+    else if(hasFert) cell.classList.add('fert-task');
+    else if(hasCut) cell.classList.add('cut-task');
 
     grid.appendChild(cell);
   }
@@ -222,6 +262,14 @@ document.addEventListener('change', async function(e){
 document.addEventListener('click', async function(e){
   if(e.target && e.target.id==='trackerAddBtn'){
     await addTrackerTask();
+  }
+  if(e.target && e.target.id==='trackerCalPrev'){
+    shiftTrackerCalendarMonth(-1);
+    await renderTrackerCalendar();
+  }
+  if(e.target && e.target.id==='trackerCalNext'){
+    shiftTrackerCalendarMonth(1);
+    await renderTrackerCalendar();
   }
 });
 

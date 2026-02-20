@@ -270,18 +270,96 @@
 
     /* Attractive Add Plant card */
     .add-plant-card {
-      background: radial-gradient(circle at top left, #e8f5e9, #ffffff);
-      border: 1px solid #c8e6c9;
-      box-shadow: 0 14px 30px rgba(46, 125, 50, 0.12);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #c5e3cb;
+      background:
+        radial-gradient(circle at 12% -28%, rgba(147, 218, 166, 0.4), rgba(255, 255, 255, 0)),
+        linear-gradient(145deg, #f9fffa, #edf8f0 55%, #f7fdf8);
+      box-shadow: 0 18px 34px rgba(30, 95, 48, 0.14);
+      animation: addPlantCardIn 0.45s ease-out;
     }
+
+    .add-plant-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      right: -85px;
+      top: -120px;
+      background: radial-gradient(circle, rgba(105, 199, 128, 0.3), rgba(105, 199, 128, 0));
+      pointer-events: none;
+    }
+
     .add-plant-card h2 {
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      font-size: clamp(1.5rem, 1.3rem + 0.7vw, 1.95rem);
+      color: #123c27;
     }
     .add-plant-card h2::before {
-      content: "âœ¨";
-      font-size: 1.1rem;
+      content: "🌱";
+      font-size: 1.05rem;
+    }
+
+    .add-plant-card .card-subtitle {
+      color: #476b55;
+      line-height: 1.52;
+      max-width: 66ch;
+    }
+
+    #addPlantForm {
+      margin-top: 0.4rem;
+    }
+
+    #addPlantForm .grid > div {
+      border: 1px solid #cce6d1;
+      border-radius: 1rem;
+      padding: 0.85rem 0.9rem 0.45rem;
+      background: linear-gradient(150deg, rgba(255, 255, 255, 0.9), rgba(236, 248, 239, 0.88));
+      box-shadow: 0 10px 22px rgba(26, 84, 43, 0.08);
+    }
+
+    #addPlantForm .form-group label {
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: #1f4f33;
+    }
+
+    #addPlantForm input,
+    #addPlantForm select,
+    #addPlantForm textarea {
+      border-radius: 0.88rem;
+      border: 1px solid #b7d8be;
+      background: linear-gradient(180deg, #ffffff, #f4fbf6);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+      min-height: 50px;
+    }
+
+    #addPlantForm textarea {
+      min-height: 124px;
+      resize: vertical;
+    }
+
+    #addPlantForm input:focus,
+    #addPlantForm select:focus,
+    #addPlantForm textarea:focus {
+      border-color: #4ba363;
+      box-shadow: 0 0 0 3px rgba(75, 163, 99, 0.18);
+      transform: translateY(-1px);
+    }
+
+    #addPlantForm .btn-primary {
+      padding: 0.78rem 1.38rem;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #34a349, #236f36);
+      box-shadow: 0 10px 22px rgba(35, 111, 54, 0.36);
+    }
+
+    #addPlantForm .btn-primary:hover {
+      box-shadow: 0 14px 26px rgba(35, 111, 54, 0.46);
     }
 
     /* LIBRARY */
@@ -575,6 +653,30 @@
       margin-bottom: 0.4rem;
     }
 
+    .calendar-nav-btn {
+      border: 1px solid #b7d8be;
+      background: linear-gradient(180deg, #ffffff, #f2f9f4);
+      color: #1d4f31;
+      border-radius: 999px;
+      width: 34px;
+      height: 34px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(24, 78, 40, 0.1);
+      transition: transform 0.15s ease, box-shadow 0.18s ease;
+    }
+
+    .calendar-nav-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 14px rgba(24, 78, 40, 0.14);
+    }
+
+    #trackerCalMonthLabel {
+      color: #1d4f31;
+      font-size: 0.96rem;
+      letter-spacing: 0.01em;
+    }
+
     .calendar-grid {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
@@ -614,6 +716,11 @@
     .calendar-cell.both-task {
       background: linear-gradient(145deg, #fff0c9, #ffe7b0);
       border-color: #e9cd85;
+    }
+
+    .calendar-cell.cut-task {
+      background: linear-gradient(145deg, #ffe4ef, #ffd2e5);
+      border-color: #f0adc8;
     }
 
     @keyframes trackerSectionIn {
@@ -663,6 +770,19 @@
 
       .calendar-cell {
         min-height: 48px;
+      }
+
+      #addPlantForm .grid > div {
+        padding: 0.78rem 0.78rem 0.42rem;
+      }
+
+      #contactSection {
+        padding: 0.86rem;
+      }
+
+      #contactSection .card {
+        grid-template-columns: 1fr;
+        gap: 0.82rem;
       }
     }
 
@@ -829,13 +949,143 @@
       border:1px solid #0f3b23;
     }
 
-    /* CONTACT & ABOUT */
-    .contact-info {
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
+    @keyframes addPlantCardIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .contact-info p { margin-bottom: 0.4rem; }
+    /* CONTACT & ABOUT */
+    #contactSection {
+      position: relative;
+      padding: 1.12rem;
+      border-radius: 1.22rem;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(170, 229, 186, 0.3), rgba(255, 255, 255, 0)),
+        linear-gradient(140deg, #f8fff9, #eff8f1 55%, #f7fcf8);
+      border: 1px solid #d5e9da;
+      box-shadow: 0 18px 40px rgba(20, 74, 38, 0.12);
+    }
+
+    #contactSection::before {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      right: -105px;
+      top: -130px;
+      background: radial-gradient(circle, rgba(109, 204, 134, 0.28), rgba(109, 204, 134, 0));
+      pointer-events: none;
+    }
+
+    #contactSection .card {
+      position: relative;
+      margin-bottom: 0;
+      border: 1px solid #cae4d0;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 14px 30px rgba(18, 75, 37, 0.12);
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 2fr);
+      gap: 1rem 1.2rem;
+      align-items: start;
+    }
+
+    #contactSection .card > h2 {
+      grid-column: 1 / -1;
+      margin-bottom: 0.2rem;
+      font-size: clamp(1.6rem, 1.45rem + 0.7vw, 2.05rem);
+      color: #103b25;
+    }
+
+    #contactSection .card > .card-subtitle {
+      grid-column: 1 / -1;
+      margin-bottom: 0.25rem;
+      color: #496c56;
+      line-height: 1.5;
+      max-width: 72ch;
+    }
+
+    .contact-info {
+      border: 1px solid #c8e4cf;
+      border-radius: 1rem;
+      padding: 0.95rem 1rem;
+      background: linear-gradient(145deg, #f9fffa, #edf8f0);
+      box-shadow: 0 10px 24px rgba(20, 80, 40, 0.1);
+      font-size: 0.96rem;
+    }
+
+    .contact-info p {
+      margin-bottom: 0.6rem;
+      color: #244f35;
+    }
+
+    .contact-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-info a {
+      color: #196f38;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(25, 111, 56, 0.35);
+    }
+
+    .contact-info a:hover {
+      color: #0e5a2b;
+    }
+
+    #contactForm {
+      border: 1px solid #c8e4cf;
+      border-radius: 1rem;
+      padding: 0.95rem 1rem 1.05rem;
+      background: linear-gradient(145deg, #ffffff, #f0f9f2);
+      box-shadow: 0 12px 24px rgba(20, 80, 40, 0.09);
+    }
+
+    #contactForm .form-group label {
+      font-weight: 600;
+      color: #1f4f33;
+    }
+
+    #contactForm input,
+    #contactForm textarea {
+      border-radius: 0.9rem;
+      border: 1px solid #b8d9c0;
+      background: linear-gradient(180deg, #ffffff, #f5fbf7);
+      min-height: 50px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    }
+
+    #contactForm textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    #contactForm input:focus,
+    #contactForm textarea:focus {
+      border-color: #4ba363;
+      box-shadow: 0 0 0 3px rgba(75, 163, 99, 0.18);
+      transform: translateY(-1px);
+    }
+
+    #contactForm .btn-primary {
+      margin-top: 0.2rem;
+      padding: 0.76rem 1.35rem;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #3cae56, #277740);
+      box-shadow: 0 10px 22px rgba(39, 119, 64, 0.34);
+    }
+
+    #contactForm .btn-primary:hover {
+      box-shadow: 0 14px 26px rgba(39, 119, 64, 0.46);
+    }
 
     /* --- NEW GLOWING ABOUT DESIGN --- */
     #aboutSection {

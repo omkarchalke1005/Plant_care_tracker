@@ -18,8 +18,62 @@
 
 </head>
 <body>
+  <!-- PRE-AUTH LANDING PAGE -->
+  <section id="preAuthLanding" class="preauth-landing">
+    <header class="preauth-header">
+      <div class="preauth-logo">Plant Care Tracker</div>
+      <div class="preauth-actions">
+        <button id="landingLoginBtn" class="btn-secondary" type="button">Login</button>
+        <button id="landingRegisterBtn" class="btn-primary" type="button">Register</button>
+      </div>
+    </header>
+
+    <main class="preauth-main">
+      <section class="preauth-hero">
+        <p class="preauth-tag">Smart Plant Management</p>
+        <h1>Grow healthier plants with a simple daily tracking system.</h1>
+        <p>
+          Plant Care Tracker helps you organize watering, fertilizing, plant notes, and growth updates in one clean dashboard.
+        </p>
+        <div class="preauth-hero-buttons">
+          <button id="landingHeroLoginBtn" class="btn-primary" type="button">Start with Login</button>
+          <button id="landingHeroRegisterBtn" class="btn-secondary" type="button">Create Account</button>
+        </div>
+      </section>
+
+      <section class="preauth-grid">
+        <article class="preauth-card">
+          <h3>Why This Website Is Useful</h3>
+          <ul>
+            <li>Keeps your plant care schedule in one place.</li>
+            <li>Helps you avoid missed watering and fertilizer tasks.</li>
+            <li>Makes plant progress visible with history and tracking.</li>
+          </ul>
+        </article>
+
+        <article class="preauth-card">
+          <h3>How Users Can Use It</h3>
+          <ol>
+            <li>Register and add your plants with type and growth stage.</li>
+            <li>Create care tasks and monitor the calendar reminders.</li>
+            <li>Check dashboards, task history, and growth updates regularly.</li>
+          </ol>
+        </article>
+
+        <article class="preauth-card">
+          <h3>Who This Website Is For</h3>
+          <ul>
+            <li>Students building plant or web-based projects.</li>
+            <li>Beginners who want easy daily plant care guidance.</li>
+            <li>Plant lovers managing multiple indoor/outdoor plants.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </section>
+
   <!-- AUTH (LOGIN / REGISTER) -->
-  <div id="authWrapper" class="auth-wrapper">
+  <div id="authWrapper" class="auth-wrapper hidden">
     <div id="loginCard" class="auth-card">
       <h1>Plant Care Tracker</h1>
       <p>Login to track your plants, care notes, and watering schedule.</p>
@@ -433,6 +487,11 @@
             <div>
               <h3>Calendar</h3>
               <div class="calendar">
+                <div class="calendar-header">
+                  <button type="button" id="trackerCalPrev" class="calendar-nav-btn" aria-label="Previous month">&lt;</button>
+                  <strong id="trackerCalMonthLabel"></strong>
+                  <button type="button" id="trackerCalNext" class="calendar-nav-btn" aria-label="Next month">&gt;</button>
+                </div>
                 <div class="calendar-grid" id="trackerCalendarGrid"></div>
               </div>
             </div>

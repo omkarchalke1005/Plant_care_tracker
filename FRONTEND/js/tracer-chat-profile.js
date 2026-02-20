@@ -530,8 +530,10 @@ if (plants && plants.length) {
 
     /* ---------- APP INIT FOR USER ---------- */
     async function initAppForUser(user) {
+      var preAuthLanding = document.getElementById('preAuthLanding');
       var authWrapper = document.getElementById('authWrapper');
       var appWrapper = document.getElementById('appWrapper');
+      if (preAuthLanding) preAuthLanding.classList.add('hidden');
       if (authWrapper) authWrapper.classList.add('hidden');
       if (appWrapper) appWrapper.classList.remove('hidden');
 

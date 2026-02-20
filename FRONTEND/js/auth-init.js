@@ -6,6 +6,26 @@
       initChatbotUI();
       initContactForm();
 
+      function showPreAuthLanding() {
+        var landing = document.getElementById('preAuthLanding');
+        var authWrapper = document.getElementById('authWrapper');
+        var appWrapper = document.getElementById('appWrapper');
+        if (landing) landing.classList.remove('hidden');
+        if (authWrapper) authWrapper.classList.add('hidden');
+        if (appWrapper) appWrapper.classList.add('hidden');
+      }
+
+      function openAuth(mode) {
+        var landing = document.getElementById('preAuthLanding');
+        var authWrapper = document.getElementById('authWrapper');
+        var appWrapper = document.getElementById('appWrapper');
+        if (landing) landing.classList.add('hidden');
+        if (authWrapper) authWrapper.classList.remove('hidden');
+        if (appWrapper) appWrapper.classList.add('hidden');
+        if (mode === 'register') showRegister();
+        else showLogin();
+      }
+
       // Listen to Firebase auth state changes
       auth.onAuthStateChanged(async (user) => {
         if (user) {
@@ -13,16 +33,43 @@
           initAppForUser(user);
         } else {
           var params = new URLSearchParams(window.location.search);
-          if (params.get('auth') === 'register') showRegister();
-          else showLogin();
+          var mode = params.get('auth');
+          if (mode === 'register') openAuth('register');
+          else if (mode === 'login') openAuth('login');
+          else showPreAuthLanding();
         }
       });
 
+      var landingLoginBtn = document.getElementById('landingLoginBtn');
+      var landingRegisterBtn = document.getElementById('landingRegisterBtn');
+      var landingHeroLoginBtn = document.getElementById('landingHeroLoginBtn');
+      var landingHeroRegisterBtn = document.getElementById('landingHeroRegisterBtn');
       var showRegisterBtn = document.getElementById('showRegisterBtn');
       var showLoginBtn = document.getElementById('showLoginBtn');
       var loginForm = document.getElementById('loginForm');
       var registerForm = document.getElementById('registerForm');
       var logoutBtn = document.getElementById('logoutBtn');
+
+      if (landingLoginBtn) {
+        landingLoginBtn.addEventListener('click', function () {
+          openAuth('login');
+        });
+      }
+      if (landingRegisterBtn) {
+        landingRegisterBtn.addEventListener('click', function () {
+          openAuth('register');
+        });
+      }
+      if (landingHeroLoginBtn) {
+        landingHeroLoginBtn.addEventListener('click', function () {
+          openAuth('login');
+        });
+      }
+      if (landingHeroRegisterBtn) {
+        landingHeroRegisterBtn.addEventListener('click', function () {
+          openAuth('register');
+        });
+      }
 
       if (showRegisterBtn) {
         showRegisterBtn.addEventListener('click', function () {
@@ -38,11 +85,7 @@
       if (logoutBtn) {
         logoutBtn.addEventListener('click', async function () {
           await auth.signOut();
-          var appWrapper = document.getElementById('appWrapper');
-          var authWrapper = document.getElementById('authWrapper');
-          if (appWrapper) appWrapper.classList.add('hidden');
-          if (authWrapper) authWrapper.classList.remove('hidden');
-          showLogin();
+          showPreAuthLanding();
         });
       }
 

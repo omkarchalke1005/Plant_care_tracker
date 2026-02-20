@@ -13,6 +13,126 @@
 
     .hidden { display: none !important; }
 
+    /* PRE-AUTH LANDING */
+    .preauth-landing {
+      min-height: 100vh;
+      padding: 1.1rem 1.1rem 1.8rem;
+      background:
+        radial-gradient(circle at 12% -5%, rgba(155, 223, 177, 0.45), rgba(255, 255, 255, 0)),
+        radial-gradient(circle at 88% 98%, rgba(171, 229, 186, 0.4), rgba(255, 255, 255, 0)),
+        linear-gradient(140deg, #e8f8ec, #d5ebd9 58%, #e6f5e8);
+    }
+
+    .preauth-header {
+      max-width: 1150px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.25rem 0;
+    }
+
+    .preauth-logo {
+      font-size: clamp(1.15rem, 1rem + 0.7vw, 1.6rem);
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      color: #16502e;
+    }
+
+    .preauth-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .preauth-main {
+      max-width: 1150px;
+      margin: 1rem auto 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .preauth-hero {
+      position: relative;
+      border-radius: 1.3rem;
+      padding: 1.5rem 1.4rem;
+      border: 1px solid rgba(132, 204, 152, 0.8);
+      background:
+        radial-gradient(circle at 92% 12%, rgba(111, 200, 136, 0.22), rgba(255, 255, 255, 0)),
+        rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(7px);
+      box-shadow: 0 20px 44px rgba(20, 74, 38, 0.15);
+    }
+
+    .preauth-tag {
+      display: inline-block;
+      padding: 0.3rem 0.62rem;
+      border-radius: 999px;
+      background: #e5f7e9;
+      border: 1px solid #bfe0c8;
+      color: #246942;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.72rem;
+    }
+
+    .preauth-hero h1 {
+      font-size: clamp(2rem, 1.65rem + 1.1vw, 2.85rem);
+      line-height: 1.1;
+      color: #124c2b;
+      margin-bottom: 0.7rem;
+      max-width: 22ch;
+    }
+
+    .preauth-hero p {
+      color: #446853;
+      font-size: 1.02rem;
+      line-height: 1.5;
+      max-width: 62ch;
+    }
+
+    .preauth-hero-buttons {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .preauth-grid {
+      display: grid;
+      gap: 0.78rem;
+    }
+
+    .preauth-card {
+      border-radius: 1rem;
+      padding: 1rem 1rem;
+      border: 1px solid #c8e3cf;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.82), rgba(241, 250, 243, 0.88));
+      box-shadow: 0 12px 24px rgba(22, 79, 41, 0.1);
+    }
+
+    .preauth-card h3 {
+      font-size: 1.25rem;
+      color: #175332;
+      margin-bottom: 0.52rem;
+    }
+
+    .preauth-card ul,
+    .preauth-card ol {
+      margin-left: 1rem;
+      color: #355a45;
+      font-size: 0.95rem;
+      line-height: 1.45;
+    }
+
+    .preauth-card li {
+      margin-bottom: 0.28rem;
+    }
+
     /* AUTH */
     .auth-wrapper {
       position: relative;
@@ -270,6 +390,28 @@
     }
 
     @media (max-width: 640px) {
+      .preauth-landing {
+        padding: 0.7rem 0.75rem 1.2rem;
+      }
+
+      .preauth-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .preauth-main {
+        margin-top: 0.8rem;
+        grid-template-columns: 1fr;
+      }
+
+      .preauth-hero {
+        padding: 1.1rem 1rem;
+      }
+
+      .preauth-hero h1 {
+        font-size: 1.78rem;
+      }
+
       .auth-wrapper {
         padding: 0.75rem;
       }
