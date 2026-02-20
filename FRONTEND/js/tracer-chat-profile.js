@@ -25,27 +25,20 @@
       var imageBox = document.getElementById('tracerPlantImageBox');
       var headerBox = document.getElementById('tracerPlantHeader');
       var metaBox = document.getElementById('tracerPlantMeta');
-      var waterList = document.getElementById('tracerWaterDates');
-      var fertList = document.getElementById('tracerFertilizerDates');
-      var nextInfo = document.getElementById('tracerNextInfo');
       var growthChart = document.getElementById('growthChart');
+      var trendMeta = document.getElementById('tracerTrendMeta');
       var healthSummary = document.getElementById('tracerHealthSummary');
-      var recentActivity = document.getElementById('tracerRecentActivity');
 
       if (!select || !imageBox || !headerBox || !metaBox ||
-          !waterList || !fertList || !nextInfo || !growthChart ||
-          !healthSummary || !recentActivity) return;
+          !growthChart || !trendMeta || !healthSummary) return;
 
       if (!plants.length) {
-        imageBox.textContent = 'Add plants first to use Growth Tracking.';
+        imageBox.textContent = 'Add plants first to use Plant Analytics.';
         headerBox.innerHTML = '';
         metaBox.innerHTML = '';
-        waterList.innerHTML = '';
-        fertList.innerHTML = '';
         growthChart.innerHTML = '';
+        trendMeta.textContent = '';
         healthSummary.innerHTML = '';
-        recentActivity.innerHTML = '';
-        nextInfo.textContent = '';
         return;
       }
 
@@ -83,150 +76,105 @@
       var tasksForPlant = tasks.filter(function (t) {
         return String(t.plantId) === String(plant.id);
       });
-      var waterTasks = tasksForPlant.filter(function (t) {
-        return /water/i.test(t.title);
-      }).sort(function (a, b) { return a.date.localeCompare(b.date); });
-      var fertTasks = tasksForPlant.filter(function (t) {
-        return /(fertil|feed)/i.test(t.title);
-      }).sort(function (a, b) { return a.date.localeCompare(b.date); });
-
       var doneCount = tasksForPlant.filter(function (t) { return tracerTaskStatus(t) === 'done'; }).length;
       var missedCount = tasksForPlant.filter(function (t) { return tracerTaskStatus(t) === 'missed'; }).length;
       var pendingCount = tasksForPlant.filter(function (t) { return tracerTaskStatus(t) === 'pending'; }).length;
-      var trackedCount = doneCount + missedCount;
-      var adherence = trackedCount ? Math.round((doneCount / trackedCount) * 100) : 0;
-      var risk = missedCount >= 3 ? 'High' : missedCount >= 1 ? 'Medium' : 'Low';
-      var riskClass = risk === 'High' ? 'risk-high' : risk === 'Medium' ? 'risk-medium' : 'risk-low';
+      var totalCount = tasksForPlant.length;
+      var completionPct = totalCount ? Math.round((doneCount / totalCount) * 100) : 0;
+      var missedPct = totalCount ? Math.round((missedCount / totalCount) * 100) : 0;
+
+      function getCurrentStreak(tasksArr, todayDate) {
+        if (!tasksArr.length) return 0;
+        var dayStatusMap = {};
+
+        tasksArr.forEach(function (task) {
+          if (!task.date || task.date > todayDate) return;
+          var status = tracerTaskStatus(task);
+          if (!dayStatusMap[task.date]) {
+            dayStatusMap[task.date] = { done: false, bad: false };
+          }
+          if (status === 'done') dayStatusMap[task.date].done = true;
+          if (status === 'missed' || status === 'pending') dayStatusMap[task.date].bad = true;
+        });
+
+        var streak = 0;
+        var pointer = new Date(todayDate);
+        for (var d = 0; d < 60; d++) {
+          var key = formatDate(pointer);
+          var state = dayStatusMap[key];
+          if (!state) {
+            pointer.setDate(pointer.getDate() - 1);
+            continue;
+          }
+          if (state.bad || !state.done) break;
+          streak++;
+          pointer.setDate(pointer.getDate() - 1);
+        }
+        return streak;
+      }
+
+      var currentStreak = getCurrentStreak(tasksForPlant, todayStr());
+      var latestHealth = 50 + Math.round((doneCount * 7) - (missedCount * 9) - (pendingCount * 3));
+      if (latestHealth > 100) latestHealth = 100;
+      if (latestHealth < 5) latestHealth = 5;
 
       healthSummary.innerHTML =
         '<div class="tracer-health-grid">' +
-          '<div class="tracer-health-card"><span>Done</span><strong>' + doneCount + '</strong></div>' +
-          '<div class="tracer-health-card"><span>Missed</span><strong>' + missedCount + '</strong></div>' +
-          '<div class="tracer-health-card"><span>Pending</span><strong>' + pendingCount + '</strong></div>' +
-          '<div class="tracer-health-card"><span>Adherence</span><strong>' + adherence + '%</strong></div>' +
+          '<div class="tracer-health-card metric-completion"><span>Completion %</span><strong>' + completionPct + '%</strong></div>' +
+          '<div class="tracer-health-card metric-missed"><span>Missed %</span><strong>' + missedPct + '%</strong></div>' +
+          '<div class="tracer-health-card metric-streak"><span>Current streak</span><strong>' + currentStreak + ' days</strong></div>' +
+          '<div class="tracer-health-card metric-health"><span>Health score</span><strong>' + latestHealth + '/100</strong></div>' +
         '</div>' +
-        '<p class="tracer-risk ' + riskClass + '">Care Risk: ' + risk + '</p>';
+        '<p class="tracer-risk ' + (missedPct >= 40 ? 'risk-high' : missedPct >= 20 ? 'risk-medium' : 'risk-low') + '">' +
+          'User Behaviour Analytics: ' + totalCount + ' tracked tasks' +
+        '</p>';
 
-      waterList.innerHTML = '';
-      fertList.innerHTML = '';
+      growthChart.innerHTML = '';
+      var phases = ['Seedling', 'Young', 'Growing', 'Mature'];
+      var maxHeight = 130;
+      var created = plant.createdAt ? new Date(plant.createdAt) : new Date();
+      var ageDays = Math.max(0, daysBetween(formatDate(created), todayStr()));
+      var plantStage = (plant.growthStage || '').toString().toLowerCase().trim();
 
-      if (!waterTasks.length) {
-        waterList.innerHTML = '<li>No watering tasks recorded yet.</li>';
-      } else {
-        waterTasks.forEach(function (w) {
-          var li = document.createElement('li');
-          li.textContent = w.date + ' — ' + w.title + ' (' + tracerTaskStatus(w).toUpperCase() + ')';
-          waterList.appendChild(li);
+      for (var k = 0; k < phases.length; k++) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'growth-bar-wrapper';
+
+        var bar = document.createElement('div');
+        bar.className = 'growth-bar';
+
+        var base = 30 + k * 15;
+        var extra = Math.min(60, Math.floor(ageDays / 3));
+        var height = Math.min(maxHeight, base + extra);
+        bar.style.height = height + 'px';
+
+        var phaseName = phases[k].toLowerCase().trim();
+        bar.style.background = 'linear-gradient(180deg,#004d33,#001a12)';
+        bar.style.opacity = '0.5';
+        bar.style.boxShadow = 'none';
+
+        if (plantStage === phaseName) {
+          bar.style.background = 'linear-gradient(180deg,#ffe066,#ffb300)';
+          bar.style.boxShadow = '0 0 20px #ffd54f';
+          bar.style.opacity = '1';
+        }
+
+        var label = document.createElement('div');
+        label.textContent = phases[k];
+
+        wrapper.appendChild(bar);
+        wrapper.appendChild(label);
+        growthChart.appendChild(wrapper);
+      }
+
+      trendMeta.textContent = 'Growth stage graph with 4 bars. Highlighted bar shows current stage.';
+
+      if (!window.__pctTrendResizeBound) {
+        window.__pctTrendResizeBound = true;
+        window.addEventListener('resize', function () {
+          renderTracer();
         });
       }
-
-      if (!fertTasks.length) {
-        fertList.innerHTML = '<li>No fertilizer tasks recorded yet.</li>';
-      } else {
-        fertTasks.forEach(function (f) {
-          var li2 = document.createElement('li');
-          li2.textContent = f.date + ' — ' + f.title + ' (' + tracerTaskStatus(f).toUpperCase() + ')';
-          fertList.appendChild(li2);
-        });
-      }
-
-      // Next watering / fertilizing info
-      var schedule = getScheduleForPlant(plant);
-      var today = todayStr();
-
-      var lastWater = null;
-      for (var i2 = waterTasks.length - 1; i2 >= 0; i2--) {
-        if (waterTasks[i2].date <= today) { lastWater = waterTasks[i2]; break; }
-      }
-      if (!lastWater) lastWater = waterTasks[waterTasks.length - 1] || null;
-
-      var lastFert = null;
-      for (var j = fertTasks.length - 1; j >= 0; j--) {
-        if (fertTasks[j].date <= today) { lastFert = fertTasks[j]; break; }
-      }
-      if (!lastFert) lastFert = fertTasks[fertTasks.length - 1] || null;
-
-      var nextWaterDate = lastWater ? addDays(lastWater.date, schedule.water) : addDays(today, schedule.water);
-      var nextFertDate = lastFert ? addDays(lastFert.date, schedule.fert) : addDays(today, schedule.fert);
-
-      nextInfo.textContent =
-        'For ' + plant.name + ' (' + plant.type +
-        '): next watering is on ' + nextWaterDate +
-        ' and next fertilizer date is ' + nextFertDate + '.';
-
-      recentActivity.innerHTML = '';
-      var recentTasks = tasksForPlant.slice().sort(function (a, b) {
-        return String(b.date).localeCompare(String(a.date));
-      }).slice(0, 5);
-      if (!recentTasks.length) {
-        recentActivity.innerHTML = '<li>No recent care activity yet.</li>';
-      } else {
-        recentTasks.forEach(function (t) {
-          var li3 = document.createElement('li');
-          li3.textContent = t.date + ' — ' + t.title + ' (' + tracerTaskStatus(t).toUpperCase() + ')';
-          recentActivity.appendChild(li3);
-        });
-      }
-
-      // Growth phase diagram (4 phases based on plant age)
-      // Growth phase diagram (4 phases based on plant age)
-growthChart.innerHTML = '';
-
-var phases = ['Seedling', 'Young', 'Growing', 'Mature'];
-var maxHeight = 130;
-var created = plant.createdAt ? new Date(plant.createdAt) : new Date();
-var ageDays = Math.max(0, daysBetween(formatDate(created), todayStr()));
-
-var plantStage = (plant.growthStage || "").toLowerCase();
-
-for (var k = 0; k < phases.length; k++) {
-
-  var wrapper = document.createElement('div');
-  wrapper.className = 'growth-bar-wrapper';
-
-  var bar = document.createElement('div');
-  bar.className = 'growth-bar';
-
-  // height increases with phase and age
-  var base = 30 + k * 15;
-  var extra = Math.min(60, Math.floor(ageDays / 3));
-  var height = Math.min(maxHeight, base + extra);
-  bar.style.height = height + 'px';
-
-  // ⭐ COLOR LOGIC (THIS IS YOUR FEATURE)
-  var phaseName = phases[k].toLowerCase();
-
-var plantStageClean = (plantStage || "")
-    .toString()
-    .toLowerCase()
-    .trim();
-
-var phaseNameClean = (phases[k] || "")
-    .toString()
-    .toLowerCase()
-    .trim();
-
-bar.style.background = "linear-gradient(180deg,#004d33,#001a12)";
-bar.style.opacity = "0.5";
-bar.style.boxShadow = "none";
-
-if (plantStageClean === phaseNameClean) {
-
-    bar.style.background = "linear-gradient(180deg,#ffe066,#ffb300)";
-    bar.style.boxShadow = "0 0 20px #ffd54f";
-    bar.style.opacity = "1";
-
-}
-
-
-  var label = document.createElement('div');
-  label.textContent = phases[k];
-
-  wrapper.appendChild(bar);
-  wrapper.appendChild(label);
-
-  growthChart.appendChild(wrapper);
-}
 
     }
 
@@ -372,7 +320,7 @@ if (plantStageClean === phaseNameClean) {
 
       if (asksWebsite) {
         reply =
-          'Use Plant Care Tracker like this: Add plants in Add Plants, create watering/fertilizer tasks in Care Tracker, review exact dates in Growth Tracking, and open Plant Gallery for each plant dashboard.';
+          'Use Plant Care Tracker like this: Add plants in Add Plants, create watering/fertilizer tasks in Care Tracker, review exact dates in Plant Analytics, and open Plant Gallery for each plant dashboard.';
         addChatMessage('bot', reply);
         return;
       }
@@ -693,4 +641,8 @@ if (plantStageClean === phaseNameClean) {
         window.open(waUrl, '_blank');
       });
     }
+
+
+
+
 

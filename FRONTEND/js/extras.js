@@ -556,6 +556,8 @@ document.addEventListener('click', async function(e){
 });
 // ===== DAILY TASK NOTIFICATION SYSTEM =====
 var plantReminderToastTimer = null;
+var plantReminderQueue = [];
+var plantReminderShowing = false;
 
 function ensurePlantReminderStyles() {
   if (document.getElementById('plantReminderStyles')) return;
@@ -604,7 +606,7 @@ function escapeReminderText(value) {
     .replace(/'/g, '&#39;');
 }
 
-function showPlantReminderNotification(plantName, taskTitle, dateStr) {
+function showPlantReminderNotification(plantName, taskTitle, dateStr, onDismiss) {
   ensurePlantReminderStyles();
 
   var oldWrap = document.getElementById('plantReminderWrap');
@@ -639,10 +641,15 @@ function showPlantReminderNotification(plantName, taskTitle, dateStr) {
     card.classList.add('show');
   });
 
+  var dismissed = false;
   function dismiss() {
+    if (dismissed) return;
+    dismissed = true;
+    if (plantReminderToastTimer) clearTimeout(plantReminderToastTimer);
     card.classList.remove('show');
     setTimeout(function () {
       if (wrap && wrap.parentNode) wrap.parentNode.removeChild(wrap);
+      if (typeof onDismiss === 'function') onDismiss();
     }, 220);
   }
 
@@ -654,6 +661,27 @@ function showPlantReminderNotification(plantName, taskTitle, dateStr) {
   plantReminderToastTimer = setTimeout(dismiss, 9000);
 }
 
+function processPlantReminderQueue() {
+  if (plantReminderShowing) return;
+  if (!plantReminderQueue.length) return;
+
+  plantReminderShowing = true;
+  var item = plantReminderQueue.shift();
+  showPlantReminderNotification(item.plantName, item.taskTitle, item.dateStr, function () {
+    plantReminderShowing = false;
+    processPlantReminderQueue();
+  });
+}
+
+function enqueuePlantReminder(plantName, taskTitle, dateStr) {
+  plantReminderQueue.push({
+    plantName: plantName,
+    taskTitle: taskTitle,
+    dateStr: dateStr
+  });
+  processPlantReminderQueue();
+}
+
 async function checkTodayNotifications(){
 
   try {
@@ -663,6 +691,7 @@ async function checkTodayNotifications(){
     var today = todayStr();
 
    var notifiedTasks = JSON.parse(localStorage.getItem("notifiedTasks") || "[]");
+   var remindersToShow = [];
 
 tasks.forEach(function(t){
 
@@ -677,12 +706,11 @@ tasks.forEach(function(t){
       var plant = plants.find(p => String(p.id) === String(t.plantId));
 
       if(plant){
-
-        setTimeout(function(){
-
-          showPlantReminderNotification(plant.name, t.title, t.date);
-
-        }, 1500);
+        remindersToShow.push({
+          plantName: plant.name,
+          taskTitle: t.title,
+          dateStr: t.date
+        });
 
         notifiedTasks.push(uniqueKey);
         localStorage.setItem("notifiedTasks", JSON.stringify(notifiedTasks));
@@ -694,6 +722,14 @@ tasks.forEach(function(t){
   }
 
 });
+
+if(remindersToShow.length){
+  setTimeout(function(){
+    remindersToShow.forEach(function(r){
+      enqueuePlantReminder(r.plantName, r.taskTitle, r.dateStr);
+    });
+  }, 1500);
+}
 
 
   } catch(e){

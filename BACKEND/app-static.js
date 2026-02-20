@@ -1,4 +1,4 @@
-﻿// -------------------- CONTACT PAGE --------------------
+// -------------------- CONTACT PAGE --------------------
 function initContactPage() {
   if (!requireLogin()) return;
   setupNavbarForLoggedInUser();
@@ -36,4 +36,6 @@ function initAboutPage() {
   setupNavbarForLoggedInUser();
   // Static content only
 }
+
+
 

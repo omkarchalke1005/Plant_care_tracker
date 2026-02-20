@@ -113,7 +113,7 @@ body.dark .tracer-panel {
 }
 
 
-/* ===== FINAL DARK MODE (FULL VISIBILITY â€“ EXAM SAFE) ===== */
+/* ===== FINAL DARK MODE (FULL VISIBILITY - EXAM SAFE) ===== */
 body.dark,
 body.dark * {
   color: #eaf7ef !important;
@@ -517,4 +517,5 @@ body.dark .home-hero-image {
   border-color: #2f7b4e !important;
   background: linear-gradient(165deg, #1a3d2b, #184130 52%, #1a4330) !important;
 }
+
 

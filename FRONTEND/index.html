@@ -146,7 +146,7 @@
   <button class="nav-link" data-section="dashboardSection">Add Plants</button>
   <button class="nav-link" data-section="trackerSection">Care Tracker</button>
   <button class="nav-link" data-section="librarySection">Plant Gallery</button>
-  <button class="nav-link" data-section="tracerSection">Growth Tracking</button>
+  <button class="nav-link" data-section="tracerSection">Plant Analytics</button>
   <button class="nav-link" data-section="plantMoodSection">🌿 Plant Mood</button>
   <button class="nav-link" data-section="profileSection">Dashboard</button>
   <button class="nav-link" data-section="contactSection">📞CONTACT</button>
@@ -184,7 +184,7 @@
               <p>
                 Start by adding a plant in the <strong>Add Plants</strong> tab.
                 Then explore <strong>Plant Gallery</strong>, <strong>Care Tracker</strong> and
-                <strong>Growth Tracking</strong>.
+                <strong>Plant Analytics</strong>.
               </p>
               <div id="homeSlider" class="home-slider">
                 <img src="https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Indoor plants by window" loading="eager" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=1200'">
@@ -245,7 +245,7 @@
             <div class="info-box">
               <h3>4. Trace & Chat</h3>
               <p>
-                In the <strong>Growth Tracking</strong> tab you can see exact watering dates,
+                In the <strong>Plant Analytics</strong> tab you can see exact watering dates,
                 fertilizer dates, growth bars and then open the AI chatbot icon at the bottom
                 of the screen for help and guidance.
               </p>
@@ -366,7 +366,7 @@
         <div class="card">
           <h2>Plant Gallery</h2>
           <p class="card-subtitle">
-            All the plants you added. Click any plant card to open its full dashboard with growth tracking,
+            All the plants you added. Click any plant card to open its full dashboard with plant analytics,
             information notes and history. Use the delete button to remove a plant completely.
           </p>
           <div id="plantLibrary" class="grid"></div>
@@ -551,13 +551,13 @@
       <!-- PLANT TRACER -->
       <section id="tracerSection" class="app-section">
         <div class="card">
-          <h2>Growth Tracking</h2>
+          <h2>Plant Analytics</h2>
           <p class="card-subtitle">
-            Exact watering / fertilizer dates and a clear growth phase diagram for each plant.
+            Track user behaviour analytics for each plant with completion, missed ratio, streak, and health trend.
           </p>
 
           <div class="form-group">
-            <label for="tracerPlantSelect">Select Plant for Tracing</label>
+            <label for="tracerPlantSelect">Select Plant for Analytics</label>
             <select id="tracerPlantSelect"></select>
           </div>
 
@@ -574,26 +574,15 @@
               <div class="tracer-meta" id="tracerPlantMeta"></div>
             </div>
 
-            <!-- RIGHT: Growth + dates -->
+            <!-- RIGHT: User Behaviour Analytics + dates -->
             <div class="tracer-panel">
               <div class="growth-chart-title">
-                <h3>Growth Phases</h3>
-                <span style="font-size:0.8rem;color:#7bedb7;">From seedling to mature</span>
+                <h3>User Behaviour Analytics</h3>
+                <span style="font-size:0.8rem;color:#7bedb7;">Completion, missed, streak, and growth stage bars</span>
               </div>
               <div id="tracerHealthSummary" class="tracer-health-summary"></div>
               <div id="growthChart" class="growth-chart"></div>
-
-              <div style="margin-top:1rem;">
-                <h4>Exact Watering Dates</h4>
-                <ul id="tracerWaterDates" class="item-list"></ul>
-
-                <h4 style="margin-top:0.6rem;">Fertilizer Dates / When to Fertilize</h4>
-                <ul id="tracerFertilizerDates" class="item-list"></ul>
-
-                <p id="tracerNextInfo" style="margin-top:0.6rem;font-size:0.85rem;color:#a5ffd2;"></p>
-                <h4 style="margin-top:0.8rem;">Recent Care Activity</h4>
-                <ul id="tracerRecentActivity" class="item-list"></ul>
-              </div>
+              <p id="tracerTrendMeta" class="tracer-trend-meta"></p>
             </div>
           </div>
         </div>
@@ -765,9 +754,9 @@
               <p style="margin-top:0.4rem;">
                 • Students can use it as a mini project to learn HTML, CSS and JavaScript while
                 actually tracking real plants at home or in school.<br>
-                • Plant lovers can track each plant’s story – from first leaf to full growth.<br>
+                • Plant lovers can track each plant's story – from first leaf to full growth.<br>
                 • Beginners can follow simple schedules for watering and fertilizing so that they
-                don’t over-water or forget important care.
+                don't over-water or forget important care.
               </p>
             </div>
 
@@ -805,7 +794,7 @@
                 • Add every new plant you bring home into the <strong>Add Plants</strong> tab.<br>
                 • Use the <strong>Care Tracker</strong> to add watering and fertilizer tasks.<br>
                 • Check the <strong>Calendar</strong> each week to see what is coming next.<br>
-                • Open the <strong>Growth Tracking</strong> tab when you are confused about a plant’s
+                • Open the <strong>Plant Analytics</strong> tab when you are confused about a plant's
                   exact watering and fertilizer dates.<br>
                 • Visit your <strong>Dashboard</strong> to quickly see how many plants you are taking care of.<br>
                 • Use the floating <strong>AI Chatbot icon</strong> at the bottom of the screen to ask questions
@@ -944,6 +933,7 @@
     <script src="./js/extras.js"></script>
 </body> 
 </html>
+
 
 
 

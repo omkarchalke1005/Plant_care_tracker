@@ -1,4 +1,108 @@
-﻿/* ---------- Helper date functions ---------- */
+﻿/* ---------- Global custom alert (replaces dull browser alert) ---------- */
+(function installCustomAlert() {
+  if (window.__pctCustomAlertInstalled) return;
+  window.__pctCustomAlertInstalled = true;
+
+  var nativeAlert = window.alert;
+
+  function ensureAlertStyles() {
+    if (document.getElementById('pctAlertStyles')) return;
+
+    var style = document.createElement('style');
+    style.id = 'pctAlertStyles';
+    style.textContent =
+      '.pct-alert-overlay{' +
+        'position:fixed;inset:0;background:rgba(8,22,13,.44);backdrop-filter:blur(2px);' +
+        'display:flex;align-items:center;justify-content:center;padding:18px;z-index:10000;' +
+      '}' +
+      '.pct-alert-card{' +
+        'width:min(440px,100%);background:linear-gradient(145deg,#f6fff7,#e3f5e9);' +
+        'border:1px solid #b7ddc2;border-radius:18px;padding:16px 16px 14px;' +
+        'box-shadow:0 16px 40px rgba(13,61,33,.30);color:#154a2d;font-family:Segoe UI,Tahoma,sans-serif;' +
+        'transform:translateY(10px) scale(.98);opacity:0;transition:all .22s ease;' +
+      '}' +
+      '.pct-alert-card.show{transform:translateY(0) scale(1);opacity:1;}' +
+      '.pct-alert-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}' +
+      '.pct-alert-title{margin:0;font-size:18px;font-weight:800;letter-spacing:.2px;}' +
+      '.pct-alert-close{' +
+        'border:0;background:#1d6d40;color:#fff;width:28px;height:28px;border-radius:999px;' +
+        'font-size:17px;line-height:1;cursor:pointer;' +
+      '}' +
+      '.pct-alert-msg{margin:10px 0 0 0;white-space:pre-wrap;font-size:15px;line-height:1.5;color:#123f27;}' +
+      '.pct-alert-actions{margin-top:12px;display:flex;justify-content:flex-end;}' +
+      '.pct-alert-ok{' +
+        'border:0;background:linear-gradient(180deg,#2fa45f,#248348);color:#fff;font-weight:700;' +
+        'padding:8px 18px;border-radius:10px;cursor:pointer;box-shadow:0 8px 18px rgba(27,106,58,.26);' +
+      '}';
+    document.head.appendChild(style);
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  window.alert = function (message) {
+    if (!document.body) {
+      nativeAlert(message);
+      return;
+    }
+
+    ensureAlertStyles();
+
+    var existing = document.getElementById('pctAlertOverlay');
+    if (existing) existing.remove();
+
+    var overlay = document.createElement('div');
+    overlay.id = 'pctAlertOverlay';
+    overlay.className = 'pct-alert-overlay';
+    overlay.innerHTML =
+      '<div class="pct-alert-card" role="alertdialog" aria-modal="true" aria-label="Notification">' +
+        '<div class="pct-alert-head">' +
+          '<h3 class="pct-alert-title">Plant Care Tracker</h3>' +
+          '<button class="pct-alert-close" type="button" aria-label="Close">&times;</button>' +
+        '</div>' +
+        '<p class="pct-alert-msg">' + escapeHtml(message) + '</p>' +
+        '<div class="pct-alert-actions"><button class="pct-alert-ok" type="button">OK</button></div>' +
+      '</div>';
+
+    document.body.appendChild(overlay);
+
+    var card = overlay.querySelector('.pct-alert-card');
+    var closeBtn = overlay.querySelector('.pct-alert-close');
+    var okBtn = overlay.querySelector('.pct-alert-ok');
+
+    requestAnimationFrame(function () {
+      if (card) card.classList.add('show');
+      if (okBtn) okBtn.focus();
+    });
+
+    function closeAlert() {
+      if (!overlay.parentNode) return;
+      if (card) card.classList.remove('show');
+      setTimeout(function () {
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }, 180);
+      document.removeEventListener('keydown', onKeyDown);
+    }
+
+    function onKeyDown(e) {
+      if (e.key === 'Escape' || e.key === 'Enter') closeAlert();
+    }
+
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay) closeAlert();
+    });
+    if (closeBtn) closeBtn.addEventListener('click', closeAlert);
+    if (okBtn) okBtn.addEventListener('click', closeAlert);
+    document.addEventListener('keydown', onKeyDown);
+  };
+})();
+/* ---------- Helper date functions ---------- */
     function formatDate(d) {
       var y = d.getFullYear();
       var m = String(d.getMonth() + 1).padStart(2, '0');
@@ -409,4 +513,5 @@
       }
       if (upcomingCountEl) upcomingCountEl.textContent = upcoming;
     }
+
 
