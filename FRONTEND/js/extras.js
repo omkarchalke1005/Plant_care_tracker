@@ -14,8 +14,33 @@ if(themeToggle){
 
 /* ===== CARE TRACKER LOGIC (UPDATED TO USE FIREBASE) ===== */
 
+function normalizeTaskStatus(task) {
+  if (task && task.status) return task.status;
+  return 'pending';
+}
+
+async function markOverdueTasksAsMissed() {
+  try {
+    var tasks = await getTasksForUser();
+    var today = todayStr();
+    for (var i = 0; i < tasks.length; i++) {
+      var t = tasks[i];
+      var status = normalizeTaskStatus(t);
+      if (status === 'pending' && t.date && t.date < today) {
+        await updateTask(t.id, {
+          status: 'missed',
+          missedAt: today
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error auto-marking missed tasks:', error);
+  }
+}
+
 async function getTrackerTasks(){
   try {
+    await markOverdueTasksAsMissed();
     return await getTasksForUser();
   } catch (error) {
     console.error('Error getting tasks:', error);
@@ -74,7 +99,9 @@ async function addTrackerTask(){
   var task = {
     plantId: pid,
     title: type === 'water' ? 'Watering' : type === 'fert' ? 'Fertilizing' : 'Cutting Leaf',
-    date: date
+    date: date,
+    status: 'pending',
+    createdAt: todayStr()
   };
 
   try {
@@ -98,14 +125,55 @@ async function renderTrackerTasks(){
   var tasks = await getTrackerTasks();
   var plants = await getGalleryPlants();
   var filteredTasks = pid ? tasks.filter(t=>String(t.plantId)===String(pid)) : tasks;
+  filteredTasks.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
 
   if(trackerTaskList) trackerTaskList.innerHTML='';
   filteredTasks.forEach(function(t){
-    var plant = plants.find(p=>String(p.id)===String(pid));
+    var plant = plants.find(p=>String(p.id)===String(t.plantId));
+    var status = normalizeTaskStatus(t);
     var li=document.createElement('li');
-    var cls = t.title.toLowerCase().includes('water')?'task-water':t.title.toLowerCase().includes('fert')?'task-fert':'task-other';
-    li.className = cls;
-    li.textContent = t.date+' - '+(plant? plant.name:'Plant')+' - '+t.title;
+    var baseCls = t.title.toLowerCase().includes('water')?'task-water':t.title.toLowerCase().includes('fert')?'task-fert':'task-other';
+    li.className = baseCls + (status === 'done' ? ' task-done-row' : '') + (status === 'missed' ? ' task-missed-row' : '');
+
+    var row = document.createElement('div');
+    row.className = 'tracker-task-row';
+
+    var text = document.createElement('span');
+    text.textContent = t.date+' - '+(plant? plant.name:'Plant')+' - '+t.title;
+
+    var actions = document.createElement('div');
+    actions.className = 'task-actions';
+
+    var badge = document.createElement('span');
+    badge.className = 'task-status ' + status;
+    badge.textContent = status.toUpperCase();
+    actions.appendChild(badge);
+
+    if (status === 'pending') {
+      var doneBtn = document.createElement('button');
+      doneBtn.className = 'btn-task-done';
+      doneBtn.textContent = 'Mark Done';
+      doneBtn.addEventListener('click', async function () {
+        try {
+          await updateTask(t.id, {
+            status: 'done',
+            completedAt: todayStr()
+          });
+          await renderTrackerTasks();
+          await renderTrackerCalendar();
+          await renderTaskHistory();
+        } catch (error) {
+          console.error('Error marking task done:', error);
+          alert('Could not mark task done.');
+        }
+      });
+      actions.appendChild(doneBtn);
+    }
+
+    row.appendChild(text);
+    row.appendChild(actions);
+    li.appendChild(row);
+
     if(trackerTaskList) trackerTaskList.appendChild(li);
   });
 }
@@ -130,7 +198,9 @@ async function renderTrackerCalendar(){
     cell.innerHTML='<span>'+i+'</span>';
 
     var d = y+'-'+m+'-'+String(i).padStart(2,'0');
-    var dayTasks = filteredTasks.filter(t=>t.date===d);
+    var dayTasks = filteredTasks.filter(function(t){
+      return t.date===d && normalizeTaskStatus(t) !== 'done' && normalizeTaskStatus(t) !== 'missed';
+    });
     var types = dayTasks.map(t=>t.title.toLowerCase());
 
     if(types.some(t=>t.includes('water')) && types.some(t=>t.includes('fert'))) cell.classList.add('both-task');
@@ -162,6 +232,91 @@ document.addEventListener('click', async function(e){
     await renderTrackerCalendar();
   }
 });
+
+async function renderTaskHistory() {
+  var list = document.getElementById('taskHistoryList');
+  var stats = document.getElementById('taskHistoryStats');
+  var filterEl = document.getElementById('taskHistoryFilter');
+  var plantFilterEl = document.getElementById('taskHistoryPlantFilter');
+  if (!list) return;
+
+  await markOverdueTasksAsMissed();
+  var tasks = await getTasksForUser();
+  var plants = await getPlantsForUser();
+  var filter = filterEl ? filterEl.value : 'all';
+  var selectedPlantId = plantFilterEl ? plantFilterEl.value : 'all';
+
+  if (plantFilterEl) {
+    var currentValue = selectedPlantId || 'all';
+    plantFilterEl.innerHTML = '<option value="all">All Plants</option>';
+    plants.forEach(function(p){
+      var opt = document.createElement('option');
+      opt.value = String(p.id);
+      opt.textContent = p.name;
+      plantFilterEl.appendChild(opt);
+    });
+    plantFilterEl.value = currentValue;
+    selectedPlantId = plantFilterEl.value || 'all';
+  }
+
+  var scopedTasks = tasks.filter(function(t){
+    if (selectedPlantId === 'all') return true;
+    return String(t.plantId) === String(selectedPlantId);
+  });
+
+  var doneCount = 0;
+  var missedCount = 0;
+  var pendingCount = 0;
+
+  scopedTasks.forEach(function(t){
+    var status = normalizeTaskStatus(t);
+    if (status === 'done') doneCount++;
+    else if (status === 'missed') missedCount++;
+    else pendingCount++;
+  });
+
+  if (stats) {
+    stats.innerHTML =
+      '<strong>Completed:</strong> ' + doneCount +
+      ' &nbsp;|&nbsp; <strong>Missed:</strong> ' + missedCount +
+      ' &nbsp;|&nbsp; <strong>Pending:</strong> ' + pendingCount;
+  }
+
+  list.innerHTML = '';
+  var rows = scopedTasks.slice().sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
+
+  rows.forEach(function(t){
+    var status = normalizeTaskStatus(t);
+    if (filter !== 'all' && status !== filter) return;
+
+    var plant = plants.find(function(p){ return String(p.id) === String(t.plantId); });
+    var li = document.createElement('li');
+    li.className = status === 'done' ? 'task-done-row' : status === 'missed' ? 'task-missed-row' : '';
+    li.innerHTML =
+      '<strong>' + t.date + '</strong> - ' + (plant ? plant.name : 'Plant') + ' - ' + t.title +
+      ' <span class="task-status ' + status + '">' + status.toUpperCase() + '</span>';
+    list.appendChild(li);
+  });
+
+  if (!list.children.length) {
+    list.innerHTML = '<li>No tasks found for selected filter.</li>';
+  }
+}
+
+document.addEventListener('change', async function(e){
+  if (e.target && e.target.id === 'taskHistoryFilter') {
+    await renderTaskHistory();
+  }
+  if (e.target && e.target.id === 'taskHistoryPlantFilter') {
+    await renderTaskHistory();
+  }
+});
+
+document.addEventListener('click', async function(e){
+  if (e.target && e.target.dataset && e.target.dataset.section === 'taskHistorySection') {
+    await renderTaskHistory();
+  }
+});
 // ===== DAILY TASK NOTIFICATION SYSTEM =====
 async function checkTodayNotifications(){
 
@@ -174,6 +329,8 @@ async function checkTodayNotifications(){
    var notifiedTasks = JSON.parse(localStorage.getItem("notifiedTasks") || "[]");
 
 tasks.forEach(function(t){
+
+  if (normalizeTaskStatus(t) !== 'pending') return;
 
   if(t.date === today){
 
@@ -251,23 +408,24 @@ async function showSelectedPlantMood(){
     let plantId = document.getElementById("plantMoodSelect").value;
     if(!plantId) return;
 
+    await markOverdueTasksAsMissed();
+
     let plants = await getPlantsForUser() || [];
     let tasks = await getTasksForUser() || [];
 
-    let plant = plants.find(p=> p.id === plantId);
-    let plantTasks = tasks.filter(t=> t.plantId === plantId);
+    let plant = plants.find(p=> String(p.id) === String(plantId));
+    let plantTasks = tasks.filter(t=> String(t.plantId) === String(plantId));
 
     let totalTasks = plantTasks.length;
+    let doneTasks = plantTasks.filter(t => normalizeTaskStatus(t) === 'done').length;
+    let missedTasks = plantTasks.filter(t => normalizeTaskStatus(t) === 'missed').length;
+    let pendingTasks = plantTasks.filter(t => normalizeTaskStatus(t) === 'pending').length;
 
-    /* SCORE */
-    let score = 0;
-
-    if(totalTasks >= 5) score = 100;
-    else if(totalTasks === 4) score = 85;
-    else if(totalTasks === 3) score = 75;
-    else if(totalTasks === 2) score = 50;
-    else if(totalTasks === 1) score = 40;
-    else score = 20;
+    /* SCORE (status-based) */
+    // Done increases health, missed decreases it, pending gives a small neutral buffer.
+    let score = 20 + (doneTasks * 30) + (pendingTasks * 5) - (missedTasks * 25);
+    if (score > 100) score = 100;
+    if (score < 5) score = 5;
 
     /* MOOD */
     let mood="", reason="", tips="", moodClass="";
@@ -326,6 +484,7 @@ async function showSelectedPlantMood(){
       <p>🌱 Last Task: ${latestTask ? latestTask.title : "No tasks yet"}</p>
       <p>📅 Last Date: ${latestTask ? latestTask.date : "N/A"}</p>
       <p>📈 Total Tasks: ${totalTasks}</p>
+      <p>✅ Done: ${doneTasks} | ❌ Missed: ${missedTasks} | ⏳ Pending: ${pendingTasks}</p>
 
     </div>
     `;
@@ -362,6 +521,18 @@ document.addEventListener("change", function(e){
 
 document.getElementById("plantDoctorFab").onclick = function(){
   document.getElementById("plantDoctorPopup").classList.remove("hidden");
+}
+
+var taskHistoryFab = document.getElementById("taskHistoryFab");
+if (taskHistoryFab) {
+  taskHistoryFab.onclick = async function () {
+    if (!getCurrentUser()) {
+      alert("Please login first.");
+      return;
+    }
+    showAppSection("taskHistorySection");
+    await renderTaskHistory();
+  };
 }
 
 function closePlantDoctor(){

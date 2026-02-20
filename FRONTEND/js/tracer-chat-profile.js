@@ -29,9 +29,12 @@
       var fertList = document.getElementById('tracerFertilizerDates');
       var nextInfo = document.getElementById('tracerNextInfo');
       var growthChart = document.getElementById('growthChart');
+      var healthSummary = document.getElementById('tracerHealthSummary');
+      var recentActivity = document.getElementById('tracerRecentActivity');
 
       if (!select || !imageBox || !headerBox || !metaBox ||
-          !waterList || !fertList || !nextInfo || !growthChart) return;
+          !waterList || !fertList || !nextInfo || !growthChart ||
+          !healthSummary || !recentActivity) return;
 
       if (!plants.length) {
         imageBox.textContent = 'Add plants first to use Growth Tracking.';
@@ -40,6 +43,8 @@
         waterList.innerHTML = '';
         fertList.innerHTML = '';
         growthChart.innerHTML = '';
+        healthSummary.innerHTML = '';
+        recentActivity.innerHTML = '';
         nextInfo.textContent = '';
         return;
       }
@@ -71,8 +76,12 @@
         ' actions recorded for this plant.</p>';
 
       // Tasks for this plant
+      function tracerTaskStatus(t) {
+        return (t && t.status) ? t.status : 'pending';
+      }
+
       var tasksForPlant = tasks.filter(function (t) {
-        return Number(t.plantId) === Number(plant.id);
+        return String(t.plantId) === String(plant.id);
       });
       var waterTasks = tasksForPlant.filter(function (t) {
         return /water/i.test(t.title);
@@ -80,6 +89,23 @@
       var fertTasks = tasksForPlant.filter(function (t) {
         return /(fertil|feed)/i.test(t.title);
       }).sort(function (a, b) { return a.date.localeCompare(b.date); });
+
+      var doneCount = tasksForPlant.filter(function (t) { return tracerTaskStatus(t) === 'done'; }).length;
+      var missedCount = tasksForPlant.filter(function (t) { return tracerTaskStatus(t) === 'missed'; }).length;
+      var pendingCount = tasksForPlant.filter(function (t) { return tracerTaskStatus(t) === 'pending'; }).length;
+      var trackedCount = doneCount + missedCount;
+      var adherence = trackedCount ? Math.round((doneCount / trackedCount) * 100) : 0;
+      var risk = missedCount >= 3 ? 'High' : missedCount >= 1 ? 'Medium' : 'Low';
+      var riskClass = risk === 'High' ? 'risk-high' : risk === 'Medium' ? 'risk-medium' : 'risk-low';
+
+      healthSummary.innerHTML =
+        '<div class="tracer-health-grid">' +
+          '<div class="tracer-health-card"><span>Done</span><strong>' + doneCount + '</strong></div>' +
+          '<div class="tracer-health-card"><span>Missed</span><strong>' + missedCount + '</strong></div>' +
+          '<div class="tracer-health-card"><span>Pending</span><strong>' + pendingCount + '</strong></div>' +
+          '<div class="tracer-health-card"><span>Adherence</span><strong>' + adherence + '%</strong></div>' +
+        '</div>' +
+        '<p class="tracer-risk ' + riskClass + '">Care Risk: ' + risk + '</p>';
 
       waterList.innerHTML = '';
       fertList.innerHTML = '';
@@ -89,7 +115,7 @@
       } else {
         waterTasks.forEach(function (w) {
           var li = document.createElement('li');
-          li.textContent = w.date + ' — ' + w.title;
+          li.textContent = w.date + ' — ' + w.title + ' (' + tracerTaskStatus(w).toUpperCase() + ')';
           waterList.appendChild(li);
         });
       }
@@ -99,7 +125,7 @@
       } else {
         fertTasks.forEach(function (f) {
           var li2 = document.createElement('li');
-          li2.textContent = f.date + ' — ' + f.title;
+          li2.textContent = f.date + ' — ' + f.title + ' (' + tracerTaskStatus(f).toUpperCase() + ')';
           fertList.appendChild(li2);
         });
       }
@@ -127,6 +153,20 @@
         'For ' + plant.name + ' (' + plant.type +
         '): next watering is on ' + nextWaterDate +
         ' and next fertilizer date is ' + nextFertDate + '.';
+
+      recentActivity.innerHTML = '';
+      var recentTasks = tasksForPlant.slice().sort(function (a, b) {
+        return String(b.date).localeCompare(String(a.date));
+      }).slice(0, 5);
+      if (!recentTasks.length) {
+        recentActivity.innerHTML = '<li>No recent care activity yet.</li>';
+      } else {
+        recentTasks.forEach(function (t) {
+          var li3 = document.createElement('li');
+          li3.textContent = t.date + ' — ' + t.title + ' (' + tracerTaskStatus(t).toUpperCase() + ')';
+          recentActivity.appendChild(li3);
+        });
+      }
 
       // Growth phase diagram (4 phases based on plant age)
       // Growth phase diagram (4 phases based on plant age)

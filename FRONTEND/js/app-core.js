@@ -284,6 +284,11 @@
       return docRef.id;
     }
 
+    async function updateTask(taskId, updates) {
+      if (!currentUser) throw new Error('No user logged in');
+      await db.collection('users').doc(currentUser.uid).collection('tasks').doc(taskId).update(updates);
+    }
+
     async function deleteTask(taskId) {
       if (!currentUser) throw new Error('No user logged in');
       await db.collection('users').doc(currentUser.uid).collection('tasks').doc(taskId).delete();
@@ -347,6 +352,7 @@
         'trackerSection',
         'librarySection',
         'tracerSection',
+        'taskHistorySection',
         'plantMoodSection',
         'profileSection',
         'contactSection',
@@ -385,6 +391,8 @@
         await fillTrackerPlantSelect();
         await renderTrackerTasks();
         await renderTrackerCalendar();
+      } else if (section === 'taskHistorySection') {
+        await renderTaskHistory();
       }
     }
 

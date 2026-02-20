@@ -18,9 +18,14 @@
       z-index: 120;
     }
 
-    .plant-doctor-fab{
+.plant-doctor-fab{
   right:140px;
   background:linear-gradient(135deg,#00c853,#1b5e20);
+}
+
+.task-history-fab{
+  right:200px;
+  background:linear-gradient(135deg,#26a69a,#00695c);
 }
 
 
@@ -68,6 +73,7 @@
       .tracker-layout,
       .tracer-layout,
       .profile-grid { grid-template-columns: 1fr; }
+      .tracer-health-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
       #aboutSection { padding: 0.8rem; }
 

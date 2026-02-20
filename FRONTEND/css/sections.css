@@ -253,6 +253,57 @@
       margin-bottom: 0.35rem;
     }
 
+    .tracker-task-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .task-status {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .task-status.pending {
+      background: #eceff1;
+      color: #455a64;
+    }
+
+    .task-status.done {
+      background: #dcedc8;
+      color: #33691e;
+    }
+
+    .task-status.missed {
+      background: #ffebee;
+      color: #b71c1c;
+    }
+
+    .btn-task-done {
+      border: 1px solid #81c784;
+      background: #f1f8e9;
+      color: #2e7d32;
+      border-radius: 999px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .btn-task-done:hover {
+      background: #e8f5e9;
+    }
+
     .task-water {
       background: #e3f2fd;
       border-left: 4px solid #2196f3;
@@ -266,6 +317,17 @@
     .task-other {
       background: #f5f5f5;
       border-left: 4px solid #9e9e9e;
+    }
+
+    .task-done-row {
+      border-left: 4px solid #66bb6a;
+      background: #f1f8e9;
+      opacity: 0.95;
+    }
+
+    .task-missed-row {
+      border-left: 4px solid #ef5350;
+      background: #ffebee;
     }
 
     .calendar { margin-top: 0.5rem; }
@@ -336,6 +398,62 @@
     .tracer-meta p { margin-bottom: 0.3rem; }
 
     .tracer-label { color: #81c995; }
+
+    .tracer-health-summary {
+      margin-top: 0.35rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .tracer-health-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .tracer-health-card {
+      border: 1px solid rgba(120, 255, 180, 0.2);
+      border-radius: 0.7rem;
+      background: rgba(0, 255, 140, 0.06);
+      padding: 0.45rem 0.5rem;
+      text-align: center;
+    }
+
+    .tracer-health-card span {
+      display: block;
+      font-size: 0.72rem;
+      color: #8de8b8;
+      margin-bottom: 0.2rem;
+    }
+
+    .tracer-health-card strong {
+      font-size: 1.02rem;
+      color: #c8ffe0;
+    }
+
+    .tracer-risk {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem;
+      border-radius: 999px;
+      display: inline-block;
+      margin: 0;
+    }
+
+    .tracer-risk.risk-low {
+      background: rgba(0, 200, 83, 0.22);
+      color: #b8ffd5;
+    }
+
+    .tracer-risk.risk-medium {
+      background: rgba(255, 214, 0, 0.2);
+      color: #fff4b8;
+    }
+
+    .tracer-risk.risk-high {
+      background: rgba(244, 67, 54, 0.24);
+      color: #ffd0cc;
+    }
 
     .growth-chart-title { display:flex; justify-content:space-between; align-items:center; }
 
