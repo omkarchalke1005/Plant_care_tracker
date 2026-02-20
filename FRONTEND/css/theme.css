@@ -45,11 +45,17 @@ body.dark label {
   color: #d4efe0;
 }
 
-body.dark nav a {
+body.dark .main-header nav {
+  background: linear-gradient(135deg, #10271d, #0b1d16);
+  border-color: #255c3a;
+}
+
+body.dark .main-header nav button {
   color: #c8facc;
 }
-body.dark nav a.active,
-body.dark nav a:hover {
+
+body.dark .main-header nav button.active,
+body.dark .main-header nav button:hover {
   background: #1f3d2f;
 }
 
@@ -127,12 +133,17 @@ body.dark .plant-card {
   border-color: #2e7d32 !important;
 }
 
-body.dark nav a {
+body.dark .main-header nav {
+  background: linear-gradient(135deg, #10271d, #0b1d16) !important;
+  border-color: #255c3a !important;
+}
+
+body.dark .main-header nav button {
   color: #c8facc !important;
 }
 
-body.dark nav a.active,
-body.dark nav a:hover {
+body.dark .main-header nav button.active,
+body.dark .main-header nav button:hover {
   background: #1f3d2f !important;
 }
 
@@ -227,5 +238,103 @@ body.dark .about-highlight {
 body.dark .hero-stat {
   background:#123527;
   color:#eafff2;
+}
+
+/* Our Team cards fix in dark mode */
+body.dark .team-card {
+  background:#123527 !important;
+  border-color:#2e7d32 !important;
+  box-shadow:0 8px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.dark .team-name {
+  color:#d2ffdf !important;
+}
+
+body.dark .team-role {
+  color:#a8e6c3 !important;
+}
+
+body.dark .team-card p {
+  color:#eafff2 !important;
+}
+
+/* ===== Care Tracker Dark Mode Polish ===== */
+body.dark #trackerSection .card {
+  background: linear-gradient(135deg, #0f2a1e, #0a1c15) !important;
+  border: 1px solid #2f8f4e !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(64, 180, 103, 0.2) inset !important;
+}
+
+body.dark #trackerSection .btn-primary {
+  background: linear-gradient(135deg, #43e97b, #2fb64c) !important;
+  color: #072010 !important;
+  border: 1px solid #7ef2a9 !important;
+  box-shadow: 0 10px 22px rgba(67, 233, 123, 0.35) !important;
+}
+
+body.dark #trackerSection .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(67, 233, 123, 0.45) !important;
+}
+
+body.dark #trackerSection .btn-task-done {
+  background: #d9ffe6 !important;
+  color: #0d3e1f !important;
+  border-color: #7ce5a1 !important;
+  box-shadow: 0 2px 10px rgba(124, 229, 161, 0.25) !important;
+}
+
+body.dark #trackerSection .btn-task-done:hover {
+  background: #c6ffd9 !important;
+}
+
+body.dark #trackerSection .task-list li {
+  background: linear-gradient(90deg, #174231, #16392c) !important;
+  border: 1px solid rgba(102, 255, 163, 0.2) !important;
+}
+
+body.dark #trackerSection .task-status {
+  border: 1px solid transparent;
+}
+
+body.dark #trackerSection .task-status.pending {
+  background: #2a3740 !important;
+  color: #d9e7f3 !important;
+  border-color: #4a6372 !important;
+}
+
+body.dark #trackerSection .task-status.done {
+  background: #214a32 !important;
+  color: #ccffd8 !important;
+  border-color: #3f8a62 !important;
+}
+
+body.dark #trackerSection .task-status.missed {
+  background: #5a2020 !important;
+  color: #ffd9d9 !important;
+  border-color: #a74848 !important;
+}
+
+body.dark #trackerSection .task-missed-row {
+  background: linear-gradient(90deg, #3a1a1a, #2b1313) !important;
+  border-left: 4px solid #ff6b6b !important;
+}
+
+body.dark #trackerSection .calendar-cell {
+  background: linear-gradient(135deg, #19372b, #153026) !important;
+  border: 1px solid rgba(120, 241, 168, 0.18) !important;
+}
+
+body.dark #trackerSection .calendar-cell.water-task {
+  background: linear-gradient(135deg, #1d4360, #1b3b54) !important;
+}
+
+body.dark #trackerSection .calendar-cell.fert-task {
+  background: linear-gradient(135deg, #244b33, #1e3d2a) !important;
+}
+
+body.dark #trackerSection .calendar-cell.both-task {
+  background: linear-gradient(135deg, #5f5a20, #454118) !important;
 }
 
