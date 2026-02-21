@@ -544,22 +544,22 @@
         headerName.textContent = '';
       }
 
-      await initDashboardMain();
-      await initPlantDashboard();
-
-      await initTracerDropdown();
-
-      await renderPlantLibrary();
-      await renderPlantDashboard();
-
-      await renderTracer();
-      await renderProfile();
-      await refreshHeaderStats();
-
+      await Promise.all([
+        initDashboardMain(),
+        initPlantDashboard(),
+        initTracerDropdown()
+      ]);
 
       var initialSection = getInitialSectionFromUrl();
       showAppSection(initialSection);
       await loadSectionData(initialSection);
+
+      Promise.all([
+        renderProfile(),
+        refreshHeaderStats()
+      ]).catch(function (error) {
+        console.error('Post-init refresh error:', error);
+      });
     }
 
     /* ---------- NAVIGATION ---------- */

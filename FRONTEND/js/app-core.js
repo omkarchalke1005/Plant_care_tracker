@@ -330,20 +330,68 @@
 
     /* ---------- FIREBASE STORAGE HELPERS ---------- */
     let currentUser = null;
+    const CACHE_TTL_MS = 5000;
+    let plantsCache = { uid: null, data: null, fetchedAt: 0, pending: null };
+    let tasksCache = { uid: null, data: null, fetchedAt: 0, pending: null };
+
+    function resetUserCaches() {
+      plantsCache = { uid: null, data: null, fetchedAt: 0, pending: null };
+      tasksCache = { uid: null, data: null, fetchedAt: 0, pending: null };
+    }
+
+    function invalidatePlantsCache() {
+      plantsCache.data = null;
+      plantsCache.fetchedAt = 0;
+      plantsCache.pending = null;
+    }
+
+    function invalidateTasksCache() {
+      tasksCache.data = null;
+      tasksCache.fetchedAt = 0;
+      tasksCache.pending = null;
+    }
 
     function setCurrentUser(user) {
       currentUser = user;
+      resetUserCaches();
     }
 
     function getCurrentUser() {
       return currentUser;
     }
 
-    async function getPlantsForUser() {
+    async function getPlantsForUser(options) {
       if (!currentUser) return [];
+      var uid = currentUser.uid;
+      var forceRefresh = !!(options && options.forceRefresh);
+      var now = Date.now();
+
+      if (plantsCache.uid !== uid) {
+        plantsCache = { uid: uid, data: null, fetchedAt: 0, pending: null };
+      }
+      if (!forceRefresh && plantsCache.data && (now - plantsCache.fetchedAt) < CACHE_TTL_MS) {
+        return plantsCache.data;
+      }
+      if (plantsCache.pending) {
+        return plantsCache.pending;
+      }
+
       try {
-        const snapshot = await db.collection('users').doc(currentUser.uid).collection('plants').get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        plantsCache.pending = db.collection('users').doc(uid).collection('plants').get()
+          .then(function (snapshot) {
+            var data = snapshot.docs.map(function (doc) { return { id: doc.id, ...doc.data() }; });
+            plantsCache.data = data;
+            plantsCache.fetchedAt = Date.now();
+            return data;
+          })
+          .catch(function (error) {
+            console.error('Error getting plants:', error);
+            return [];
+          })
+          .finally(function () {
+            plantsCache.pending = null;
+          });
+        return await plantsCache.pending;
       } catch (error) {
         console.error('Error getting plants:', error);
         return [];
@@ -353,29 +401,59 @@
     async function savePlant(plant) {
       if (!currentUser) throw new Error('No user logged in');
       const docRef = await db.collection('users').doc(currentUser.uid).collection('plants').add(plant);
+      invalidatePlantsCache();
       return docRef.id;
     }
 
     async function updatePlant(plantId, plant) {
       if (!currentUser) throw new Error('No user logged in');
       await db.collection('users').doc(currentUser.uid).collection('plants').doc(plantId).update(plant);
+      invalidatePlantsCache();
     }
 
-    async function deletePlantFromDB(plantId) {
+async function deletePlantFromDB(plantId) {
   if (!currentUser) throw new Error('No user logged in');
   await db.collection('users')
     .doc(currentUser.uid)
     .collection('plants')
     .doc(plantId)
     .delete();
+  invalidatePlantsCache();
 }
 
 
-    async function getTasksForUser() {
+    async function getTasksForUser(options) {
       if (!currentUser) return [];
+      var uid = currentUser.uid;
+      var forceRefresh = !!(options && options.forceRefresh);
+      var now = Date.now();
+
+      if (tasksCache.uid !== uid) {
+        tasksCache = { uid: uid, data: null, fetchedAt: 0, pending: null };
+      }
+      if (!forceRefresh && tasksCache.data && (now - tasksCache.fetchedAt) < CACHE_TTL_MS) {
+        return tasksCache.data;
+      }
+      if (tasksCache.pending) {
+        return tasksCache.pending;
+      }
+
       try {
-        const snapshot = await db.collection('users').doc(currentUser.uid).collection('tasks').get();
-        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        tasksCache.pending = db.collection('users').doc(uid).collection('tasks').get()
+          .then(function (snapshot) {
+            var data = snapshot.docs.map(function (doc) { return { id: doc.id, ...doc.data() }; });
+            tasksCache.data = data;
+            tasksCache.fetchedAt = Date.now();
+            return data;
+          })
+          .catch(function (error) {
+            console.error('Error getting tasks:', error);
+            return [];
+          })
+          .finally(function () {
+            tasksCache.pending = null;
+          });
+        return await tasksCache.pending;
       } catch (error) {
         console.error('Error getting tasks:', error);
         return [];
@@ -385,17 +463,20 @@
     async function saveTask(task) {
       if (!currentUser) throw new Error('No user logged in');
       const docRef = await db.collection('users').doc(currentUser.uid).collection('tasks').add(task);
+      invalidateTasksCache();
       return docRef.id;
     }
 
     async function updateTask(taskId, updates) {
       if (!currentUser) throw new Error('No user logged in');
       await db.collection('users').doc(currentUser.uid).collection('tasks').doc(taskId).update(updates);
+      invalidateTasksCache();
     }
 
     async function deleteTask(taskId) {
       if (!currentUser) throw new Error('No user logged in');
       await db.collection('users').doc(currentUser.uid).collection('tasks').doc(taskId).delete();
+      invalidateTasksCache();
     }
 
     function setCurrentPlantId(id) {

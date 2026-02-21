@@ -55,7 +55,7 @@
     }
 
     async function initDashboardMain() {
-      await refreshHeaderStats();
+      refreshHeaderStats();
       setupPlantCatalogUI();
 
       // Attach growth stage auto-detect events
@@ -82,79 +82,125 @@
 
       var form = document.getElementById('addPlantForm');
       if (!form) return;
-      
 
-var form = document.getElementById('addPlantForm');
-if (!form) return;
-
-form.onsubmit = async function (e) {
-  e.preventDefault();
-
-  var name = document.getElementById('plantName').value.trim();
-  var type = document.getElementById('plantType').value.trim();
-  var imageUrl = document.getElementById('plantImageUrl').value.trim();
-  var growth = document.getElementById('growthStage').value.trim();
-  var note = document.getElementById('initialNote').value.trim();
-  var fileInput = document.getElementById('plantImageFile');
-  var file = fileInput.files[0];
-
-  if (!name || !type) {
-    alert('Please enter plant name and select type.');
-    return;
-  }
-
-  var plant = {
-    name: name,
-    type: type,
-    imageUrl: imageUrl || '',
-    imageData: '',
-    growthStage: growth || 'Seedling',
-    notes: [],
-    history: [],
-    progressPhotos: [],
-    createdAt: todayStr()
-  };
-
-  if (note) {
-    plant.notes.push({ text: note, date: plant.createdAt });
-    plant.history.push({ action: 'Information note added', date: plant.createdAt });
-  }
-
-  try {
-    if (file) {
-      var reader = new FileReader();
-      reader.onload = async function (evt) {
-        plant.imageData = evt.target.result;
-        plant.progressPhotos.push({
-          date: plant.createdAt,
-          caption: 'Initial photo',
-          imageData: plant.imageData,
-          imageUrl: ''
-        });
-        await savePlant(plant);
-        alert('Plant added!');
-        form.reset();
-        await renderPlantLibrary();
-      };
-      reader.readAsDataURL(file);
-    } else {
-      if (plant.imageUrl) {
-        plant.progressPhotos.push({
-          date: plant.createdAt,
-          caption: 'Initial photo',
-          imageData: '',
-          imageUrl: plant.imageUrl
+      function readFileAsDataURL(file) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function (evt) { resolve(evt.target.result || ''); };
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
         });
       }
-      await savePlant(plant);
-      alert('Plant added!');
-      form.reset();
-      await renderPlantLibrary();
-    }
-  } catch (error) {
-    alert('Error saving plant.');
-  }
-};
+
+      function compressImageFile(file) {
+        return new Promise(function (resolve, reject) {
+          var objectUrl = URL.createObjectURL(file);
+          var img = new Image();
+          img.onload = function () {
+            try {
+              var maxSize = 1280;
+              var width = img.naturalWidth || img.width;
+              var height = img.naturalHeight || img.height;
+              var ratio = Math.min(1, maxSize / Math.max(width, height));
+              var canvas = document.createElement('canvas');
+              canvas.width = Math.max(1, Math.round(width * ratio));
+              canvas.height = Math.max(1, Math.round(height * ratio));
+              var ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+              var compressed = canvas.toDataURL('image/jpeg', 0.75);
+              URL.revokeObjectURL(objectUrl);
+              resolve(compressed);
+            } catch (e) {
+              URL.revokeObjectURL(objectUrl);
+              reject(e);
+            }
+          };
+          img.onerror = function () {
+            URL.revokeObjectURL(objectUrl);
+            reject(new Error('Image processing failed.'));
+          };
+          img.src = objectUrl;
+        });
+      }
+
+      form.onsubmit = async function (e) {
+        e.preventDefault();
+
+        var name = document.getElementById('plantName').value.trim();
+        var type = document.getElementById('plantType').value.trim();
+        var imageUrl = document.getElementById('plantImageUrl').value.trim();
+        var growth = document.getElementById('growthStage').value.trim();
+        var note = document.getElementById('initialNote').value.trim();
+        var fileInputEl = document.getElementById('plantImageFile');
+        var file = fileInputEl && fileInputEl.files ? fileInputEl.files[0] : null;
+        var submitBtn = form.querySelector('button[type="submit"]');
+        var originalBtnText = submitBtn ? submitBtn.textContent : '';
+
+        if (!name || !type) {
+          alert('Please enter plant name and select type.');
+          return;
+        }
+
+        var plant = {
+          name: name,
+          type: type,
+          imageUrl: imageUrl || '',
+          imageData: '',
+          growthStage: growth || 'Seedling',
+          notes: [],
+          history: [],
+          progressPhotos: [],
+          createdAt: todayStr()
+        };
+
+        if (note) {
+          plant.notes.push({ text: note, date: plant.createdAt });
+          plant.history.push({ action: 'Information note added', date: plant.createdAt });
+        }
+
+        try {
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adding...';
+          }
+
+          if (file) {
+            var imageData = '';
+            try {
+              imageData = await compressImageFile(file);
+            } catch (compressErr) {
+              imageData = await readFileAsDataURL(file);
+            }
+            plant.imageData = imageData;
+            plant.progressPhotos.push({
+              date: plant.createdAt,
+              caption: 'Initial photo',
+              imageData: imageData,
+              imageUrl: ''
+            });
+          } else if (plant.imageUrl) {
+            plant.progressPhotos.push({
+              date: plant.createdAt,
+              caption: 'Initial photo',
+              imageData: '',
+              imageUrl: plant.imageUrl
+            });
+          }
+
+          await savePlant(plant);
+          await Promise.all([renderPlantLibrary(), refreshHeaderStats()]);
+          form.reset();
+          alert('Plant added!');
+        } catch (error) {
+          console.error('Error saving plant:', error);
+          alert('Error saving plant.');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalBtnText || 'Add Plant';
+          }
+        }
+      };
 
     }
 

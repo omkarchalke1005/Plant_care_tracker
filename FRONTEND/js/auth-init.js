@@ -1,4 +1,4 @@
-﻿    /* ---------- AUTH FORMS & INITIALISATION ---------- */
+    /* ---------- AUTH FORMS & INITIALISATION ---------- */
     document.addEventListener('DOMContentLoaded', function () {
       initHomeSlider();
       initNav();
@@ -33,10 +33,6 @@
           initAppForUser(user);
         } else {
           var params = new URLSearchParams(window.location.search);
-          var section = params.get('section');
-          if (section && typeof clearUrlParam === 'function') {
-            clearUrlParam('section');
-          }
           var mode = params.get('auth');
           if (mode === 'register') openAuth('register');
           else if (mode === 'login') openAuth('login');
@@ -102,6 +98,8 @@
 
           var email = emailInput ? emailInput.value.trim() : '';
           var password = passwordInput ? passwordInput.value : '';
+          var submitBtn = loginForm.querySelector('button[type="submit"]');
+          var originalBtnText = submitBtn ? submitBtn.textContent : '';
 
           if (!email || !password) {
             if (msg) {
@@ -112,6 +110,10 @@
           }
 
           try {
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.textContent = 'Logging in...';
+            }
             await auth.signInWithEmailAndPassword(email, password);
             if (msg) {
               msg.textContent = '';
@@ -121,6 +123,11 @@
             if (msg) {
               msg.textContent = 'Invalid email or password.';
               msg.style.color = '#c62828';
+            }
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalBtnText || 'Login';
             }
           }
         });
@@ -141,6 +148,8 @@
           var phone = pInput ? pInput.value.trim() : '';
           var email = eInput ? eInput.value.trim() : '';
           var password = pwInput ? pwInput.value : '';
+          var submitBtn = registerForm.querySelector('button[type="submit"]');
+          var originalBtnText = submitBtn ? submitBtn.textContent : '';
 
           if (!username || !name || !phone || !email || !password) {
             if (msg) {
@@ -151,6 +160,10 @@
           }
 
           try {
+            if (submitBtn) {
+              submitBtn.disabled = true;
+              submitBtn.textContent = 'Registering...';
+            }
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             const user = userCredential.user;
 
@@ -171,6 +184,11 @@
             if (msg) {
               msg.textContent = 'Registration failed. Email may already be in use.';
               msg.style.color = '#c62828';
+            }
+          } finally {
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = originalBtnText || 'Register';
             }
           }
         });
