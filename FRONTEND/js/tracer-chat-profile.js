@@ -28,6 +28,7 @@
       var growthChart = document.getElementById('growthChart');
       var trendMeta = document.getElementById('tracerTrendMeta');
       var healthSummary = document.getElementById('tracerHealthSummary');
+      var stagePill = document.getElementById('tracerStagePill');
 
       if (!select || !imageBox || !headerBox || !metaBox ||
           !growthChart || !trendMeta || !healthSummary) return;
@@ -39,6 +40,7 @@
         growthChart.innerHTML = '';
         trendMeta.textContent = '';
         healthSummary.innerHTML = '';
+        if (stagePill) stagePill.textContent = 'Stage insight';
         return;
       }
 
@@ -126,7 +128,7 @@
           '<div class="tracer-health-card metric-health"><span>Health score</span><strong>' + latestHealth + '/100</strong></div>' +
         '</div>' +
         '<p class="tracer-risk ' + (missedPct >= 40 ? 'risk-high' : missedPct >= 20 ? 'risk-medium' : 'risk-low') + '">' +
-          'User Behaviour Analytics: ' + totalCount + ' tracked tasks' +
+          'Care Rhythm: ' + totalCount + ' tracked tasks' +
         '</p>';
 
       growthChart.innerHTML = '';
@@ -135,6 +137,9 @@
       var created = plant.createdAt ? new Date(plant.createdAt) : new Date();
       var ageDays = Math.max(0, daysBetween(formatDate(created), todayStr()));
       var plantStage = (plant.growthStage || '').toString().toLowerCase().trim();
+      if (stagePill) {
+        stagePill.textContent = plant.growthStage || 'Unknown stage';
+      }
 
       for (var k = 0; k < phases.length; k++) {
         var wrapper = document.createElement('div');

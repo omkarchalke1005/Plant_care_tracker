@@ -74,6 +74,9 @@
       .tracer-layout,
       .profile-grid { grid-template-columns: 1fr; }
       .tracer-health-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .growth-chart-title { align-items: flex-start; flex-direction: column; gap: 0.32rem; }
+      .tracer-kicker { white-space: normal; }
+      .tracer-stage-header { flex-wrap: wrap; }
 
       #aboutSection { padding: 0.8rem; }
 
