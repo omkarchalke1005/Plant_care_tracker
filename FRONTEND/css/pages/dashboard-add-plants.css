@@ -1,0 +1,155 @@
+    /* DASHBOARD / ADD PLANTS */
+    .home-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 1.3rem;
+    }
+
+    .hero-text h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-text p {
+      color: #4f6f52;
+      margin-bottom: 1rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .hero-stat {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 0.9rem;
+      background: #e8f5e9;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .hero-image {
+      border-radius: 1.1rem;
+      background: linear-gradient(135deg, #a5d6a7, #e8f5e9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-box {
+      background: #f8fff8;
+      border-radius: 0.9rem;
+      padding: 1rem;
+      border: 1px solid #cde9ce;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    .info-box h3 { margin-bottom: 0.4rem; }
+
+    /* Attractive Add Plant card */
+    .add-plant-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #c5e3cb;
+      background:
+        radial-gradient(circle at 12% -28%, rgba(147, 218, 166, 0.4), rgba(255, 255, 255, 0)),
+        linear-gradient(145deg, #f9fffa, #edf8f0 55%, #f7fdf8);
+      box-shadow: 0 18px 34px rgba(30, 95, 48, 0.14);
+      animation: addPlantCardIn 0.45s ease-out;
+    }
+
+    .add-plant-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      right: -85px;
+      top: -120px;
+      background: radial-gradient(circle, rgba(105, 199, 128, 0.3), rgba(105, 199, 128, 0));
+      pointer-events: none;
+    }
+
+    .add-plant-card h2 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: clamp(1.5rem, 1.3rem + 0.7vw, 1.95rem);
+      color: #123c27;
+    }
+    .add-plant-card h2::before {
+      content: "??";
+      font-size: 1.05rem;
+    }
+
+    .add-plant-card .card-subtitle {
+      color: #476b55;
+      line-height: 1.52;
+      max-width: 66ch;
+    }
+
+    #addPlantForm {
+      margin-top: 0.4rem;
+    }
+
+    #addPlantForm .grid > div {
+      border: 1px solid #cce6d1;
+      border-radius: 1rem;
+      padding: 0.85rem 0.9rem 0.45rem;
+      background: linear-gradient(150deg, rgba(255, 255, 255, 0.9), rgba(236, 248, 239, 0.88));
+      box-shadow: 0 10px 22px rgba(26, 84, 43, 0.08);
+    }
+
+    #addPlantForm .form-group label {
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      color: #1f4f33;
+    }
+
+    #addPlantForm input,
+    #addPlantForm select,
+    #addPlantForm textarea {
+      border-radius: 0.88rem;
+      border: 1px solid #b7d8be;
+      background: linear-gradient(180deg, #ffffff, #f4fbf6);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+      min-height: 50px;
+    }
+
+    #addPlantForm textarea {
+      min-height: 124px;
+      resize: vertical;
+    }
+
+    #addPlantForm input:focus,
+    #addPlantForm select:focus,
+    #addPlantForm textarea:focus {
+      border-color: #4ba363;
+      box-shadow: 0 0 0 3px rgba(75, 163, 99, 0.18);
+      transform: translateY(-1px);
+    }
+
+    #addPlantForm .btn-primary {
+      padding: 0.78rem 1.38rem;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #34a349, #236f36);
+      box-shadow: 0 10px 22px rgba(35, 111, 54, 0.36);
+    }
+
+    #addPlantForm .btn-primary:hover {
+      box-shadow: 0 14px 26px rgba(35, 111, 54, 0.46);
+    }
+
+

@@ -1,0 +1,418 @@
+    /* CARE TRACKER (Plant Tracker page) */
+    .tracker-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.2fr);
+      gap: 1.2rem;
+    }
+
+    #trackerSection .card {
+      position: relative;
+      border: 1px solid #d6ebda;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(166, 230, 183, 0.3), rgba(255, 255, 255, 0)),
+        linear-gradient(145deg, #f8fff9, #eef7f0 48%, #f7fbf8);
+      box-shadow: 0 18px 36px rgba(21, 70, 37, 0.12);
+      overflow: hidden;
+      animation: trackerSectionIn 0.48s ease-out;
+    }
+
+    #trackerSection .card::before {
+      content: "";
+      position: absolute;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      top: -82px;
+      right: -68px;
+      background: radial-gradient(circle, rgba(107, 199, 126, 0.25), rgba(107, 199, 126, 0));
+      pointer-events: none;
+    }
+
+    #trackerSection h2 {
+      font-size: clamp(1.65rem, 1.5rem + 0.7vw, 2.15rem);
+      letter-spacing: 0.02em;
+      color: #113b25;
+      margin-bottom: 0.35rem;
+    }
+
+    #trackerSection .card-subtitle {
+      max-width: 72ch;
+      line-height: 1.55;
+      color: #486a54;
+      margin-bottom: 1.2rem;
+    }
+
+    #trackerSection h3 {
+      font-size: 1.5rem;
+      letter-spacing: 0.01em;
+      color: #164528;
+      margin-bottom: 0.65rem;
+    }
+
+    #trackerSection .form-group label {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #274f37;
+      margin-bottom: 0.42rem;
+      letter-spacing: 0.01em;
+    }
+
+    #trackerSection .form-group input,
+    #trackerSection .form-group select {
+      border-radius: 0.9rem;
+      border: 1px solid #b7d8be;
+      background: linear-gradient(180deg, #ffffff, #f6fbf8);
+      min-height: 50px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    #trackerSection .form-group input:focus,
+    #trackerSection .form-group select:focus {
+      border-color: #48a362;
+      box-shadow: 0 0 0 3px rgba(72, 163, 98, 0.2);
+      transform: translateY(-1px);
+    }
+
+    #trackerSection #trackerAddBtn {
+      margin-top: 0.1rem;
+      padding: 0.75rem 1.35rem;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #38a34d, #247136);
+      box-shadow: 0 10px 20px rgba(36, 113, 54, 0.35);
+    }
+
+    #trackerSection #trackerAddBtn:hover {
+      box-shadow: 0 14px 24px rgba(36, 113, 54, 0.42);
+    }
+
+    .smart-planner {
+      margin-top: 0.85rem;
+      border: 1px solid #c6e2cd;
+      border-radius: 1rem;
+      padding: 0.85rem 0.9rem;
+      background:
+        radial-gradient(circle at 96% -30%, rgba(129, 212, 148, 0.35), rgba(255, 255, 255, 0)),
+        linear-gradient(150deg, #f9fffa, #ecf8ef 60%, #f7fcf8);
+      box-shadow: 0 10px 20px rgba(20, 82, 40, 0.09);
+    }
+
+    .smart-planner h3 {
+      font-size: 1.16rem !important;
+      margin-bottom: 0.35rem !important;
+      color: #174b2c !important;
+    }
+
+    .smart-planner .small-text {
+      margin-top: 0;
+      margin-bottom: 0.55rem;
+      color: #3f6a4f;
+      font-size: 0.84rem;
+    }
+
+    .smart-planner-actions {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      margin-top: 0.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .smart-planner-actions .btn-secondary,
+    .smart-planner-actions .btn-primary {
+      min-height: 40px;
+      padding: 0.5rem 0.9rem;
+      font-size: 0.86rem;
+    }
+
+    .smart-plan-list {
+      margin-top: 0.45rem;
+      max-height: 170px;
+      overflow-y: auto;
+      border-radius: 0.8rem;
+      border: 1px dashed #c3dcc8;
+      padding: 0.35rem 0.55rem;
+      background: rgba(255, 255, 255, 0.64);
+    }
+
+    .smart-plan-list li {
+      font-size: 0.82rem;
+      border-bottom-style: solid;
+      border-bottom-color: #e2ece3;
+      padding: 0.32rem 0.15rem;
+    }
+
+    .smart-plan-list li:last-child {
+      border-bottom: none;
+    }
+
+    .task-list {
+      list-style: none;
+      margin-top: 0.4rem;
+    }
+
+    .task-list li {
+      position: relative;
+      padding: 0.7rem 0.8rem;
+      border-radius: 0.95rem;
+      border: 1px solid rgba(23, 92, 45, 0.16);
+      background: linear-gradient(90deg, #f8fffa, #ecf8ef);
+      box-shadow: 0 8px 18px rgba(26, 80, 43, 0.08);
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      transition: transform 0.18s ease, box-shadow 0.2s ease;
+      animation: trackerItemIn 0.35s ease;
+    }
+
+    .task-list li:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px rgba(26, 80, 43, 0.13);
+    }
+
+    .tracker-task-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .task-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.48rem;
+    }
+
+    .task-status {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      padding: 0.2rem 0.56rem;
+      border-radius: 999px;
+      font-weight: 700;
+      border: 1px solid transparent;
+    }
+
+    .task-status.pending {
+      background: #edf2f5;
+      color: #35505d;
+      border-color: #d4e0e8;
+    }
+
+    .task-status.done {
+      background: #d8f1dc;
+      color: #1f6a2b;
+      border-color: #bde0c3;
+    }
+
+    .task-status.missed {
+      background: #ffe2e6;
+      color: #ab1c2a;
+      border-color: #ffc4cb;
+    }
+
+    .btn-task-done {
+      border: 1px solid #76c285;
+      background: linear-gradient(135deg, #e8f9ec, #d7f0dc);
+      color: #1f6c31;
+      border-radius: 999px;
+      padding: 0.28rem 0.68rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 4px 8px rgba(31, 108, 49, 0.15);
+      transition: transform 0.18s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .btn-task-done:hover {
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, #dff5e5, #cde8d4);
+      box-shadow: 0 8px 12px rgba(31, 108, 49, 0.2);
+    }
+
+    .task-water {
+      background: linear-gradient(90deg, #e8f5ff, #f3f9ff);
+      border-left: 4px solid #3d9be4;
+    }
+
+    .task-fert {
+      background: linear-gradient(90deg, #eaf8eb, #f5fcf5);
+      border-left: 4px solid #49a64f;
+    }
+
+    .task-other {
+      background: linear-gradient(90deg, #f6f4fb, #fcfbff);
+      border-left: 4px solid #8e87ba;
+    }
+
+    .task-done-row {
+      border-left: 4px solid #66bb6a;
+      background: linear-gradient(90deg, #ebf8ed, #f7fcf8);
+      opacity: 0.95;
+    }
+
+    .task-missed-row {
+      border-left: 4px solid #ef5350;
+      background: linear-gradient(90deg, #ffe8eb, #fff5f6);
+    }
+
+    .calendar { margin-top: 0.5rem; }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.4rem;
+    }
+
+    .calendar-nav-btn {
+      border: 1px solid #b7d8be;
+      background: linear-gradient(180deg, #ffffff, #f2f9f4);
+      color: #1d4f31;
+      border-radius: 999px;
+      width: 34px;
+      height: 34px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(24, 78, 40, 0.1);
+      transition: transform 0.15s ease, box-shadow 0.18s ease;
+    }
+
+    .calendar-nav-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 14px rgba(24, 78, 40, 0.14);
+    }
+
+    #trackerCalMonthLabel {
+      color: #1d4f31;
+      font-size: 0.96rem;
+      letter-spacing: 0.01em;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.4rem;
+    }
+
+    .calendar-cell {
+      background: linear-gradient(145deg, #f8fbf8, #edf5ef);
+      border-radius: 0.72rem;
+      border: 1px solid #d7e7da;
+      padding: 0.35rem 0.4rem;
+      min-height: 52px;
+      font-size: 0.8rem;
+      text-align: right;
+      box-shadow: 0 4px 10px rgba(24, 78, 40, 0.05);
+      transition: transform 0.15s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .calendar-cell:hover {
+      transform: translateY(-1px);
+      border-color: #b9d8bf;
+      box-shadow: 0 7px 14px rgba(24, 78, 40, 0.12);
+    }
+
+    .calendar-cell span { font-weight: 600; }
+
+    .calendar-cell.water-task {
+      background: linear-gradient(145deg, #d9ecff, #c3e1ff);
+      border-color: #9ecaf4;
+    }
+
+    .calendar-cell.fert-task {
+      background: linear-gradient(145deg, #ddf4e0, #caeacb);
+      border-color: #abddb0;
+    }
+
+    .calendar-cell.both-task {
+      background: linear-gradient(145deg, #fff0c9, #ffe7b0);
+      border-color: #e9cd85;
+    }
+
+    .calendar-cell.cut-task {
+      background: linear-gradient(145deg, #ffe4ef, #ffd2e5);
+      border-color: #f0adc8;
+    }
+
+    @keyframes trackerSectionIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes trackerItemIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      #trackerSection h2 {
+        font-size: 1.55rem;
+      }
+
+      #trackerSection h3 {
+        font-size: 1.34rem;
+      }
+
+      .task-list li {
+        padding: 0.62rem 0.7rem;
+      }
+
+      .tracker-task-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .task-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .calendar-cell {
+        min-height: 48px;
+      }
+
+      #addPlantForm .grid > div {
+        padding: 0.78rem 0.78rem 0.42rem;
+      }
+
+      #contactSection {
+        padding: 0.86rem;
+      }
+
+      #contactSection .card {
+        grid-template-columns: 1fr;
+        gap: 0.82rem;
+      }
+
+      #plantLibrary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.82rem;
+      }
+
+      .plant-card img {
+        height: 168px;
+      }
+
+      .plant-name {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      #plantLibrary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
