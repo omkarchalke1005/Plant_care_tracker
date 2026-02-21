@@ -466,10 +466,26 @@
       ];
     }
 
+    function clearUrlParam(paramName) {
+      try {
+        var url = new URL(window.location.href);
+        if (!url.searchParams.has(paramName)) return;
+        url.searchParams.delete(paramName);
+        var next =
+          url.pathname +
+          (url.searchParams.toString() ? '?' + url.searchParams.toString() : '') +
+          url.hash;
+        window.history.replaceState({}, '', next);
+      } catch (e) {
+        console.log('URL cleanup error', e);
+      }
+    }
+
     function getInitialSectionFromUrl() {
       try {
         var params = new URLSearchParams(window.location.search);
         var section = params.get('section');
+        if (section) clearUrlParam('section');
         if (section && getAllowedSections().indexOf(section) !== -1) {
           return section;
         }

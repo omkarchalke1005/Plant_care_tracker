@@ -378,22 +378,35 @@ body.dark #trackerSection .task-missed-row {
 body.dark #trackerSection .calendar-cell {
   background: linear-gradient(135deg, #19372b, #153026) !important;
   border: 1px solid rgba(120, 241, 168, 0.18) !important;
+  color: #dff8ea !important;
 }
 
 body.dark #trackerSection .calendar-cell.water-task {
-  background: linear-gradient(135deg, #1d4360, #1b3b54) !important;
+  background: linear-gradient(135deg, #2b6fa0, #235c85) !important;
+  border-color: #6fb8eb !important;
+  box-shadow: inset 0 0 0 1px rgba(190, 230, 255, 0.22) !important;
 }
 
 body.dark #trackerSection .calendar-cell.fert-task {
-  background: linear-gradient(135deg, #244b33, #1e3d2a) !important;
+  background: linear-gradient(135deg, #2e6a3f, #245233) !important;
+  border-color: #6ac589 !important;
+  box-shadow: inset 0 0 0 1px rgba(198, 255, 220, 0.2) !important;
 }
 
 body.dark #trackerSection .calendar-cell.both-task {
-  background: linear-gradient(135deg, #5f5a20, #454118) !important;
+  background: linear-gradient(135deg, #8a7630, #6b5c25) !important;
+  border-color: #e2c565 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 241, 196, 0.2) !important;
 }
 
 body.dark #trackerSection .calendar-cell.cut-task {
-  background: linear-gradient(135deg, #5d2a45, #482039) !important;
+  background: linear-gradient(135deg, #87406a, #6b3153) !important;
+  border-color: #df8fba !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 216, 236, 0.2) !important;
+}
+
+body.dark #trackerSection .calendar-cell span {
+  color: #effff6 !important;
 }
 
 body.dark #trackerSection .smart-planner {
@@ -417,6 +430,51 @@ body.dark #trackerSection .calendar-nav-btn {
 
 body.dark #trackerSection #trackerCalMonthLabel {
   color: #c9ffde !important;
+}
+
+body.dark #taskHistorySection .card {
+  background: linear-gradient(145deg, #11271d, #0d1f18) !important;
+  border: 1px solid #2f7f4c !important;
+}
+
+body.dark #taskHistorySection .info-box {
+  background: linear-gradient(135deg, #183628, #142f23) !important;
+  border: 1px solid #3b8f5d !important;
+  color: #e3ffee !important;
+}
+
+body.dark #taskHistorySection .item-list li {
+  background: linear-gradient(90deg, #163828, #132f23) !important;
+  border: 1px solid rgba(118, 226, 164, 0.24) !important;
+  color: #e7fff2 !important;
+}
+
+body.dark #taskHistorySection .task-done-row {
+  border-left: 4px solid #63d38b !important;
+  background: linear-gradient(90deg, #1a4430, #153726) !important;
+}
+
+body.dark #taskHistorySection .task-missed-row {
+  border-left: 4px solid #ff7f8a !important;
+  background: linear-gradient(90deg, #4a2027, #38171d) !important;
+}
+
+body.dark #taskHistorySection .task-status.pending {
+  background: #2d3d48 !important;
+  color: #e2eef9 !important;
+  border-color: #58778e !important;
+}
+
+body.dark #taskHistorySection .task-status.done {
+  background: #24543a !important;
+  color: #d7ffe6 !important;
+  border-color: #52a77a !important;
+}
+
+body.dark #taskHistorySection .task-status.missed {
+  background: #682a33 !important;
+  color: #ffe1e6 !important;
+  border-color: #bf5f6f !important;
 }
 
 /* ===== Plant Gallery Dark Aggressive Style ===== */
@@ -560,6 +618,11 @@ body.dark select {
   color: #e6edf3 !important;
 }
 
+body.dark select option {
+  background: #f2f4f7 !important;
+  color: #0f1722 !important;
+}
+
 body.dark input::placeholder,
 body.dark textarea::placeholder {
   color: #9fb2c6 !important;
@@ -600,4 +663,75 @@ body.dark h2,
 body.dark h3,
 body.dark h4 {
   color: #e8f1fb !important;
+}
+
+body.dark #plantInfo .badge {
+  background: #dce6de !important;
+  color: #10231a !important;
+  border: 1px solid #b8cbbd !important;
+}
+
+body.dark .pct-alert-card {
+  background: linear-gradient(145deg, #15241e, #102019) !important;
+  border-color: #35654f !important;
+  color: #d9f6e7 !important;
+}
+
+body.dark .pct-alert-title {
+  color: #dfffee !important;
+}
+
+body.dark .pct-alert-msg {
+  color: #c4ecd8 !important;
+}
+
+body.dark .preauth-landing {
+  background:
+    radial-gradient(circle at 10% -5%, rgba(71, 143, 196, 0.2), rgba(0, 0, 0, 0)),
+    radial-gradient(circle at 92% 98%, rgba(91, 160, 124, 0.2), rgba(0, 0, 0, 0)),
+    linear-gradient(140deg, #0e1620, #0c1420 58%, #0f1824) !important;
+}
+
+body.dark .preauth-logo {
+  color: #e6f0fc !important;
+}
+
+body.dark .preauth-hero {
+  border-color: #2f4661 !important;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(69, 148, 211, 0.2), rgba(0, 0, 0, 0)),
+    linear-gradient(145deg, rgba(19, 31, 45, 0.94), rgba(16, 27, 40, 0.94)) !important;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.dark .preauth-tag {
+  background: #1a2e42 !important;
+  border-color: #395879 !important;
+  color: #d5e8ff !important;
+}
+
+body.dark .preauth-hero h1 {
+  color: #e8f1fb !important;
+}
+
+body.dark .preauth-hero p,
+body.dark .preauth-card li {
+  color: #c7d8ea !important;
+}
+
+body.dark .preauth-card {
+  border-color: #2f4661 !important;
+  background: linear-gradient(145deg, rgba(20, 32, 47, 0.94), rgba(17, 29, 43, 0.94)) !important;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.38) !important;
+}
+
+body.dark .preauth-card h3 {
+  color: #deecfb !important;
+}
+
+body.dark .auth-wrapper {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(64, 132, 194, 0.2), rgba(0, 0, 0, 0)),
+    radial-gradient(circle at 88% 90%, rgba(82, 156, 118, 0.2), rgba(0, 0, 0, 0)),
+    linear-gradient(140deg, #0e1620, #0c1420 58%, #0f1824) !important;
 }

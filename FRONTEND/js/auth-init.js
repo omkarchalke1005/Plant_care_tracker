@@ -33,6 +33,10 @@
           initAppForUser(user);
         } else {
           var params = new URLSearchParams(window.location.search);
+          var section = params.get('section');
+          if (section && typeof clearUrlParam === 'function') {
+            clearUrlParam('section');
+          }
           var mode = params.get('auth');
           if (mode === 'register') openAuth('register');
           else if (mode === 'login') openAuth('login');
