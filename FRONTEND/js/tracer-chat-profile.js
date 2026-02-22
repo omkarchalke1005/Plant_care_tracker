@@ -550,7 +550,12 @@
         initTracerDropdown()
       ]);
 
-      var initialSection = getInitialSectionFromUrl();
+      var params = new URLSearchParams(window.location.search);
+      var initialSection = params.get('auth') === 'login' ? 'homeSection' : getInitialSectionFromUrl();
+      if (params.get('auth') === 'login') {
+        clearUrlParam('auth');
+        clearUrlParam('section');
+      }
       showAppSection(initialSection);
       await loadSectionData(initialSection);
 

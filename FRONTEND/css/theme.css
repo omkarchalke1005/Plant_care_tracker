@@ -735,3 +735,62 @@ body.dark .auth-wrapper {
     radial-gradient(circle at 88% 90%, rgba(82, 156, 118, 0.2), rgba(0, 0, 0, 0)),
     linear-gradient(140deg, #0e1620, #0c1420 58%, #0f1824) !important;
 }
+
+/* About + Timeline dark polish */
+body.dark .about-hero,
+body.dark .about-stat-card,
+body.dark .about-highlight,
+body.dark .about-impact-item {
+  background: linear-gradient(145deg, rgba(19, 32, 46, 0.92), rgba(14, 25, 36, 0.92)) !important;
+  border-color: #2f4763 !important;
+  color: #d7e6f7 !important;
+}
+
+body.dark .about-kicker,
+body.dark .about-pill,
+body.dark .team-avatar {
+  background: linear-gradient(145deg, #1a2f46, #193646) !important;
+  border-color: #37597a !important;
+  color: #d7e8fb !important;
+}
+
+body.dark .about-stat-card span,
+body.dark .about-impact-item span,
+body.dark .about-highlight p,
+body.dark .team-role {
+  color: #b8ccdf !important;
+}
+
+body.dark .timeline-hub,
+body.dark .timeline-upload-panel,
+body.dark .timeline-compare-panel,
+body.dark .timeline-stat-card,
+body.dark .timeline-compare-card {
+  background: linear-gradient(145deg, rgba(18, 31, 45, 0.95), rgba(13, 24, 36, 0.95)) !important;
+  border-color: #2f4763 !important;
+  color: #d5e7fb !important;
+}
+
+body.dark .timeline-item {
+  background: linear-gradient(145deg, #182a3d, #132336) !important;
+  border-color: #355272 !important;
+}
+
+body.dark .timeline-date,
+body.dark .timeline-meta,
+body.dark .timeline-compare-caption {
+  color: #d3e6fa !important;
+}
+
+body.dark .timeline-day-pill {
+  background: #1d3954 !important;
+  border-color: #3f648a !important;
+  color: #d5e9ff !important;
+}
+
+body.dark .timeline-filter-row .btn-secondary,
+body.dark .timeline-delete-btn {
+  background: #1a3148 !important;
+  border-color: #46688b !important;
+  color: #d7e8fb !important;
+}

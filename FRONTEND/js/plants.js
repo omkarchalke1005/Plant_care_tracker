@@ -434,6 +434,155 @@
     }
 
     var growthTimelineInitDone = false;
+    var timelineViewState = {
+      search: '',
+      sort: 'newest',
+      from: '',
+      to: ''
+    };
+
+    function timelineToEpoch(dateStr) {
+      if (!dateStr) return 0;
+      var t = new Date(dateStr + 'T00:00:00').getTime();
+      return Number.isNaN(t) ? 0 : t;
+    }
+
+    function setTimelineStats(filteredPhotos) {
+      var totalEl = document.getElementById('timelineStatsTotal');
+      var firstEl = document.getElementById('timelineStatsFirst');
+      var latestEl = document.getElementById('timelineStatsLatest');
+      var daysEl = document.getElementById('timelineStatsDays');
+
+      if (!totalEl || !firstEl || !latestEl || !daysEl) return;
+      if (!filteredPhotos.length) {
+        totalEl.textContent = '0';
+        firstEl.textContent = '-';
+        latestEl.textContent = '-';
+        daysEl.textContent = '0 days';
+        return;
+      }
+
+      var minDate = filteredPhotos[0].entry.date || '';
+      var maxDate = filteredPhotos[0].entry.date || '';
+      filteredPhotos.forEach(function (item) {
+        var d = item.entry.date || '';
+        if (d && (!minDate || d < minDate)) minDate = d;
+        if (d && (!maxDate || d > maxDate)) maxDate = d;
+      });
+
+      var daySpan = 0;
+      if (minDate && maxDate) {
+        daySpan = Math.max(0, Math.round((timelineToEpoch(maxDate) - timelineToEpoch(minDate)) / 86400000));
+      }
+
+      totalEl.textContent = String(filteredPhotos.length);
+      firstEl.textContent = minDate || '-';
+      latestEl.textContent = maxDate || '-';
+      daysEl.textContent = String(daySpan) + ' days';
+    }
+
+    function populateCompareSelectors(filteredPhotos) {
+      var oldSel = document.getElementById('timelineCompareOldMain');
+      var newSel = document.getElementById('timelineCompareNewMain');
+      if (!oldSel || !newSel) return;
+
+      var prevOld = oldSel.value;
+      var prevNew = newSel.value;
+      oldSel.innerHTML = '';
+      newSel.innerHTML = '';
+
+      filteredPhotos.forEach(function (item) {
+        var label = (item.entry.date || '-') + ' - ' + (item.entry.caption || 'Progress update');
+        var oldOpt = document.createElement('option');
+        oldOpt.value = String(item.idx);
+        oldOpt.textContent = label;
+        oldSel.appendChild(oldOpt);
+
+        var newOpt = document.createElement('option');
+        newOpt.value = String(item.idx);
+        newOpt.textContent = label;
+        newSel.appendChild(newOpt);
+      });
+
+      if (!filteredPhotos.length) return;
+
+      var earliest = filteredPhotos[0];
+      var latest = filteredPhotos[0];
+      filteredPhotos.forEach(function (item) {
+        var dateVal = item.entry.date || '';
+        var earliestDate = earliest.entry.date || '';
+        var latestDate = latest.entry.date || '';
+        if (dateVal && (!earliestDate || dateVal < earliestDate)) earliest = item;
+        if (dateVal && (!latestDate || dateVal > latestDate)) latest = item;
+      });
+
+      var firstIdx = String(earliest.idx);
+      var lastIdx = String(latest.idx);
+
+      oldSel.value = filteredPhotos.some(function (item) { return String(item.idx) === prevOld; }) ? prevOld : firstIdx;
+      newSel.value = filteredPhotos.some(function (item) { return String(item.idx) === prevNew; }) ? prevNew : lastIdx;
+    }
+
+    function renderTimelineCompare(filteredPhotos, plantName) {
+      var card = document.getElementById('timelineCompareCardMain');
+      var oldSel = document.getElementById('timelineCompareOldMain');
+      var newSel = document.getElementById('timelineCompareNewMain');
+      var oldImg = document.getElementById('timelineCompareOldImgMain');
+      var newImg = document.getElementById('timelineCompareNewImgMain');
+      var oldLabel = document.getElementById('timelineCompareOldLabelMain');
+      var newLabel = document.getElementById('timelineCompareNewLabelMain');
+      var caption = document.getElementById('timelineCompareCaptionMain');
+      if (!card || !oldSel || !newSel || !oldImg || !newImg || !oldLabel || !newLabel || !caption) return;
+
+      if (filteredPhotos.length < 2) {
+        card.classList.add('timeline-compare-empty');
+        caption.textContent = 'Add at least two timeline photos to compare growth.';
+        oldImg.removeAttribute('src');
+        newImg.removeAttribute('src');
+        oldLabel.textContent = 'Earlier';
+        newLabel.textContent = 'Latest';
+        return;
+      }
+
+      var oldIdx = oldSel.value;
+      var newIdx = newSel.value;
+      var oldItem = filteredPhotos.find(function (item) { return String(item.idx) === String(oldIdx); });
+      var newItem = filteredPhotos.find(function (item) { return String(item.idx) === String(newIdx); });
+      if (!oldItem || !newItem) return;
+
+      var oldSrc = oldItem.entry.imageData || oldItem.entry.imageUrl || '';
+      var newSrc = newItem.entry.imageData || newItem.entry.imageUrl || '';
+
+      oldImg.src = oldSrc;
+      newImg.src = newSrc;
+      oldImg.alt = plantName + ' earlier stage';
+      newImg.alt = plantName + ' latest stage';
+      oldLabel.textContent = 'Earlier: ' + (oldItem.entry.date || '-');
+      newLabel.textContent = 'Latest: ' + (newItem.entry.date || '-');
+
+      var diffDays = Math.max(0, Math.round((timelineToEpoch(newItem.entry.date) - timelineToEpoch(oldItem.entry.date)) / 86400000));
+      caption.textContent = 'Growth comparison span: ' + String(diffDays) + ' day(s).';
+      card.classList.remove('timeline-compare-empty');
+    }
+
+    async function deleteTimelinePhoto(plant, photoIdx) {
+      if (!plant) return;
+      if (!confirm('Delete this timeline photo?')) return;
+
+      var existing = plant.progressPhotos || [];
+      if (photoIdx < 0 || photoIdx >= existing.length) return;
+      var nextPhotos = existing.filter(function (_entry, idx) { return idx !== photoIdx; });
+
+      var updatedPlant = {
+        ...plant,
+        progressPhotos: nextPhotos,
+        history: [...(plant.history || []), { action: 'Timeline photo removed', date: todayStr() }]
+      };
+
+      await updatePlant(plant.id, updatedPlant);
+      await renderGrowthTimelineSection();
+      await renderTracer();
+    }
 
     async function renderGrowthTimelineSection() {
       var select = document.getElementById('timelinePlantSelectMain');
@@ -444,6 +593,9 @@
       if (!plants.length) {
         select.innerHTML = '<option value="">No plants found</option>';
         gallery.innerHTML = '<p class="small-text">Add plants first to start a visual growth timeline.</p>';
+        setTimelineStats([]);
+        populateCompareSelectors([]);
+        renderTimelineCompare([], '');
         return;
       }
 
@@ -460,19 +612,55 @@
       var plant = plants.find(function (p) { return String(p.id) === String(select.value); }) || plants[0];
       if (!plant) return;
 
-      var photos = (plant.progressPhotos || []).slice().sort(function (a, b) {
-        return String(b.date || '').localeCompare(String(a.date || ''));
+      var mapped = (plant.progressPhotos || []).map(function (entry, idx) {
+        return { entry: entry, idx: idx };
       });
 
-      if (!photos.length) {
+      var searchText = (timelineViewState.search || '').toLowerCase();
+      var filtered = mapped.filter(function (item) {
+        var date = item.entry.date || '';
+        var caption = (item.entry.caption || '').toLowerCase();
+        if (searchText && caption.indexOf(searchText) === -1) return false;
+        if (timelineViewState.from && date && date < timelineViewState.from) return false;
+        if (timelineViewState.to && date && date > timelineViewState.to) return false;
+        return true;
+      });
+
+      filtered.sort(function (a, b) {
+        var ad = a.entry.date || '';
+        var bd = b.entry.date || '';
+        if (timelineViewState.sort === 'oldest') {
+          return String(ad).localeCompare(String(bd));
+        }
+        return String(bd).localeCompare(String(ad));
+      });
+
+      setTimelineStats(filtered);
+      populateCompareSelectors(filtered);
+      renderTimelineCompare(filtered, plant.name || 'Plant');
+
+      if (!mapped.length) {
         gallery.innerHTML = '<p class="small-text">No timeline photos yet for <strong>' + plant.name + '</strong>. Add your first one above.</p>';
         return;
       }
 
+      if (!filtered.length) {
+        gallery.innerHTML = '<p class="small-text">No matching timeline photos. Try changing filters.</p>';
+        return;
+      }
+
+      var minDate = filtered[0].entry.date || '';
+      filtered.forEach(function (item) {
+        var d = item.entry.date || '';
+        if (d && (!minDate || d < minDate)) minDate = d;
+      });
+
       gallery.innerHTML = '';
-      photos.forEach(function (entry) {
+      filtered.forEach(function (item) {
+        var entry = item.entry;
         var card = document.createElement('div');
         card.className = 'timeline-item';
+
         var src = entry.imageData || entry.imageUrl || '';
         var img = document.createElement('img');
         img.src = src;
@@ -482,13 +670,35 @@
 
         var meta = document.createElement('div');
         meta.className = 'timeline-meta';
+
         var dt = document.createElement('div');
         dt.className = 'timeline-date';
         dt.textContent = entry.date || '-';
+
+        var span = document.createElement('span');
+        span.className = 'timeline-day-pill';
+        var dayOffset = 0;
+        if (minDate && entry.date) {
+          dayOffset = Math.max(0, Math.round((timelineToEpoch(entry.date) - timelineToEpoch(minDate)) / 86400000));
+        }
+        span.textContent = 'Day +' + String(dayOffset);
+        dt.appendChild(span);
+
         var cap = document.createElement('div');
         cap.textContent = entry.caption || 'Progress update';
+
+        var actions = document.createElement('div');
+        actions.className = 'timeline-item-actions';
+        var delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'btn-secondary timeline-delete-btn';
+        delBtn.setAttribute('data-photo-index', String(item.idx));
+        delBtn.textContent = 'Delete';
+        actions.appendChild(delBtn);
+
         meta.appendChild(dt);
         meta.appendChild(cap);
+        meta.appendChild(actions);
         card.appendChild(meta);
         gallery.appendChild(card);
       });
@@ -501,10 +711,85 @@
       var select = document.getElementById('timelinePlantSelectMain');
       var form = document.getElementById('growthTimelineFormMain');
       var dateInput = document.getElementById('timelineDateMain');
+      var searchInput = document.getElementById('timelineSearchMain');
+      var sortSelect = document.getElementById('timelineSortMain');
+      var fromInput = document.getElementById('timelineFromDateMain');
+      var toInput = document.getElementById('timelineToDateMain');
+      var clearBtn = document.getElementById('timelineClearFiltersMain');
+      var oldSel = document.getElementById('timelineCompareOldMain');
+      var newSel = document.getElementById('timelineCompareNewMain');
+      var gallery = document.getElementById('timelineGalleryMain');
       if (dateInput) dateInput.value = todayStr();
 
       if (select) {
         select.addEventListener('change', async function () {
+          await renderGrowthTimelineSection();
+        });
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', async function () {
+          timelineViewState.search = this.value || '';
+          await renderGrowthTimelineSection();
+        });
+      }
+
+      if (sortSelect) {
+        sortSelect.addEventListener('change', async function () {
+          timelineViewState.sort = this.value || 'newest';
+          await renderGrowthTimelineSection();
+        });
+      }
+
+      if (fromInput) {
+        fromInput.addEventListener('change', async function () {
+          timelineViewState.from = this.value || '';
+          await renderGrowthTimelineSection();
+        });
+      }
+
+      if (toInput) {
+        toInput.addEventListener('change', async function () {
+          timelineViewState.to = this.value || '';
+          await renderGrowthTimelineSection();
+        });
+      }
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', async function () {
+          timelineViewState.search = '';
+          timelineViewState.sort = 'newest';
+          timelineViewState.from = '';
+          timelineViewState.to = '';
+          if (searchInput) searchInput.value = '';
+          if (sortSelect) sortSelect.value = 'newest';
+          if (fromInput) fromInput.value = '';
+          if (toInput) toInput.value = '';
+          await renderGrowthTimelineSection();
+        });
+      }
+
+      if (gallery) {
+        gallery.addEventListener('click', async function (e) {
+          var btn = e.target.closest('.timeline-delete-btn');
+          if (!btn) return;
+          var idx = Number(btn.getAttribute('data-photo-index'));
+          if (Number.isNaN(idx)) return;
+
+          var plants = await getPlantsForUser();
+          var plantId = select ? select.value : '';
+          var plant = plants.find(function (p) { return String(p.id) === String(plantId); });
+          await deleteTimelinePhoto(plant, idx);
+        });
+      }
+
+      if (oldSel) {
+        oldSel.addEventListener('change', async function () {
+          await renderGrowthTimelineSection();
+        });
+      }
+      if (newSel) {
+        newSel.addEventListener('change', async function () {
           await renderGrowthTimelineSection();
         });
       }

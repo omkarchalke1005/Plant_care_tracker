@@ -157,9 +157,9 @@
   <button class="nav-link" data-section="librarySection">Plant Gallery</button>
   <button class="nav-link" data-section="tracerSection">Plant Analytics</button>
   <button class="nav-link" data-section="growthTimelineSection">Growth Timeline</button>
-  <button class="nav-link" data-section="plantMoodSection">🌿 Plant Mood</button>
+  <button class="nav-link" data-section="plantMoodSection">Plant Mood</button>
   <button class="nav-link" data-section="profileSection">Dashboard</button>
-  <button class="nav-link" data-section="contactSection">📞CONTACT</button>
+  <button class="nav-link" data-section="contactSection">Contact</button>
   <button class="nav-link" data-section="aboutSection">About</button>
 </nav>
 
@@ -615,13 +615,55 @@
         <div class="card timeline-hub">
           <h2>Growth Timeline Studio</h2>
           <p class="card-subtitle">
-            Build a visual before/after story for each plant with dated photos and progress captions.
+            Build a visual growth journal with filters, milestones, and before/after comparisons.
           </p>
 
           <div class="timeline-toolbar">
             <div class="form-group m-0">
               <label for="timelinePlantSelectMain">Select Plant</label>
               <select id="timelinePlantSelectMain"></select>
+            </div>
+            <div class="form-group m-0">
+              <label for="timelineSearchMain">Search Caption</label>
+              <input id="timelineSearchMain" type="text" placeholder="Search updates">
+            </div>
+            <div class="form-group m-0">
+              <label for="timelineSortMain">Sort</label>
+              <select id="timelineSortMain">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="timeline-filter-row">
+            <div class="form-group m-0">
+              <label for="timelineFromDateMain">From</label>
+              <input id="timelineFromDateMain" type="date">
+            </div>
+            <div class="form-group m-0">
+              <label for="timelineToDateMain">To</label>
+              <input id="timelineToDateMain" type="date">
+            </div>
+            <button type="button" id="timelineClearFiltersMain" class="btn-secondary">Clear Filters</button>
+          </div>
+
+          <div class="timeline-stats-grid">
+            <div class="timeline-stat-card">
+              <span>Total Updates</span>
+              <strong id="timelineStatsTotal">0</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>First Photo</span>
+              <strong id="timelineStatsFirst">-</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>Latest Photo</span>
+              <strong id="timelineStatsLatest">-</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>Journey Span</span>
+              <strong id="timelineStatsDays">0 days</strong>
             </div>
           </div>
 
@@ -650,6 +692,30 @@
             </div>
             <button type="submit" class="btn-primary">Add to Timeline</button>
           </form>
+
+          <div class="timeline-compare-panel">
+            <div class="timeline-compare-controls">
+              <div class="form-group m-0">
+                <label for="timelineCompareOldMain">Compare Start</label>
+                <select id="timelineCompareOldMain"></select>
+              </div>
+              <div class="form-group m-0">
+                <label for="timelineCompareNewMain">Compare End</label>
+                <select id="timelineCompareNewMain"></select>
+              </div>
+            </div>
+            <div id="timelineCompareCardMain" class="timeline-compare-card">
+              <div class="timeline-compare-image-wrap">
+                <img id="timelineCompareOldImgMain" alt="Earlier plant photo">
+                <p class="small-text" id="timelineCompareOldLabelMain">Earlier</p>
+              </div>
+              <div class="timeline-compare-image-wrap">
+                <img id="timelineCompareNewImgMain" alt="Latest plant photo">
+                <p class="small-text" id="timelineCompareNewLabelMain">Latest</p>
+              </div>
+              <p id="timelineCompareCaptionMain" class="timeline-compare-caption"></p>
+            </div>
+          </div>
 
           <div id="timelineGalleryMain" class="timeline-gallery timeline-gallery-main"></div>
         </div>
@@ -793,115 +859,111 @@
       <!-- ABOUT (GLOWING) -->
       <section id="aboutSection" class="app-section">
         <div class="card">
-          <h2>About Plant Care Tracker</h2>
-          <p class="card-subtitle">
-            A simple idea with a clear mission – helping people everywhere care for their plants with confidence.
+          <div class="about-hero">
+            <span class="about-kicker">Plant Care Platform</span>
+            <h2>About Plant Care Tracker</h2>
+            <p class="card-subtitle">
+              A modern plant journey workspace that combines reminders, visual growth logs, and care intelligence in one place.
+            </p>
+            <div class="about-pill-row">
+              <span class="about-pill">Simple Daily Workflow</span>
+              <span class="about-pill">Student Project Ready</span>
+              <span class="about-pill">Visual Progress Tracking</span>
+              <span class="about-pill">Care Intelligence</span>
+            </div>
+          </div>
+
+          <div class="about-stat-grid">
+            <div class="about-stat-card">
+              <span>Core Focus</span>
+              <strong>Healthy Plants</strong>
+              <p>Track routines, avoid missed watering, and keep plant care consistent.</p>
+            </div>
+            <div class="about-stat-card">
+              <span>Experience</span>
+              <strong>Visual + Practical</strong>
+              <p>Timeline, gallery, analytics and dashboard are built for real care decisions.</p>
+            </div>
+            <div class="about-stat-card">
+              <span>Audience</span>
+              <strong>Everyone</strong>
+              <p>Useful for beginners, home gardeners, and students building project demos.</p>
+            </div>
+          </div>
+
+          <div class="about-columns">
+            <article class="about-highlight">
+              <h3>Why this website is useful</h3>
+              <p>
+                Plant Care Tracker turns scattered notes into a focused system. Instead of guessing care dates,
+                you can see what happened, what is pending, and what to do next.
+              </p>
+            </article>
+            <article class="about-highlight">
+              <h3>Mission</h3>
+              <p>
+                Make plant care simple, organized, and reliable for every user with clear reminders, practical tools, and clean design.
+              </p>
+            </article>
+            <article class="about-highlight">
+              <h3>Vision</h3>
+              <p>
+                Build a future where homes, classrooms, and communities use digital tracking to grow healthier plants with less waste.
+              </p>
+            </article>
+            <article class="about-highlight">
+              <h3>Daily usage flow</h3>
+              <p>
+                Add your plants, schedule care tasks, review your calendar weekly, and use analytics before making care decisions.
+              </p>
+            </article>
+          </div>
+
+          <div class="about-impact-strip">
+            <div class="about-impact-item">
+              <strong>Track</strong>
+              <span>Every plant update with history and notes</span>
+            </div>
+            <div class="about-impact-item">
+              <strong>Plan</strong>
+              <span>Watering and fertilizer tasks with dates</span>
+            </div>
+            <div class="about-impact-item">
+              <strong>Improve</strong>
+              <span>See growth trends and adjust plant care</span>
+            </div>
+          </div>
+
+          <h3 class="mt-1">Our Team</h3>
+          <p class="card-subtitle mt-02">
+            The people building Plant Care Tracker.
           </p>
 
-          <div class="about-text">
-            <p>
-              <span class="about-pill">Easy to Use</span>
-              <span class="about-pill">Student Friendly</span>
-              <span class="about-pill">Visual Dashboard</span>
-              <span class="about-pill">Free to Try</span>
-            </p>
-
-            <div class="about-highlight">
-              <h3>How useful is this website?</h3>
-              <p class="mt-04">
-                Plant Care Tracker helps you turn scattered plant notes into one
-                clean, visual dashboard. Instead of remembering everything in your head,
-                you can track watering dates, fertilizer days, growth stages and
-                plant health in one place with a glowing, modern interface.
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-avatar">OC</div>
+              <div class="team-name">Omkar Chalke</div>
+              <div class="team-role">Co-Founder</div>
+              <p class="mt-03 fs-085">
+                Leads product direction and turns plant-care ideas into practical features.
               </p>
             </div>
-
-            <div class="about-highlight">
-              <h3>How people can use this website</h3>
-              <p class="mt-04">
-                • Students can use it as a mini project to learn HTML, CSS and JavaScript while
-                actually tracking real plants at home or in school.<br>
-                • Plant lovers can track each plant's story – from first leaf to full growth.<br>
-                • Beginners can follow simple schedules for watering and fertilizing so that they
-                don't over-water or forget important care.
+            <div class="team-card">
+              <div class="team-avatar">AS</div>
+              <div class="team-name">Ayush Sawant</div>
+              <div class="team-role">Project Lead</div>
+              <p class="mt-03 fs-085">
+                Manages planning, structure, and execution across the application experience.
               </p>
             </div>
-
-            <div class="about-highlight">
-              <h3>Our Mission</h3>
-              <p class="mt-04">
-                Our mission is to make plant care <strong>simple, organised and enjoyable</strong>
-                for everyone – especially students and beginners. We want you to feel confident
-                that your plants are safe, healthy and receiving the right care at the right time.
+            <div class="team-card">
+              <div class="team-avatar">VC</div>
+              <div class="team-name">Vikas Chalke</div>
+              <div class="team-role">UI Designer</div>
+              <p class="mt-03 fs-085">
+                Crafts interface style, visual clarity, and interaction polish for usability.
               </p>
             </div>
-
-            <div class="about-highlight">
-              <h3>Our Vision</h3>
-              <p class="mt-04">
-                We imagine a future where every home, classroom and balcony has plants that are
-                well cared for using easy digital tools like Plant Care Tracker. A world where
-                technology and nature work together instead of being separate.
-              </p>
-            </div>
-
-            <div class="about-highlight">
-              <h3>Global Impact</h3>
-              <p class="mt-04">
-                Even though this is a student project, the idea can help people everywhere:
-                tracking plants, saving water, avoiding waste and encouraging more greenery
-                in cities and villages. When more people successfully care for plants, we
-                move one small step closer to a greener planet.
-              </p>
-            </div>
-
-            <div class="about-highlight">
-              <h3>How to use Plant Care Tracker in daily life</h3>
-              <p class="mt-04">
-                • Add every new plant you bring home into the <strong>Add Plants</strong> tab.<br>
-                • Use the <strong>Care Tracker</strong> to add watering and fertilizer tasks.<br>
-                • Check the <strong>Calendar</strong> each week to see what is coming next.<br>
-                • Open the <strong>Plant Analytics</strong> tab when you are confused about a plant's
-                  exact watering and fertilizer dates.<br>
-                • Visit your <strong>Dashboard</strong> to quickly see how many plants you are taking care of.<br>
-                • Use the floating <strong>AI Chatbot icon</strong> at the bottom of the screen to ask questions
-                  or get basic plant advice.
-              </p>
-            </div>
-
-            <h3 class="mt-1">Our Team</h3>
-            <p class="card-subtitle mt-02">
-              The people behind Plant Care Tracker.
-            </p>
-
-            <div class="team-grid">
-              <div class="team-card">
-                <div class="team-name">Omkar Chalke</div>
-                <div class="team-role">Co-Founder</div>
-                <p class="mt-03 fs-085">
-                  Works on ideas, features and overall direction of Plant Care Tracker.
-                </p>
-              </div>
-              <div class="team-card">
-                <div class="team-name">Ayush Sawant</div>
-                <div class="team-role">Leader</div>
-                <p class="mt-03 fs-085">
-                  Leads the planning, coordination and helps in turning concepts into working screens.
-                </p>
-              </div>
-              <div class="team-card">
-                <div class="team-name">Vikas Chalke</div>
-                <div class="team-role">UI Designer</div>
-                <p class="mt-03 fs-085">
-                  Focuses on clean, modern design so that the website looks beautiful and easy to use.
-                </p>
-              </div>
-            </div>
-
-            <p class="mt-1">
-              Plant Care Tracker is more than just a project – it is a small step towards
-              bringing technology and nature together, starting from you. 🌿
-            </p>
           </div>
         </div>
       </section>

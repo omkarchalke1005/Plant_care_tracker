@@ -77,6 +77,16 @@
       .growth-chart-title { align-items: flex-start; flex-direction: column; gap: 0.32rem; }
       .tracer-kicker { white-space: normal; }
       .tracer-stage-header { flex-wrap: wrap; }
+      .timeline-stats-grid,
+      .about-stat-grid,
+      .about-impact-strip { grid-template-columns: 1fr 1fr; }
+      .timeline-compare-controls,
+      .timeline-compare-card,
+      .about-columns,
+      #contactSection .card { grid-template-columns: 1fr; }
+      .timeline-toolbar .form-group,
+      .timeline-filter-row .form-group { min-width: 100%; }
+      .timeline-filter-row .btn-secondary { width: 100%; }
 
       #aboutSection { padding: 0.8rem; }
 
@@ -91,6 +101,12 @@
         flex-wrap: wrap;
         justify-content: center;
       }
+    }
+
+    @media (max-width: 560px) {
+      .timeline-stats-grid,
+      .about-stat-grid,
+      .about-impact-strip { grid-template-columns: 1fr; }
     }
 
 
