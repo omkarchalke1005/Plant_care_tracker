@@ -3,12 +3,13 @@
       var select = document.getElementById('tracerPlantSelect');
       var plants = await getPlantsForUser();
       if (!select) return;
+      var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
 
       select.innerHTML = '<option value="">Select a plant</option>';
       plants.forEach(function (p) {
         var opt = document.createElement('option');
         opt.value = p.id;
-        opt.textContent = p.name;
+        opt.textContent = nameMap[String(p.id)] || p.name;
         select.appendChild(opt);
       });
 

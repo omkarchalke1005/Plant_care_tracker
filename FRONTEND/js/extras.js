@@ -78,11 +78,12 @@ async function fillTrackerPlantSelect(){
   var plants = await getGalleryPlants();
   var sel = document.getElementById('trackerPlantSelect');
   if(!sel) return;
+  var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
   sel.innerHTML = '<option value="">Select Plant</option>';
   plants.forEach(function(p){
     var o=document.createElement('option');
     o.value = p.id;
-    o.textContent = p.name;
+    o.textContent = nameMap[String(p.id)] || p.name;
     sel.appendChild(o);
   });
   // Select the first plant by default if available
@@ -156,6 +157,8 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
   var tasks = await getTrackerTasks();
   var plant = plants.find(function (p) { return String(p.id) === String(plantId); });
   if (!plant) return { tasks: [], summary: 'Select a valid plant first.' };
+  var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
+  var displayName = nameMap[String(plant.id)] || plant.name;
 
   var today = todayStr();
   var endDate = addDays(today, rangeDays);
@@ -172,8 +175,38 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
   var fertTasks = plantTasks.filter(function (t) { return /(fertil|feed|manure)/i.test(t.title); })
     .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
 
-  var nextWater = waterTasks.length ? addDays(waterTasks[waterTasks.length - 1].date, waterEvery) : today;
-  var nextFert = fertTasks.length ? addDays(fertTasks[fertTasks.length - 1].date, fertEvery) : addDays(today, 1);
+  var doneWaterTasks = waterTasks.filter(function (t) { return normalizeTaskStatus(t) === 'done'; });
+  var doneFertTasks = fertTasks.filter(function (t) { return normalizeTaskStatus(t) === 'done'; });
+  var missedWaterTasks = waterTasks.filter(function (t) { return normalizeTaskStatus(t) === 'missed'; });
+  var missedFertTasks = fertTasks.filter(function (t) { return normalizeTaskStatus(t) === 'missed'; });
+
+  var completedCount = doneWaterTasks.length + doneFertTasks.length;
+  var missedCount = missedWaterTasks.length + missedFertTasks.length;
+  var trackedCount = completedCount + missedCount;
+  var missRatio = trackedCount ? (missedCount / trackedCount) : 0;
+
+  // Adaptive reminder logic:
+  // - If user misses many tasks, lighten schedule slightly to improve consistency.
+  // - If user is very consistent, tighten watering by 1 day for better growth monitoring.
+  if (missRatio >= 0.45) {
+    waterEvery += 1;
+    fertEvery += 4;
+  } else if (missRatio <= 0.1 && trackedCount >= 6) {
+    waterEvery = Math.max(2, waterEvery - 1);
+  }
+
+  var lastDoneWater = doneWaterTasks.length ? doneWaterTasks[doneWaterTasks.length - 1] : null;
+  var lastDoneFert = doneFertTasks.length ? doneFertTasks[doneFertTasks.length - 1] : null;
+  var lastAnyWater = waterTasks.length ? waterTasks[waterTasks.length - 1] : null;
+  var lastAnyFert = fertTasks.length ? fertTasks[fertTasks.length - 1] : null;
+
+  var waterAnchor = lastDoneWater ? lastDoneWater.date : (lastAnyWater ? lastAnyWater.date : today);
+  var fertAnchor = lastDoneFert ? lastDoneFert.date : (lastAnyFert ? lastAnyFert.date : today);
+
+  var nextWater = addDays(waterAnchor, waterEvery);
+  var nextFert = addDays(fertAnchor, fertEvery);
+  if (nextWater < today) nextWater = today;
+  if (nextFert < today) nextFert = addDays(today, 1);
 
   var candidate = [];
   createDateSequence(nextWater, waterEvery, endDate).forEach(function (d) {
@@ -208,12 +241,14 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
   var fertCount = unique.filter(function (t) { return t.title === 'Fertilizing'; }).length;
 
   var summary =
-    plant.name + ': ' + unique.length + ' new tasks (' +
+    displayName + ': ' + unique.length + ' new tasks (' +
     waterCount + ' water, ' + fertCount +
     ' fertilizer). Skipped ' + skipped + ' duplicates.' +
+    ' Interval used: water every ' + waterEvery + ' day(s), fertilizer every ' + fertEvery + ' day(s).' +
+    ' Miss ratio: ' + Math.round(missRatio * 100) + '%.' +
     (baseSchedule.seasonal ? ' Seasonal mode: ' + baseSchedule.seasonLabel + '.' : '');
 
-  return { tasks: unique, summary: summary, plantName: plant.name };
+  return { tasks: unique, summary: summary, plantName: displayName };
 }
 
 async function cleanupDeprecatedSunlightTasks() {
@@ -305,6 +340,7 @@ async function renderTrackerTasks(){
   var pid = trackerPlantSelect ? trackerPlantSelect.value : '';
   var tasks = await getTrackerTasks();
   var plants = await getGalleryPlants();
+  var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
   var filteredTasks = pid ? tasks.filter(t=>String(t.plantId)===String(pid)) : tasks;
   filteredTasks.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
 
@@ -320,7 +356,7 @@ async function renderTrackerTasks(){
     row.className = 'tracker-task-row';
 
     var text = document.createElement('span');
-    text.textContent = t.date+' - '+(plant? plant.name:'Plant')+' - '+t.title;
+    text.textContent = t.date+' - '+(plant ? (nameMap[String(plant.id)] || plant.name) : 'Plant')+' - '+t.title;
 
     var actions = document.createElement('div');
     actions.className = 'task-actions';
@@ -487,6 +523,7 @@ async function renderTaskHistory() {
   await markOverdueTasksAsMissed();
   var tasks = await getTasksForUser();
   var plants = await getPlantsForUser();
+  var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
   var filter = filterEl ? filterEl.value : 'all';
   var selectedPlantId = plantFilterEl ? plantFilterEl.value : 'all';
 
@@ -496,7 +533,7 @@ async function renderTaskHistory() {
     plants.forEach(function(p){
       var opt = document.createElement('option');
       opt.value = String(p.id);
-      opt.textContent = p.name;
+      opt.textContent = nameMap[String(p.id)] || p.name;
       plantFilterEl.appendChild(opt);
     });
     plantFilterEl.value = currentValue;
@@ -537,7 +574,7 @@ async function renderTaskHistory() {
     var li = document.createElement('li');
     li.className = status === 'done' ? 'task-done-row' : status === 'missed' ? 'task-missed-row' : '';
     li.innerHTML =
-      '<strong>' + t.date + '</strong> - ' + (plant ? plant.name : 'Plant') + ' - ' + t.title +
+      '<strong>' + t.date + '</strong> - ' + (plant ? (nameMap[String(plant.id)] || plant.name) : 'Plant') + ' - ' + t.title +
       ' <span class="task-status ' + status + '">' + status.toUpperCase() + '</span>';
     list.appendChild(li);
   });
@@ -629,7 +666,7 @@ function showPlantReminderNotification(plantName, taskTitle, dateStr, onDismiss)
   card.innerHTML =
     '<div class="plant-reminder-head">' +
       '<div>' +
-        '<p class="plant-reminder-title">Plant Care Reminder</p>' +
+        '<p class="plant-reminder-title">Plant Care</p>' +
         '<p class="plant-reminder-sub">Your task is due today</p>' +
       '</div>' +
       '<button class="plant-reminder-close" type="button" aria-label="Close notification">&times;</button>' +
@@ -695,6 +732,7 @@ async function checkTodayNotifications(){
 
     var tasks = await getTrackerTasks();
     var plants = await getGalleryPlants();
+    var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
     var today = todayStr();
 
    var notifiedTasks = JSON.parse(localStorage.getItem("notifiedTasks") || "[]");
@@ -714,7 +752,7 @@ tasks.forEach(function(t){
 
       if(plant){
         remindersToShow.push({
-          plantName: plant.name,
+          plantName: nameMap[String(plant.id)] || plant.name,
           taskTitle: t.title,
           dateStr: t.date
         });
@@ -765,8 +803,9 @@ async function loadPlantMoodPlants(){
 
     select.innerHTML = "<option value=''>Select Plant</option>";
 
+    var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
     plants.forEach(p=>{
-      select.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+      select.innerHTML += `<option value="${p.id}">${nameMap[String(p.id)] || p.name}</option>`;
     });
 
   }catch(e){
@@ -786,6 +825,7 @@ async function showSelectedPlantMood(){
 
     let plants = await getPlantsForUser() || [];
     let tasks = await getTasksForUser() || [];
+    let nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
 
     let plant = plants.find(p=> String(p.id) === String(plantId));
     let plantTasks = tasks.filter(t=> String(t.plantId) === String(plantId));
@@ -840,7 +880,7 @@ async function showSelectedPlantMood(){
     document.getElementById("plantMoodResult").innerHTML = `
     <div class="mood-box ${moodClass}">
       <div class="mood-header">
-        <h3 class="mood-plant-name">${plant.name}</h3>
+        <h3 class="mood-plant-name">${nameMap[String(plant.id)] || plant.name}</h3>
         <span class="mood-pill">LIVE STATUS</span>
       </div>
 

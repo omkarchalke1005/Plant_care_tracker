@@ -682,10 +682,11 @@
 
       var previous = select.value;
       select.innerHTML = '';
+      var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
       plants.forEach(function (p) {
         var opt = document.createElement('option');
         opt.value = p.id;
-        opt.textContent = p.name;
+        opt.textContent = nameMap[String(p.id)] || p.name;
         select.appendChild(opt);
       });
       select.value = previous || plants[0].id;

@@ -589,6 +589,46 @@ async function deletePlantFromDB(plantId) {
       return localStorage.getItem('pct_current_plant_' + currentUser.uid);
     }
 
+    function getPlantBaseName(plant) {
+      if (!plant) return 'Unknown plant';
+      return String(plant.name || 'Plant').trim();
+    }
+
+    function buildPlantNameMap(plants) {
+      var map = {};
+      var grouped = {};
+
+      (plants || []).forEach(function (plant) {
+        if (!plant || !plant.id) return;
+        var base = getPlantBaseName(plant);
+        var key = base.toLowerCase();
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(plant);
+      });
+
+      Object.keys(grouped).forEach(function (key) {
+        var list = grouped[key];
+        list.sort(function (a, b) {
+          var aDate = String(a.createdAt || '');
+          var bDate = String(b.createdAt || '');
+          var dateCmp = aDate.localeCompare(bDate);
+          if (dateCmp !== 0) return dateCmp;
+          return String(a.id || '').localeCompare(String(b.id || ''));
+        });
+
+        if (list.length === 1) {
+          map[String(list[0].id)] = getPlantBaseName(list[0]);
+          return;
+        }
+
+        for (var i = 0; i < list.length; i++) {
+          map[String(list[i].id)] = String(i + 1) + '. ' + getPlantBaseName(list[i]);
+        }
+      });
+
+      return map;
+    }
+
     /* ---------- HOME SLIDER ---------- */
     function initHomeSlider() {
       var slider = document.getElementById('homeSlider');

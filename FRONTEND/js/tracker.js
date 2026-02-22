@@ -3,12 +3,13 @@
       var select = document.getElementById('taskPlant');
       var timerSelect = document.getElementById('timerPlantSelect');
       var plants = await getPlantsForUser();
+      var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
       if (select) {
         select.innerHTML = '<option value="">Select a plant</option>';
         plants.forEach(function (p) {
           var opt = document.createElement('option');
           opt.value = p.id;
-          opt.textContent = p.name;
+          opt.textContent = nameMap[String(p.id)] || p.name;
           select.appendChild(opt);
         });
       }
@@ -17,7 +18,7 @@
         plants.forEach(function (p) {
           var opt2 = document.createElement('option');
           opt2.value = p.id;
-          opt2.textContent = p.name;
+          opt2.textContent = nameMap[String(p.id)] || p.name;
           timerSelect.appendChild(opt2);
         });
       }
@@ -25,7 +26,7 @@
       if (calSelect) {
         calSelect.innerHTML = '<option value="">Select a plant</option>';
         plants.forEach(function (p) {
-          var optc = document.createElement('option'); optc.value = p.id; optc.textContent = p.name; calSelect.appendChild(optc);
+          var optc = document.createElement('option'); optc.value = p.id; optc.textContent = nameMap[String(p.id)] || p.name; calSelect.appendChild(optc);
         });
         calSelect.addEventListener('change', async function () {
           var sel = calSelect.value || (plants[0] && plants[0].id);
@@ -44,10 +45,11 @@
       if (!waterList || !fertList) return;
       waterList.innerHTML = '';
       fertList.innerHTML = '';
+      var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
 
       function plantNameById(id) {
         for (var i = 0; i < plants.length; i++) {
-          if (String(plants[i].id) === String(id)) return plants[i].name;
+          if (String(plants[i].id) === String(id)) return nameMap[String(plants[i].id)] || plants[i].name;
         }
         return 'Unknown plant';
       }
@@ -179,9 +181,10 @@
         if (String(plants[i].id) === String(plantId)) { plant = plants[i]; break; }
       }
       if (!plant) return;
+      var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
 
       var schedule = getScheduleForPlant(plant);
-      timerInfo.textContent = 'Selected plant: ' + plant.name +
+      timerInfo.textContent = 'Selected plant: ' + (nameMap[String(plant.id)] || plant.name) +
         ' (' + plant.type + '). Water every ' + schedule.water +
         ' days, fertilize every ' + schedule.fert + ' days.';
 
@@ -292,13 +295,14 @@
       var upcomingList = document.getElementById('upcomingTasks');
       var pastList = document.getElementById('pastTasks');
       if (!upcomingList || !pastList) return;
+      var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
 
       upcomingList.innerHTML = '';
       pastList.innerHTML = '';
 
       function plantNameById(id) {
         for (var i = 0; i < plants.length; i++) {
-          if (String(plants[i].id) === String(id)) return plants[i].name;
+          if (String(plants[i].id) === String(id)) return nameMap[String(plants[i].id)] || plants[i].name;
         }
         return 'Unknown plant';
       }
