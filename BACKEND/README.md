@@ -9,6 +9,7 @@ This backend now uses a proper Express structure while keeping your current webs
   - `GET /api/health` -> working health endpoint
   - `GET /api/plants` -> scaffold placeholder (`501`)
   - `GET /api/tasks` -> scaffold placeholder (`501`)
+  - `GET /api/recommendations/smart-care` -> weather-aware watering/fertilizer recommendation
 - Serves the frontend from `../FRONTEND`.
 - Uses SPA fallback to `FRONTEND/index.html`.
 
@@ -73,3 +74,30 @@ Variables:
 - Implement real `plants` and `tasks` storage in services.
 - Add request validation middleware.
 - Add authentication middleware for protected APIs.
+
+## New advanced API: Smart Care Recommendation
+
+This endpoint uses live weather forecast (Open-Meteo) and your plant profile inputs to suggest:
+- next watering date
+- watering frequency (in days)
+- fertilizer timing
+- hydration risk score
+
+### Endpoint
+
+- `GET /api/recommendations/smart-care`
+
+### Query params
+
+- `latitude` (required, number)
+- `longitude` (required, number)
+- `plantType` (optional, text)
+- `moisturePreference` (optional: `low` | `medium` | `high`)
+- `lastWateredDate` (optional, `YYYY-MM-DD`)
+- `isIndoor` (optional: `true` | `false`)
+
+### Example
+
+```text
+/api/recommendations/smart-care?latitude=19.0760&longitude=72.8777&plantType=Money%20Plant&moisturePreference=medium&lastWateredDate=2026-02-20&isIndoor=true
+```

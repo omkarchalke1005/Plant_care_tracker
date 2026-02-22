@@ -664,6 +664,15 @@ async function deletePlantFromDB(plantId) {
       var el = document.getElementById(id);
       if (el) el.style.display = 'block';
 
+      // Keep navigation predictable: always jump to top when switching tabs.
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      } catch (_e) {
+        window.scrollTo(0, 0);
+      }
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
       document.querySelectorAll('.nav-link').forEach(function (l) {
         if (l.getAttribute('data-section') === id) l.classList.add('active');
         else l.classList.remove('active');

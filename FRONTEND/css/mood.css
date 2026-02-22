@@ -1,17 +1,19 @@
 /* ===== PLANT MOOD LAYOUT ===== */
 
 #plantMoodSection {
-  min-height: calc(100vh - 140px);
+  min-height: calc(100vh - 130px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   width: 100%;
+  padding-top: 0.4rem;
 }
 
 #plantMoodSection .card {
   width: 100%;
-  max-width: 860px;
+  max-width: 1080px;
   margin: 0 auto;
+  padding: 1.4rem 1.45rem;
   border: 1px solid #d4e8d9;
   background:
     radial-gradient(circle at top right, rgba(180, 231, 194, 0.28), rgba(255, 255, 255, 0)),
@@ -45,20 +47,24 @@
 }
 
 #plantMoodResult {
-  margin-top: 16px;
+  margin-top: 0.9rem;
 }
 
 /* ===== MOOD RESULT CARD ===== */
 
 .mood-box {
-  padding: 1.15rem 1.22rem;
-  border-radius: 1.08rem;
+  padding: 1.35rem 1.38rem;
+  border-radius: 1.2rem;
   margin-top: 0.25rem;
   color: #ffffff;
   animation: moodFade 0.55s ease;
   position: relative;
   overflow: hidden;
   box-shadow: 0 16px 34px rgba(0, 0, 0, 0.2);
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
 }
 
 .mood-box::before {
@@ -79,6 +85,7 @@
   justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.55rem;
+  grid-column: 1 / -1;
 }
 
 .mood-plant-name {
@@ -102,7 +109,7 @@
 
 .mood-main {
   margin: 0.22rem 0 0.1rem;
-  font-size: clamp(1.26rem, 1.12rem + 0.42vw, 1.5rem);
+  font-size: clamp(1.32rem, 1.16rem + 0.5vw, 1.7rem);
   line-height: 1.15;
 }
 
@@ -141,7 +148,7 @@
 }
 
 .mood-score-value {
-  font-size: 1.18rem;
+  font-size: 1.35rem;
 }
 
 .mood-tip {
@@ -158,6 +165,7 @@
   height: 1px;
   margin: 0.72rem 0 0.62rem;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.2));
+  display: none;
 }
 
 .mood-stats {
@@ -170,7 +178,7 @@
   background: rgba(0, 0, 0, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 0.72rem;
-  padding: 0.46rem 0.56rem;
+  padding: 0.6rem 0.7rem;
 }
 
 .mood-stat-label {
@@ -180,7 +188,7 @@
 }
 
 .mood-stat-value {
-  font-size: 0.98rem;
+  font-size: 1.06rem;
   font-weight: 700;
 }
 
@@ -192,12 +200,98 @@
 }
 
 .mood-count-pill {
-  padding: 0.28rem 0.56rem;
+  padding: 0.34rem 0.62rem;
   border-radius: 999px;
-  font-size: 0.8rem;
+  font-size: 0.86rem;
   font-weight: 700;
   border: 1px solid rgba(255, 255, 255, 0.34);
   background: rgba(0, 0, 0, 0.14);
+}
+
+.mood-history-wrap {
+  margin-top: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 0.9rem;
+  background: rgba(0, 0, 0, 0.12);
+  padding: 0.62rem 0.68rem;
+  grid-column: 1 / -1;
+}
+
+.progress-container,
+.mood-score-row,
+.mood-tip {
+  grid-column: 1;
+}
+
+.mood-stats,
+.mood-quick-counts {
+  grid-column: 2;
+}
+
+.mood-main,
+.mood-reason {
+  grid-column: 1;
+}
+
+.mood-history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.45rem;
+  margin-bottom: 0.42rem;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.mood-history-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.mood-history-item {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 0.66rem;
+  background: rgba(0, 0, 0, 0.14);
+  padding: 0.38rem 0.44rem;
+  text-align: center;
+}
+
+.mood-history-item strong {
+  display: block;
+  font-size: 0.95rem;
+}
+
+.mood-history-date {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+.mood-trend-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  padding: 0.2rem 0.52rem;
+  font-size: 0.73rem;
+  font-weight: 800;
+}
+
+.mood-trend-up {
+  background: rgba(42, 170, 86, 0.35);
+}
+
+.mood-trend-down {
+  background: rgba(210, 62, 62, 0.35);
+}
+
+.mood-trend-stable {
+  background: rgba(235, 189, 24, 0.35);
+}
+
+.mood-history-empty {
+  grid-column: 1 / -1;
+  font-size: 0.84rem;
+  opacity: 0.92;
 }
 
 /* ===== MOOD COLOR THEMES ===== */
@@ -240,10 +334,32 @@
 @media (max-width: 720px) {
   #plantMoodSection .card {
     max-width: 100%;
+    padding: 1rem;
+  }
+
+  .mood-box {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .mood-header,
+  .mood-main,
+  .mood-reason,
+  .progress-container,
+  .mood-score-row,
+  .mood-tip,
+  .mood-stats,
+  .mood-quick-counts,
+  .mood-history-wrap {
+    grid-column: 1;
   }
 
   .mood-stats {
     grid-template-columns: 1fr;
+  }
+
+  .mood-history-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .mood-score-row {
@@ -272,4 +388,121 @@ body.dark #plantMoodSection label {
 body.dark #plantMoodSelect {
   background: linear-gradient(180deg, #102219, #0d1e16) !important;
   border-color: #2d7d45 !important;
+}
+
+/* ===== UNIQUE MOOD PAGE SKIN ===== */
+
+#plantMoodSection .mood-shell {
+  border: 1px solid #b8dbc2;
+  background:
+    radial-gradient(circle at 12% -8%, rgba(114, 217, 151, 0.36), rgba(255, 255, 255, 0)),
+    radial-gradient(circle at 95% 110%, rgba(111, 181, 255, 0.24), rgba(255, 255, 255, 0)),
+    linear-gradient(150deg, #f9fffb, #edf8f0 52%, #eef7ff);
+  box-shadow: 0 24px 48px rgba(17, 79, 44, 0.16);
+}
+
+.mood-page-hero {
+  border: 1px solid #c3e4cc;
+  border-radius: 1.05rem;
+  padding: 1rem 1.05rem;
+  margin-bottom: 0.9rem;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(236, 250, 241, 0.84));
+  box-shadow: 0 10px 24px rgba(32, 95, 57, 0.1);
+}
+
+.mood-kicker {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #175838;
+  padding: 0.22rem 0.58rem;
+  border-radius: 999px;
+  border: 1px solid #b4dec1;
+  background: linear-gradient(145deg, #e6faee, #f0f7ff);
+  margin-bottom: 0.35rem;
+}
+
+.mood-page-hero .card-subtitle {
+  margin-bottom: 0.65rem;
+  max-width: 66ch;
+}
+
+.mood-hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.42rem;
+}
+
+.mood-hero-pill {
+  font-size: 0.77rem;
+  font-weight: 700;
+  color: #215f3f;
+  border: 1px solid #bfe0ca;
+  border-radius: 999px;
+  padding: 0.3rem 0.6rem;
+  background: linear-gradient(135deg, #f1fff4, #ecf7ff);
+}
+
+.mood-select-wrap {
+  margin-bottom: 0.75rem;
+}
+
+.mood-select-wrap label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.92rem;
+}
+
+.mood-result-area {
+  min-height: 140px;
+}
+
+.mood-box {
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  box-shadow: 0 22px 44px rgba(0, 0, 0, 0.26);
+}
+
+.mood-history-item {
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+
+.mood-history-item:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+body.dark #plantMoodSection .mood-shell {
+  border-color: #2f5b44;
+  background:
+    radial-gradient(circle at 12% -8%, rgba(45, 126, 77, 0.34), rgba(10, 23, 17, 0)),
+    radial-gradient(circle at 95% 110%, rgba(39, 86, 147, 0.28), rgba(11, 22, 34, 0)),
+    linear-gradient(150deg, #0f261b, #10261d 52%, #122236);
+}
+
+body.dark .mood-page-hero {
+  border-color: #365a45;
+  background: linear-gradient(145deg, rgba(19, 40, 30, 0.9), rgba(16, 34, 28, 0.88));
+}
+
+body.dark .mood-kicker,
+body.dark .mood-hero-pill {
+  border-color: #436e59;
+  color: #d3f4df;
+  background: linear-gradient(145deg, #1b3a2d, #1c3546);
+}
+
+@media (max-width: 720px) {
+  .mood-page-hero {
+    padding: 0.82rem 0.86rem;
+  }
+
+  .mood-kicker {
+    font-size: 0.68rem;
+  }
+
+  .mood-hero-pill {
+    font-size: 0.72rem;
+  }
 }

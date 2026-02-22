@@ -515,421 +515,292 @@
     }
 
     var growthTimelineInitDone = false;
-    var timelineViewState = {
-      search: '',
-      sort: 'newest',
-      from: '',
-      to: ''
-    };
 
-    function timelineToEpoch(dateStr) {
-      if (!dateStr) return 0;
-      var t = new Date(dateStr + 'T00:00:00').getTime();
-      return Number.isNaN(t) ? 0 : t;
+    function resetWeatherPanel() {
+      var risk = document.getElementById('weatherRiskMain');
+      var nextWater = document.getElementById('weatherNextWaterMain');
+      var frequency = document.getElementById('weatherFrequencyMain');
+      var fertilizer = document.getElementById('weatherFertilizerMain');
+      var summary = document.getElementById('weatherSummaryMain');
+      var notes = document.getElementById('weatherNotesMain');
+
+      if (risk) risk.textContent = '-';
+      if (nextWater) nextWater.textContent = '-';
+      if (frequency) frequency.textContent = '-';
+      if (fertilizer) fertilizer.textContent = '-';
+      if (summary) summary.innerHTML = '<p class="small-text">Fill details and click <strong>Get Weather Advice</strong>.</p>';
+      if (notes) notes.innerHTML = '';
     }
 
-    function setTimelineStats(filteredPhotos) {
-      var totalEl = document.getElementById('timelineStatsTotal');
-      var firstEl = document.getElementById('timelineStatsFirst');
-      var latestEl = document.getElementById('timelineStatsLatest');
-      var daysEl = document.getElementById('timelineStatsDays');
+    function renderWeatherResult(payload) {
+      var recommendation = payload && payload.recommendation ? payload.recommendation : null;
+      var weather = payload && payload.weatherSnapshot ? payload.weatherSnapshot : null;
 
-      if (!totalEl || !firstEl || !latestEl || !daysEl) return;
-      if (!filteredPhotos.length) {
-        totalEl.textContent = '0';
-        firstEl.textContent = '-';
-        latestEl.textContent = '-';
-        daysEl.textContent = '0 days';
+      var risk = document.getElementById('weatherRiskMain');
+      var nextWater = document.getElementById('weatherNextWaterMain');
+      var frequency = document.getElementById('weatherFrequencyMain');
+      var fertilizer = document.getElementById('weatherFertilizerMain');
+      var summary = document.getElementById('weatherSummaryMain');
+      var notes = document.getElementById('weatherNotesMain');
+
+      if (!recommendation) {
+        resetWeatherPanel();
         return;
       }
 
-      var minDate = filteredPhotos[0].entry.date || '';
-      var maxDate = filteredPhotos[0].entry.date || '';
-      filteredPhotos.forEach(function (item) {
-        var d = item.entry.date || '';
-        if (d && (!minDate || d < minDate)) minDate = d;
-        if (d && (!maxDate || d > maxDate)) maxDate = d;
-      });
+      if (risk) risk.textContent = String(recommendation.hydrationRiskScore) + '/100';
+      if (nextWater) nextWater.textContent = recommendation.suggestedNextWaterDate || '-';
+      if (frequency) frequency.textContent = String(recommendation.suggestedWaterFrequencyDays || '-') + ' days';
+      if (fertilizer) fertilizer.textContent = String(recommendation.suggestedFertilizerAfterDays || '-') + ' days';
 
-      var daySpan = 0;
-      if (minDate && maxDate) {
-        daySpan = Math.max(0, Math.round((timelineToEpoch(maxDate) - timelineToEpoch(minDate)) / 86400000));
+      if (summary) {
+        var maxTemp = weather ? weather.avgMaxTempNext2Days : '-';
+        var minTemp = weather ? weather.avgMinTempNext2Days : '-';
+        var rain = weather ? weather.rainMmNext2Days : '-';
+        summary.innerHTML =
+          '<p><strong>Weather Snapshot (next 2 days):</strong></p>' +
+          '<p class="small-text">Max Temp: ' + maxTemp + ' | Min Temp: ' + minTemp + ' | Rain: ' + rain + ' mm</p>' +
+          '<p class="small-text mt-03"><strong>Confidence:</strong> ' + String(recommendation.confidence || 'medium').toUpperCase() + '</p>';
       }
 
-      totalEl.textContent = String(filteredPhotos.length);
-      firstEl.textContent = minDate || '-';
-      latestEl.textContent = maxDate || '-';
-      daysEl.textContent = String(daySpan) + ' days';
-    }
-
-    function populateCompareSelectors(filteredPhotos) {
-      var oldSel = document.getElementById('timelineCompareOldMain');
-      var newSel = document.getElementById('timelineCompareNewMain');
-      if (!oldSel || !newSel) return;
-
-      var prevOld = oldSel.value;
-      var prevNew = newSel.value;
-      oldSel.innerHTML = '';
-      newSel.innerHTML = '';
-
-      filteredPhotos.forEach(function (item) {
-        var label = (item.entry.date || '-') + ' - ' + (item.entry.caption || 'Progress update');
-        var oldOpt = document.createElement('option');
-        oldOpt.value = String(item.idx);
-        oldOpt.textContent = label;
-        oldSel.appendChild(oldOpt);
-
-        var newOpt = document.createElement('option');
-        newOpt.value = String(item.idx);
-        newOpt.textContent = label;
-        newSel.appendChild(newOpt);
-      });
-
-      if (!filteredPhotos.length) return;
-
-      var earliest = filteredPhotos[0];
-      var latest = filteredPhotos[0];
-      filteredPhotos.forEach(function (item) {
-        var dateVal = item.entry.date || '';
-        var earliestDate = earliest.entry.date || '';
-        var latestDate = latest.entry.date || '';
-        if (dateVal && (!earliestDate || dateVal < earliestDate)) earliest = item;
-        if (dateVal && (!latestDate || dateVal > latestDate)) latest = item;
-      });
-
-      var firstIdx = String(earliest.idx);
-      var lastIdx = String(latest.idx);
-
-      oldSel.value = filteredPhotos.some(function (item) { return String(item.idx) === prevOld; }) ? prevOld : firstIdx;
-      newSel.value = filteredPhotos.some(function (item) { return String(item.idx) === prevNew; }) ? prevNew : lastIdx;
-    }
-
-    function renderTimelineCompare(filteredPhotos, plantName) {
-      var card = document.getElementById('timelineCompareCardMain');
-      var oldSel = document.getElementById('timelineCompareOldMain');
-      var newSel = document.getElementById('timelineCompareNewMain');
-      var oldImg = document.getElementById('timelineCompareOldImgMain');
-      var newImg = document.getElementById('timelineCompareNewImgMain');
-      var oldLabel = document.getElementById('timelineCompareOldLabelMain');
-      var newLabel = document.getElementById('timelineCompareNewLabelMain');
-      var caption = document.getElementById('timelineCompareCaptionMain');
-      if (!card || !oldSel || !newSel || !oldImg || !newImg || !oldLabel || !newLabel || !caption) return;
-
-      if (filteredPhotos.length < 2) {
-        card.classList.add('timeline-compare-empty');
-        caption.textContent = 'Add at least two timeline photos to compare growth.';
-        oldImg.removeAttribute('src');
-        newImg.removeAttribute('src');
-        oldLabel.textContent = 'Earlier';
-        newLabel.textContent = 'Latest';
-        return;
+      if (notes) {
+        notes.innerHTML = '';
+        (recommendation.notes || []).forEach(function (note) {
+          var li = document.createElement('li');
+          li.textContent = note;
+          notes.appendChild(li);
+        });
       }
-
-      var oldIdx = oldSel.value;
-      var newIdx = newSel.value;
-      var oldItem = filteredPhotos.find(function (item) { return String(item.idx) === String(oldIdx); });
-      var newItem = filteredPhotos.find(function (item) { return String(item.idx) === String(newIdx); });
-      if (!oldItem || !newItem) return;
-
-      var oldSrc = oldItem.entry.imageData || oldItem.entry.imageUrl || '';
-      var newSrc = newItem.entry.imageData || newItem.entry.imageUrl || '';
-
-      oldImg.src = oldSrc;
-      newImg.src = newSrc;
-      oldImg.alt = plantName + ' earlier stage';
-      newImg.alt = plantName + ' latest stage';
-      oldLabel.textContent = 'Earlier: ' + (oldItem.entry.date || '-');
-      newLabel.textContent = 'Latest: ' + (newItem.entry.date || '-');
-
-      var diffDays = Math.max(0, Math.round((timelineToEpoch(newItem.entry.date) - timelineToEpoch(oldItem.entry.date)) / 86400000));
-      caption.textContent = 'Growth comparison span: ' + String(diffDays) + ' day(s).';
-      card.classList.remove('timeline-compare-empty');
     }
 
-    async function deleteTimelinePhoto(plant, photoIdx) {
-      if (!plant) return;
-      if (!confirm('Delete this timeline photo?')) return;
-
-      var existing = plant.progressPhotos || [];
-      if (photoIdx < 0 || photoIdx >= existing.length) return;
-      var nextPhotos = existing.filter(function (_entry, idx) { return idx !== photoIdx; });
-
-      var updatedPlant = {
-        ...plant,
-        progressPhotos: nextPhotos,
-        history: [...(plant.history || []), { action: 'Timeline photo removed', date: todayStr() }]
-      };
-
-      await updatePlant(plant.id, updatedPlant);
-      await renderGrowthTimelineSection();
-      await renderTracer();
-    }
-
-    async function renderGrowthTimelineSection() {
-      var select = document.getElementById('timelinePlantSelectMain');
-      var gallery = document.getElementById('timelineGalleryMain');
-      if (!select || !gallery) return;
+    async function populateWeatherPlantSelect() {
+      var select = document.getElementById('weatherPlantSelectMain');
+      if (!select) return;
 
       var plants = await getPlantsForUser();
       if (!plants.length) {
         select.innerHTML = '<option value="">No plants found</option>';
-        gallery.innerHTML = '<p class="small-text">Add plants first to start a visual growth timeline.</p>';
-        setTimelineStats([]);
-        populateCompareSelectors([]);
-        renderTimelineCompare([], '');
         return;
       }
 
       var previous = select.value;
-      select.innerHTML = '';
       var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
-      plants.forEach(function (p) {
-        var opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = nameMap[String(p.id)] || p.name;
-        select.appendChild(opt);
+      select.innerHTML = '';
+      plants.forEach(function (plant) {
+        var option = document.createElement('option');
+        option.value = plant.id;
+        option.textContent = nameMap[String(plant.id)] || plant.name || 'Plant';
+        select.appendChild(option);
       });
       select.value = previous || plants[0].id;
+    }
 
-      var plant = plants.find(function (p) { return String(p.id) === String(select.value); }) || plants[0];
-      if (!plant) return;
+    function buildSmartCareUrl(baseOrigin, params) {
+      var query = new URLSearchParams(params);
+      var path = '/api/recommendations/smart-care?' + query.toString();
+      if (!baseOrigin) return path;
+      return String(baseOrigin).replace(/\/+$/, '') + path;
+    }
 
-      var mapped = (plant.progressPhotos || []).map(function (entry, idx) {
-        return { entry: entry, idx: idx };
+    function getSmartCareApiCandidates() {
+      var currentOrigin = window.location.origin || '';
+      var list = [currentOrigin, 'http://localhost:5500', 'http://127.0.0.1:5500'];
+      return list.filter(function (origin, idx, arr) {
+        return !!origin && arr.indexOf(origin) === idx;
       });
+    }
 
-      var searchText = (timelineViewState.search || '').toLowerCase();
-      var filtered = mapped.filter(function (item) {
-        var date = item.entry.date || '';
-        var caption = (item.entry.caption || '').toLowerCase();
-        if (searchText && caption.indexOf(searchText) === -1) return false;
-        if (timelineViewState.from && date && date < timelineViewState.from) return false;
-        if (timelineViewState.to && date && date > timelineViewState.to) return false;
-        return true;
-      });
+    function computeFallbackPayload(params, weatherSnapshot, sourceName) {
+      var moisture = String(params.moisturePreference || 'medium').toLowerCase();
+      var isIndoor = String(params.isIndoor || 'true') === 'true';
+      var rain = Number(weatherSnapshot.rainMmNext2Days || 0);
+      var maxTemp = Number(weatherSnapshot.avgMaxTempNext2Days || 28);
+      var minTemp = Number(weatherSnapshot.avgMinTempNext2Days || 20);
 
-      filtered.sort(function (a, b) {
-        var ad = a.entry.date || '';
-        var bd = b.entry.date || '';
-        if (timelineViewState.sort === 'oldest') {
-          return String(ad).localeCompare(String(bd));
+      var risk = 50;
+      if (maxTemp >= 34) risk += 20;
+      else if (maxTemp >= 29) risk += 12;
+      else if (maxTemp <= 20) risk -= 8;
+      if (rain >= 12) risk -= 22;
+      else if (rain >= 6) risk -= 12;
+      else if (rain <= 1) risk += 8;
+      if (moisture === 'high') risk += 10;
+      if (moisture === 'low') risk -= 10;
+      if (isIndoor) risk -= 10;
+      if (minTemp <= 10) risk -= 8;
+      risk = Math.max(0, Math.min(100, Math.round(risk)));
+
+      var freq = 4;
+      if (moisture === 'high') freq = 2;
+      if (moisture === 'low') freq = 6;
+      if (isIndoor) freq += 1;
+      if (risk >= 75) freq = Math.max(1, freq - 1);
+      if (risk <= 30) freq += 1;
+
+      var baseDate = new Date((params.lastWateredDate || todayStr()) + 'T00:00:00');
+      if (Number.isNaN(baseDate.getTime())) baseDate = new Date();
+      var nextWaterDate = new Date(baseDate);
+      nextWaterDate.setDate(nextWaterDate.getDate() + freq);
+      var fertilizerDays = isIndoor ? 28 : 21;
+      if (rain >= 10) fertilizerDays += 7;
+
+      var notes = [];
+      if (maxTemp >= 32) notes.push('High heat expected; check topsoil daily.');
+      if (rain >= 8) notes.push('Rain expected; reduce watering volume.');
+      if (isIndoor) notes.push('Indoor mode active; avoid overwatering.');
+      if (!notes.length) notes.push('Normal conditions; keep regular care cycle.');
+
+      return {
+        ok: true,
+        feature: 'weather-aware-smart-care',
+        source: sourceName || 'frontend-fallback',
+        weatherSnapshot: weatherSnapshot,
+        recommendation: {
+          suggestedNextWaterDate: nextWaterDate.toISOString().slice(0, 10),
+          suggestedWaterFrequencyDays: freq,
+          suggestedFertilizerAfterDays: fertilizerDays,
+          hydrationRiskScore: risk,
+          confidence: (risk >= 70 || risk <= 30) ? 'high' : 'medium',
+          notes: notes
         }
-        return String(bd).localeCompare(String(ad));
-      });
+      };
+    }
 
-      setTimelineStats(filtered);
-      populateCompareSelectors(filtered);
-      renderTimelineCompare(filtered, plant.name || 'Plant');
+    async function fetchDirectWeatherFallback(params) {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=' +
+        encodeURIComponent(params.latitude) +
+        '&longitude=' + encodeURIComponent(params.longitude) +
+        '&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&forecast_days=2&timezone=auto';
 
-      if (!mapped.length) {
-        gallery.innerHTML = '<p class="small-text">No timeline photos yet for <strong>' + plant.name + '</strong>. Add your first one above.</p>';
-        return;
+      try {
+        var response = await fetch(url);
+        var payload = await response.json().catch(function () { return null; });
+        var daily = payload && payload.daily ? payload.daily : {};
+        var maxArr = Array.isArray(daily.temperature_2m_max) ? daily.temperature_2m_max : [];
+        var minArr = Array.isArray(daily.temperature_2m_min) ? daily.temperature_2m_min : [];
+        var rainArr = Array.isArray(daily.precipitation_sum) ? daily.precipitation_sum : [];
+
+        var weatherSnapshot = {
+          rainMmNext2Days: Number(((Number(rainArr[0]) || 0) + (Number(rainArr[1]) || 0)).toFixed(2)),
+          avgMaxTempNext2Days: Number((((Number(maxArr[0]) || 0) + (Number(maxArr[1]) || 0)) / 2).toFixed(1)),
+          avgMinTempNext2Days: Number((((Number(minArr[0]) || 0) + (Number(minArr[1]) || 0)) / 2).toFixed(1))
+        };
+        return computeFallbackPayload(params, weatherSnapshot, 'frontend-open-meteo');
+      } catch (_error) {
+        var localSnapshot = {
+          rainMmNext2Days: 3,
+          avgMaxTempNext2Days: 29,
+          avgMinTempNext2Days: 21
+        };
+        return computeFallbackPayload(params, localSnapshot, 'frontend-default');
+      }
+    }
+
+    async function fetchSmartCarePayload(params) {
+      var candidates = getSmartCareApiCandidates();
+      var lastError = null;
+
+      for (var i = 0; i < candidates.length; i++) {
+        var origin = candidates[i];
+        var url = buildSmartCareUrl(origin, params);
+        try {
+          var response = await fetch(url);
+          var contentType = String(response.headers.get('content-type') || '').toLowerCase();
+          var payload = await response.json().catch(function () { return null; });
+
+          if (response.ok && payload && payload.ok !== false) {
+            return payload;
+          }
+
+          if (response.ok && !payload && contentType.indexOf('text/html') !== -1) {
+            throw new Error('Weather API route not found on ' + origin + '. Start backend on http://localhost:5500.');
+          }
+
+          throw new Error((payload && payload.message) ? payload.message : ('Weather API failed on ' + origin));
+        } catch (error) {
+          lastError = error;
+        }
       }
 
-      if (!filtered.length) {
-        gallery.innerHTML = '<p class="small-text">No matching timeline photos. Try changing filters.</p>';
-        return;
-      }
-
-      var minDate = filtered[0].entry.date || '';
-      filtered.forEach(function (item) {
-        var d = item.entry.date || '';
-        if (d && (!minDate || d < minDate)) minDate = d;
+      return fetchDirectWeatherFallback(params).catch(function () {
+        throw (lastError || new Error('Could not reach weather API.'));
       });
+    }
 
-      gallery.innerHTML = '';
-      filtered.forEach(function (item) {
-        var entry = item.entry;
-        var card = document.createElement('div');
-        card.className = 'timeline-item';
-
-        var src = entry.imageData || entry.imageUrl || '';
-        var img = document.createElement('img');
-        img.src = src;
-        img.alt = plant.name + ' timeline photo';
-        img.onerror = function () { this.style.display = 'none'; };
-        card.appendChild(img);
-
-        var meta = document.createElement('div');
-        meta.className = 'timeline-meta';
-
-        var dt = document.createElement('div');
-        dt.className = 'timeline-date';
-        dt.textContent = entry.date || '-';
-
-        var span = document.createElement('span');
-        span.className = 'timeline-day-pill';
-        var dayOffset = 0;
-        if (minDate && entry.date) {
-          dayOffset = Math.max(0, Math.round((timelineToEpoch(entry.date) - timelineToEpoch(minDate)) / 86400000));
-        }
-        span.textContent = 'Day +' + String(dayOffset);
-        dt.appendChild(span);
-
-        var cap = document.createElement('div');
-        cap.textContent = entry.caption || 'Progress update';
-
-        var actions = document.createElement('div');
-        actions.className = 'timeline-item-actions';
-        var delBtn = document.createElement('button');
-        delBtn.type = 'button';
-        delBtn.className = 'btn-secondary timeline-delete-btn';
-        delBtn.setAttribute('data-photo-index', String(item.idx));
-        delBtn.textContent = 'Delete';
-        actions.appendChild(delBtn);
-
-        meta.appendChild(dt);
-        meta.appendChild(cap);
-        meta.appendChild(actions);
-        card.appendChild(meta);
-        gallery.appendChild(card);
-      });
+    async function renderGrowthTimelineSection() {
+      var form = document.getElementById('weatherSmartCareFormMain');
+      if (!form) return;
+      await populateWeatherPlantSelect();
+      resetWeatherPanel();
     }
 
     async function initGrowthTimelineSection() {
       if (growthTimelineInitDone) return;
       growthTimelineInitDone = true;
 
-      var select = document.getElementById('timelinePlantSelectMain');
-      var form = document.getElementById('growthTimelineFormMain');
-      var dateInput = document.getElementById('timelineDateMain');
-      var searchInput = document.getElementById('timelineSearchMain');
-      var sortSelect = document.getElementById('timelineSortMain');
-      var fromInput = document.getElementById('timelineFromDateMain');
-      var toInput = document.getElementById('timelineToDateMain');
-      var clearBtn = document.getElementById('timelineClearFiltersMain');
-      var oldSel = document.getElementById('timelineCompareOldMain');
-      var newSel = document.getElementById('timelineCompareNewMain');
-      var gallery = document.getElementById('timelineGalleryMain');
-      if (dateInput) dateInput.value = todayStr();
+      var form = document.getElementById('weatherSmartCareFormMain');
+      var useLocationBtn = document.getElementById('weatherUseLocationMain');
+      var plantSelect = document.getElementById('weatherPlantSelectMain');
+      var moistureSelect = document.getElementById('weatherMoisturePrefMain');
+      var lastWateredInput = document.getElementById('weatherLastWateredMain');
+      var indoorSelect = document.getElementById('weatherIndoorMain');
+      var latInput = document.getElementById('weatherLatitudeMain');
+      var lonInput = document.getElementById('weatherLongitudeMain');
+      var summary = document.getElementById('weatherSummaryMain');
 
-      if (select) {
-        select.addEventListener('change', async function () {
-          await renderGrowthTimelineSection();
-        });
-      }
+      if (lastWateredInput) lastWateredInput.value = todayStr();
 
-      if (searchInput) {
-        searchInput.addEventListener('input', async function () {
-          timelineViewState.search = this.value || '';
-          await renderGrowthTimelineSection();
-        });
-      }
-
-      if (sortSelect) {
-        sortSelect.addEventListener('change', async function () {
-          timelineViewState.sort = this.value || 'newest';
-          await renderGrowthTimelineSection();
-        });
-      }
-
-      if (fromInput) {
-        fromInput.addEventListener('change', async function () {
-          timelineViewState.from = this.value || '';
-          await renderGrowthTimelineSection();
-        });
-      }
-
-      if (toInput) {
-        toInput.addEventListener('change', async function () {
-          timelineViewState.to = this.value || '';
-          await renderGrowthTimelineSection();
-        });
-      }
-
-      if (clearBtn) {
-        clearBtn.addEventListener('click', async function () {
-          timelineViewState.search = '';
-          timelineViewState.sort = 'newest';
-          timelineViewState.from = '';
-          timelineViewState.to = '';
-          if (searchInput) searchInput.value = '';
-          if (sortSelect) sortSelect.value = 'newest';
-          if (fromInput) fromInput.value = '';
-          if (toInput) toInput.value = '';
-          await renderGrowthTimelineSection();
-        });
-      }
-
-      if (gallery) {
-        gallery.addEventListener('click', async function (e) {
-          var btn = e.target.closest('.timeline-delete-btn');
-          if (!btn) return;
-          var idx = Number(btn.getAttribute('data-photo-index'));
-          if (Number.isNaN(idx)) return;
-
-          var plants = await getPlantsForUser();
-          var plantId = select ? select.value : '';
-          var plant = plants.find(function (p) { return String(p.id) === String(plantId); });
-          await deleteTimelinePhoto(plant, idx);
-        });
-      }
-
-      if (oldSel) {
-        oldSel.addEventListener('change', async function () {
-          await renderGrowthTimelineSection();
-        });
-      }
-      if (newSel) {
-        newSel.addEventListener('change', async function () {
-          await renderGrowthTimelineSection();
+      if (useLocationBtn) {
+        useLocationBtn.addEventListener('click', function () {
+          if (!navigator.geolocation) {
+            alert('Geolocation is not supported in this browser.');
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              if (latInput) latInput.value = String(position.coords.latitude.toFixed(6));
+              if (lonInput) lonInput.value = String(position.coords.longitude.toFixed(6));
+            },
+            function () {
+              alert('Could not fetch location. Please enter latitude and longitude manually.');
+            }
+          );
         });
       }
 
       if (!form) return;
-
       form.addEventListener('submit', async function (e) {
         e.preventDefault();
-        var plants = await getPlantsForUser();
-        var plantId = select ? select.value : '';
-        var plant = plants.find(function (p) { return String(p.id) === String(plantId); });
-        if (!plant) { alert('Please select a valid plant first.'); return; }
 
-        var photoDate = (document.getElementById('timelineDateMain').value || todayStr()).trim();
-        var caption = document.getElementById('timelineCaptionMain').value.trim() || 'Progress update';
-        var fileInput = document.getElementById('timelineImageFileMain');
-        var urlInput = document.getElementById('timelineImageUrlMain');
-        var imageUrl = (urlInput && urlInput.value ? urlInput.value.trim() : '');
-        var file = fileInput && fileInput.files ? fileInput.files[0] : null;
-
-        if (!file && !imageUrl) {
-          alert('Upload an image file or provide an image URL.');
+        var lat = (latInput && latInput.value ? latInput.value.trim() : '');
+        var lon = (lonInput && lonInput.value ? lonInput.value.trim() : '');
+        if (!lat || !lon) {
+          alert('Please provide latitude and longitude.');
           return;
         }
 
-        async function saveTimeline(imageData) {
-          var updatedPlant = {
-            ...plant,
-            progressPhotos: [...(plant.progressPhotos || []), {
-              date: photoDate,
-              caption: caption,
-              imageData: imageData || '',
-              imageUrl: imageData ? '' : imageUrl
-            }],
-            history: [...(plant.history || []), { action: 'Timeline photo added', date: todayStr() }]
-          };
-          await updatePlant(plant.id, updatedPlant);
-          form.reset();
-          var dInput = document.getElementById('timelineDateMain');
-          if (dInput) dInput.value = todayStr();
-          await renderPlantDashboard();
-          await renderGrowthTimelineSection();
-          await renderTracer();
-        }
+        var plants = await getPlantsForUser();
+        var selectedPlant = plants.find(function (p) {
+          return String(p.id) === String(plantSelect ? plantSelect.value : '');
+        }) || null;
+
+        var params = {
+          latitude: lat,
+          longitude: lon,
+          plantType: selectedPlant ? String(selectedPlant.name || selectedPlant.type || 'General') : 'General',
+          moisturePreference: moistureSelect ? moistureSelect.value : 'medium',
+          lastWateredDate: lastWateredInput ? lastWateredInput.value : todayStr(),
+          isIndoor: indoorSelect ? indoorSelect.value : 'true'
+        };
 
         try {
-          if (file) {
-            var reader = new FileReader();
-            reader.onload = async function (evt) {
-              await saveTimeline(evt.target.result);
-            };
-            reader.readAsDataURL(file);
-          } else {
-            await saveTimeline('');
-          }
+          if (summary) summary.innerHTML = '<p class="small-text">Fetching weather recommendation...</p>';
+          var payload = await fetchSmartCarePayload(params);
+          renderWeatherResult(payload);
         } catch (error) {
-          console.error('Timeline save error:', error);
-          alert('Error adding timeline photo.');
+          console.error('Weather advice error:', error);
+          var reason = error && error.message ? error.message : 'Unknown error';
+          if (summary) summary.innerHTML = '<p class="small-text">Could not fetch weather advice: ' + reason + '</p>';
         }
       });
     }

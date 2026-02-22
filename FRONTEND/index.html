@@ -156,7 +156,7 @@
   <button class="nav-link" data-section="trackerSection">Care Tracker</button>
   <button class="nav-link" data-section="librarySection">Plant Gallery</button>
   <button class="nav-link" data-section="tracerSection">Plant Analytics</button>
-  <button class="nav-link" data-section="growthTimelineSection">Growth Timeline</button>
+  <button class="nav-link" data-section="growthTimelineSection">Weather</button>
   <button class="nav-link" data-section="plantMoodSection">Plant Mood</button>
   <button class="nav-link" data-section="profileSection">Dashboard</button>
   <button class="nav-link" data-section="contactSection">Contact</button>
@@ -644,111 +644,76 @@
 
       <section id="growthTimelineSection" class="app-section">
         <div class="card timeline-hub">
-          <h2>Growth Timeline Studio</h2>
+          <h2>Weather Smart Care</h2>
           <p class="card-subtitle">
-            Build a visual growth journal with filters, milestones, and before/after comparisons.
+            Get weather-based watering and fertilizer suggestions for your plants.
           </p>
 
-          <div class="timeline-toolbar">
-            <div class="form-group m-0">
-              <label for="timelinePlantSelectMain">Select Plant</label>
-              <select id="timelinePlantSelectMain"></select>
-            </div>
-            <div class="form-group m-0">
-              <label for="timelineSearchMain">Search Caption</label>
-              <input id="timelineSearchMain" type="text" placeholder="Search updates">
-            </div>
-            <div class="form-group m-0">
-              <label for="timelineSortMain">Sort</label>
-              <select id="timelineSortMain">
-                <option value="newest">Newest First</option>
-                <option value="oldest">Oldest First</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="timeline-filter-row">
-            <div class="form-group m-0">
-              <label for="timelineFromDateMain">From</label>
-              <input id="timelineFromDateMain" type="date">
-            </div>
-            <div class="form-group m-0">
-              <label for="timelineToDateMain">To</label>
-              <input id="timelineToDateMain" type="date">
-            </div>
-            <button type="button" id="timelineClearFiltersMain" class="btn-secondary">Clear Filters</button>
-          </div>
-
-          <div class="timeline-stats-grid">
-            <div class="timeline-stat-card">
-              <span>Total Updates</span>
-              <strong id="timelineStatsTotal">0</strong>
-            </div>
-            <div class="timeline-stat-card">
-              <span>First Photo</span>
-              <strong id="timelineStatsFirst">-</strong>
-            </div>
-            <div class="timeline-stat-card">
-              <span>Latest Photo</span>
-              <strong id="timelineStatsLatest">-</strong>
-            </div>
-            <div class="timeline-stat-card">
-              <span>Journey Span</span>
-              <strong id="timelineStatsDays">0 days</strong>
-            </div>
-          </div>
-
-          <form id="growthTimelineFormMain" class="timeline-upload-panel">
+          <form id="weatherSmartCareFormMain" class="timeline-upload-panel">
             <div class="grid">
               <div>
                 <div class="form-group">
-                  <label for="timelineDateMain">Photo Date</label>
-                  <input id="timelineDateMain" type="date">
+                  <label for="weatherPlantSelectMain">Select Plant</label>
+                  <select id="weatherPlantSelectMain"></select>
                 </div>
                 <div class="form-group">
-                  <label for="timelineCaptionMain">Caption</label>
-                  <input id="timelineCaptionMain" type="text" placeholder="e.g. Week 4: strong new leaves">
+                  <label for="weatherMoisturePrefMain">Moisture Preference</label>
+                  <select id="weatherMoisturePrefMain">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="weatherLastWateredMain">Last Watered Date</label>
+                  <input id="weatherLastWateredMain" type="date">
+                </div>
+                <div class="form-group">
+                  <label for="weatherIndoorMain">Placement</label>
+                  <select id="weatherIndoorMain">
+                    <option value="true">Indoor</option>
+                    <option value="false">Outdoor</option>
+                  </select>
                 </div>
               </div>
               <div>
                 <div class="form-group">
-                  <label for="timelineImageFileMain">Upload Image</label>
-                  <input id="timelineImageFileMain" type="file" accept="image/*">
+                  <label for="weatherLatitudeMain">Latitude</label>
+                  <input id="weatherLatitudeMain" type="number" step="any" placeholder="e.g. 19.0760">
                 </div>
                 <div class="form-group">
-                  <label for="timelineImageUrlMain">Or Image URL</label>
-                  <input id="timelineImageUrlMain" type="text" placeholder="Paste image URL">
+                  <label for="weatherLongitudeMain">Longitude</label>
+                  <input id="weatherLongitudeMain" type="number" step="any" placeholder="e.g. 72.8777">
+                </div>
+                <div class="weather-action-row">
+                  <button type="button" id="weatherUseLocationMain" class="btn-secondary">Use My Location</button>
+                  <button type="submit" class="btn-primary">Get Weather Advice</button>
                 </div>
               </div>
             </div>
-            <button type="submit" class="btn-primary">Add to Timeline</button>
           </form>
 
-          <div class="timeline-compare-panel">
-            <div class="timeline-compare-controls">
-              <div class="form-group m-0">
-                <label for="timelineCompareOldMain">Compare Start</label>
-                <select id="timelineCompareOldMain"></select>
-              </div>
-              <div class="form-group m-0">
-                <label for="timelineCompareNewMain">Compare End</label>
-                <select id="timelineCompareNewMain"></select>
-              </div>
+          <div class="timeline-stats-grid weather-stats-grid">
+            <div class="timeline-stat-card">
+              <span>Hydration Risk</span>
+              <strong id="weatherRiskMain">-</strong>
             </div>
-            <div id="timelineCompareCardMain" class="timeline-compare-card">
-              <div class="timeline-compare-image-wrap">
-                <img id="timelineCompareOldImgMain" alt="Earlier plant photo">
-                <p class="small-text" id="timelineCompareOldLabelMain">Earlier</p>
-              </div>
-              <div class="timeline-compare-image-wrap">
-                <img id="timelineCompareNewImgMain" alt="Latest plant photo">
-                <p class="small-text" id="timelineCompareNewLabelMain">Latest</p>
-              </div>
-              <p id="timelineCompareCaptionMain" class="timeline-compare-caption"></p>
+            <div class="timeline-stat-card">
+              <span>Next Water Date</span>
+              <strong id="weatherNextWaterMain">-</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>Water Frequency</span>
+              <strong id="weatherFrequencyMain">-</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>Fertilizer In</span>
+              <strong id="weatherFertilizerMain">-</strong>
             </div>
           </div>
 
-          <div id="timelineGalleryMain" class="timeline-gallery timeline-gallery-main"></div>
+          <div id="weatherSummaryMain" class="timeline-compare-panel"></div>
+          <ul id="weatherNotesMain" class="item-list"></ul>
         </div>
       </section>
 
@@ -999,25 +964,31 @@
         </div>
       </section>
 
-    
-</main>
-<!-- WEATHER REMOVED FOR EXAM VERSION -->
+      <section id="plantMoodSection" class="app-section">
+        <div class="card mood-shell">
+          <div class="mood-page-hero">
+            <span class="mood-kicker">Plant Wellness Studio</span>
+            <h2>Plant Mood Indicator</h2>
+            <p class="card-subtitle">Live emotional health dashboard for each plant based on your care consistency.</p>
+            <div class="mood-hero-pills">
+              <span class="mood-hero-pill">Live Score</span>
+              <span class="mood-hero-pill">Care Trend</span>
+              <span class="mood-hero-pill">7-Day Timeline</span>
+            </div>
+          </div>
 
-<section id="plantMoodSection" class="app-section">
-  <div class="card">
-    <h2>🌿 Plant Mood Indicator</h2>
+          <div class="mood-select-wrap">
+            <label for="plantMoodSelect">Select Plant</label>
+            <select id="plantMoodSelect"></select>
+          </div>
 
-    <label>Select Plant:</label>
-    <select id="plantMoodSelect"></select>
+          <div id="plantMoodResult" class="mood-result-area">
+            Select plant to see mood.
+          </div>
+        </div>
+      </section>
 
-    <div id="plantMoodResult">
-      Select plant to see mood.
-    </div>
-
-  </div>
-</section>
-
-</main>
+    </main>
 
     <!-- FLOATING CHAT ICON -->
      <button id="taskHistoryFab" class="chat-fab task-history-fab" title="Task History">📋</button>

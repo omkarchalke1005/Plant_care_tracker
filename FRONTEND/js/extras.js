@@ -792,6 +792,55 @@ updateAnalytics();
 
 /******** PLANT MOOD FINAL ********/
 
+function getMoodHistoryStorageKey(plantId) {
+  var user = getCurrentUser();
+  var userKey = user && user.uid ? user.uid : String(user || 'guest');
+  return 'pct_mood_history_' + userKey + '_' + String(plantId);
+}
+
+function readMoodHistory(plantId) {
+  try {
+    var raw = localStorage.getItem(getMoodHistoryStorageKey(plantId));
+    var parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_error) {
+    return [];
+  }
+}
+
+function writeMoodHistory(plantId, score, moodText) {
+  var history = readMoodHistory(plantId);
+  var today = todayStr();
+  var last = history.length ? history[history.length - 1] : null;
+
+  if (!last || String(last.date) !== today || Math.abs(Number(last.score || 0) - Number(score || 0)) >= 3) {
+    history.push({
+      date: today,
+      score: Number(score) || 0,
+      mood: String(moodText || '')
+    });
+  } else {
+    last.score = Number(score) || 0;
+    last.mood = String(moodText || '');
+  }
+
+  var trimmed = history.slice(-7);
+  try {
+    localStorage.setItem(getMoodHistoryStorageKey(plantId), JSON.stringify(trimmed));
+  } catch (_error) {}
+  return trimmed;
+}
+
+function getMoodTrend(history) {
+  if (!history || history.length < 2) return { label: 'Stable', delta: 0, cls: 'stable' };
+  var latest = Number(history[history.length - 1].score) || 0;
+  var prev = Number(history[history.length - 2].score) || 0;
+  var delta = latest - prev;
+  if (delta >= 3) return { label: 'Improving', delta: delta, cls: 'up' };
+  if (delta <= -3) return { label: 'Declining', delta: delta, cls: 'down' };
+  return { label: 'Stable', delta: delta, cls: 'stable' };
+}
+
 async function loadPlantMoodPlants(){
 
   try{
@@ -876,6 +925,12 @@ async function showSelectedPlantMood(){
     }
 
     let latestTask = plantTasks.sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
+    let moodHistory = writeMoodHistory(plantId, score, mood);
+    let trend = getMoodTrend(moodHistory);
+    let trendSign = trend.delta > 0 ? '+' + trend.delta : String(trend.delta);
+    let historyHtml = moodHistory.map(function (entry) {
+      return '<div class="mood-history-item"><span class="mood-history-date">' + entry.date + '</span><strong>' + entry.score + '%</strong></div>';
+    }).join('');
 
     document.getElementById("plantMoodResult").innerHTML = `
     <div class="mood-box ${moodClass}">
@@ -923,6 +978,14 @@ async function showSelectedPlantMood(){
         <span class="mood-count-pill">✅ Done: ${doneTasks}</span>
         <span class="mood-count-pill">❌ Missed: ${missedTasks}</span>
         <span class="mood-count-pill">⏳ Pending: ${pendingTasks}</span>
+      </div>
+
+      <div class="mood-history-wrap">
+        <div class="mood-history-head">
+          <span>Mood Timeline (Last 7 checks)</span>
+          <span class="mood-trend-pill mood-trend-${trend.cls}">${trend.label} (${trendSign})</span>
+        </div>
+        <div class="mood-history-list">${historyHtml || '<div class="mood-history-empty">No history yet</div>'}</div>
       </div>
     </div>
     `;

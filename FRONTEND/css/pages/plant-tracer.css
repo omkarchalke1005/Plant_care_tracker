@@ -269,6 +269,9 @@
     }
 
     .timeline-hub {
+      width: 100%;
+      max-width: 1320px;
+      margin: 0 auto;
       background:
         radial-gradient(circle at 10% -10%, rgba(144, 233, 186, 0.42), rgba(255, 255, 255, 0)),
         radial-gradient(circle at 90% 0%, rgba(255, 223, 170, 0.32), rgba(255, 255, 255, 0)),
@@ -445,6 +448,18 @@
       border-color: #d9b7b7;
       background: linear-gradient(135deg, #fff5f5, #ffecec);
       color: #8a3535;
+    }
+
+    .weather-action-row {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      margin-top: 0.35rem;
+      flex-wrap: wrap;
+    }
+
+    .weather-stats-grid {
+      margin-top: 0.8rem;
     }
 
     .seasonal-toggle-row {

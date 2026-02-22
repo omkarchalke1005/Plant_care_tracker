@@ -576,6 +576,38 @@ body.dark .home-hero-image {
   background: linear-gradient(165deg, #1a3d2b, #184130 52%, #1a4330) !important;
 }
 
+body.dark .home-kicker {
+  background: linear-gradient(135deg, #183126, #1a2e43) !important;
+  border-color: #3a5c4a !important;
+  color: #d8f2e3 !important;
+}
+
+body.dark .home-highlight-pill {
+  background: linear-gradient(130deg, #172b22, #1b3045) !important;
+  border-color: #3a5c4a !important;
+  color: #d7ebff !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35) !important;
+}
+
+body.dark .home-metric-card {
+  background: linear-gradient(140deg, #15271f, #16293b) !important;
+  border-color: #395b77 !important;
+}
+
+body.dark .home-metric-card span {
+  color: #b9d2ea !important;
+}
+
+body.dark .home-metric-card strong {
+  color: #eef6ff !important;
+}
+
+body.dark .home-step-no {
+  background: linear-gradient(130deg, #1a3126, #1a3248) !important;
+  border-color: #436587 !important;
+  color: #ddedff !important;
+}
+
 
 
 /* ===== Dark Mode Refresh (Less Green, More Premium) ===== */
@@ -793,4 +825,45 @@ body.dark .timeline-delete-btn {
   background: #1a3148 !important;
   border-color: #46688b !important;
   color: #d7e8fb !important;
+}
+
+/* Final hard override: Home dark contrast */
+html body.dark #homeSection .home-kicker,
+html body.dark #homeSection .home-highlight-pill,
+html body.dark #homeSection .home-metric-card,
+html body.dark #homeSection .home-step-no {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+html body.dark #homeSection .home-kicker {
+  background: #1a2d24 !important;
+  border-color: #3f6d57 !important;
+  color: #e4f8ec !important;
+}
+
+html body.dark #homeSection .home-highlight-pill {
+  background: #1b2f26 !important;
+  border-color: #3f6d57 !important;
+  color: #e5f0ff !important;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.38) !important;
+}
+
+html body.dark #homeSection .home-metric-card {
+  background: #1a2c24 !important;
+  border-color: #476a88 !important;
+}
+
+html body.dark #homeSection .home-metric-card span {
+  color: #c6dcf2 !important;
+}
+
+html body.dark #homeSection .home-metric-card strong {
+  color: #f2f8ff !important;
+}
+
+html body.dark #homeSection .home-step-no {
+  background: #1a2f26 !important;
+  border-color: #476a88 !important;
+  color: #e5f2ff !important;
 }
