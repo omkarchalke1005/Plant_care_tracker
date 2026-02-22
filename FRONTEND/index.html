@@ -175,11 +175,17 @@
       <section id="homeSection" class="app-section">
         <div class="card home-hero-main">
           <div class="home-hero-text">
-            <h1>Welcome to Plant Care Tracker 🌱</h1>
+            <span class="home-kicker">Smart Plant Journal</span>
+            <h1>Welcome to Plant Care Tracker</h1>
             <p>
               This website helps you organize all your plants in one place – with photos, notes,
               watering reminders and a special plant tracer dashboard.
             </p>
+            <div class="home-highlight-row">
+              <span class="home-highlight-pill">Simple Daily Tracking</span>
+              <span class="home-highlight-pill">Student Friendly</span>
+              <span class="home-highlight-pill">Visual Growth Logs</span>
+            </div>
             <p><strong>What you can do here:</strong></p>
             <ul>
               <li>Save each plant with photo, type and growth stage.</li>
@@ -187,6 +193,16 @@
               <li>See care history and important notes per plant.</li>
               <li>Use the Plant Assistant chatbot for quick help.</li>
             </ul>
+            <div class="home-metric-row">
+              <div class="home-metric-card">
+                <span>Focus</span>
+                <strong>Healthy Plants</strong>
+              </div>
+              <div class="home-metric-card">
+                <span>Workflow</span>
+                <strong>Add -> Plan -> Track</strong>
+              </div>
+            </div>
           </div>
           <div class="home-hero-image">
             <div>
@@ -230,30 +246,30 @@
           <p class="card-subtitle">
             Follow these simple steps to get the best use from Plant Care Tracker.
           </p>
-          <div class="grid">
-            <div class="info-box">
-              <h3>1. Go to Add Plants</h3>
+          <div class="grid home-how-grid">
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">01</span>Go to Add Plants</h3>
               <p>
                 Open the <strong>Add Plants</strong> tab and add your first plant.
                 You can select from the built-in Plant Information Library and upload a picture.
               </p>
             </div>
-            <div class="info-box">
-              <h3>2. Check Plant Gallery</h3>
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">02</span>Check Plant Gallery</h3>
               <p>
                 After adding plants, all of them appear in the <strong>Plant Gallery</strong>.
                 Click any plant card to open its individual <strong>Plant Dashboard</strong>.
               </p>
             </div>
-            <div class="info-box">
-              <h3>3. Use Care Tracker</h3>
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">03</span>Use Care Tracker</h3>
               <p>
                 In the <strong>Care Tracker</strong> tab, add watering and fertilizer tasks,
                 see upcoming and past activities and view everything on the calendar.
               </p>
             </div>
-            <div class="info-box">
-              <h3>4. Trace & Chat</h3>
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">04</span>Trace & Chat</h3>
               <p>
                 In the <strong>Plant Analytics</strong> tab you can see exact watering dates,
                 fertilizer dates, growth bars and then open the AI chatbot icon at the bottom
@@ -328,6 +344,25 @@
             It will appear in your Plant Gallery, and each plant will have its own dashboard page.
           </p>
 
+          <div class="add-plant-quickbar">
+            <div class="quick-group">
+              <span class="quick-label">Quick Type</span>
+              <button type="button" class="quick-chip" data-plant-type="Indoor">Indoor</button>
+              <button type="button" class="quick-chip" data-plant-type="Outdoor">Outdoor</button>
+            </div>
+            <div class="quick-group">
+              <span class="quick-label">Quick Stage</span>
+              <button type="button" class="quick-chip" data-growth-stage="Seedling">Seedling</button>
+              <button type="button" class="quick-chip" data-growth-stage="Young">Young</button>
+              <button type="button" class="quick-chip" data-growth-stage="Mature">Mature</button>
+            </div>
+          </div>
+
+          <div id="addPlantPreview" class="add-plant-preview">
+            <h3>Plant Preview</h3>
+            <p class="small-text">Fill the form to preview how your plant entry will look.</p>
+          </div>
+
           <form id="addPlantForm">
             <div class="grid">
               <div>
@@ -352,10 +387,6 @@
                 <div class="form-group">
                   <label for="plantImageFile">Upload Plant Picture (optional)</label>
                   <input id="plantImageFile" type="file" accept="image/*">
-                </div>
-                <div class="form-group">
-                  <label for="plantImageUrl">Or Plant Image URL (optional)</label>
-                  <input id="plantImageUrl" type="text" placeholder="Paste any online image link for the plant">
                 </div>
                 <div class="form-group">
                   <label for="initialNote">Plant Information Note</label>

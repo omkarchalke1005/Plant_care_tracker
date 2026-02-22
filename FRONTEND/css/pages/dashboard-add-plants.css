@@ -89,15 +89,72 @@
       font-size: clamp(1.5rem, 1.3rem + 0.7vw, 1.95rem);
       color: #123c27;
     }
-    .add-plant-card h2::before {
-      content: "??";
-      font-size: 1.05rem;
-    }
 
     .add-plant-card .card-subtitle {
       color: #476b55;
       line-height: 1.52;
       max-width: 66ch;
+    }
+
+    .add-plant-quickbar {
+      margin: 0.7rem 0 0.8rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+
+    .quick-group {
+      border: 1px solid #c9e5d0;
+      border-radius: 0.85rem;
+      padding: 0.55rem 0.6rem;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.88), rgba(239, 251, 244, 0.9));
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.42rem;
+      align-items: center;
+    }
+
+    .quick-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #24563e;
+      margin-right: 0.15rem;
+    }
+
+    .quick-chip {
+      border: 1px solid #b9dcbf;
+      border-radius: 999px;
+      padding: 0.26rem 0.66rem;
+      font-size: 0.78rem;
+      color: #1f5e3d;
+      background: linear-gradient(135deg, #f6fff9, #ecf9f0);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .quick-chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(35, 111, 54, 0.15);
+    }
+
+    .add-plant-preview {
+      border: 1px solid #c8e3cf;
+      border-radius: 0.95rem;
+      padding: 0.75rem 0.85rem;
+      background: linear-gradient(145deg, #f8fffa, #edf8f0);
+      box-shadow: 0 10px 20px rgba(25, 84, 43, 0.08);
+      margin-bottom: 0.9rem;
+    }
+
+    .add-plant-preview h3 {
+      margin-bottom: 0.35rem;
+      color: #114129;
+      font-size: 1rem;
+    }
+
+    .add-plant-preview p {
+      margin: 0.18rem 0;
+      color: #436552;
     }
 
     #addPlantForm {
@@ -150,6 +207,12 @@
 
     #addPlantForm .btn-primary:hover {
       box-shadow: 0 14px 26px rgba(35, 111, 54, 0.46);
+    }
+
+    @media (max-width: 860px) {
+      .add-plant-quickbar {
+        grid-template-columns: 1fr;
+      }
     }
 
 

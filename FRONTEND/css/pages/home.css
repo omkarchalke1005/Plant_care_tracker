@@ -110,9 +110,73 @@
       color: #0f3a25;
     }
 
+    .home-kicker {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.24rem 0.62rem;
+      border-radius: 999px;
+      border: 1px solid #b7dcc1;
+      background: linear-gradient(135deg, #e4f8eb, #eff7ff);
+      color: #175035;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.45rem;
+    }
+
     .home-hero-text p {
       color: #476953;
       line-height: 1.45;
+    }
+
+    .home-highlight-row {
+      margin: 0.35rem 0 0.55rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+
+    .home-highlight-pill {
+      display: inline-flex;
+      padding: 0.28rem 0.68rem;
+      border-radius: 999px;
+      border: 1px solid #b9ddc3;
+      background: linear-gradient(130deg, #f2fff7, #ebf6ff);
+      color: #1f5e3d;
+      font-size: 0.78rem;
+      font-weight: 600;
+      box-shadow: 0 6px 14px rgba(21, 89, 51, 0.1);
+    }
+
+    .home-metric-row {
+      margin-top: 0.55rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+
+    .home-metric-card {
+      border: 1px solid #c9e4d1;
+      border-radius: 0.82rem;
+      padding: 0.48rem 0.58rem;
+      background: linear-gradient(140deg, #f8fff9, #edf7ef);
+      box-shadow: 0 8px 18px rgba(18, 79, 44, 0.09);
+    }
+
+    .home-metric-card span {
+      display: block;
+      font-size: 0.72rem;
+      color: #50755f;
+      margin-bottom: 0.15rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .home-metric-card strong {
+      color: #12462d;
+      font-size: 0.94rem;
+      line-height: 1.2;
     }
 
     .home-hero-text ul {
@@ -166,6 +230,40 @@
       filter: saturate(1.08);
     }
 
+    .home-how-grid .home-step-card {
+      border: 1px solid #c8e3cf;
+      border-radius: 0.92rem;
+      background: linear-gradient(145deg, #f9fffb, #edf7f1);
+      box-shadow: 0 10px 22px rgba(17, 79, 44, 0.1);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .home-how-grid .home-step-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 26px rgba(17, 79, 44, 0.16);
+    }
+
+    .home-step-card h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      color: #10402a;
+    }
+
+    .home-step-no {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 34px;
+      height: 24px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #1e6a42;
+      border: 1px solid #a9d6b8;
+      background: linear-gradient(130deg, #e1f5e9, #eef7ff);
+    }
+
     .home-slider {
       margin-top: 0.72rem;
       height: 220px;
@@ -205,6 +303,10 @@
 
       .home-slider {
         height: 200px;
+      }
+
+      .home-metric-row {
+        grid-template-columns: 1fr;
       }
     }
 

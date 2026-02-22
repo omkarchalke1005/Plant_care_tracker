@@ -8,23 +8,66 @@
       function renderOptions(filterText) {
         select.innerHTML = '<option value="">-- Choose a plant from the list --</option>';
         var text = (filterText || '').toLowerCase();
+        var count = 0;
         plantCatalog.forEach(function (p, index) {
           if (!text || p.name.toLowerCase().indexOf(text) !== -1) {
             var opt = document.createElement('option');
             opt.value = index;
             opt.textContent = p.name + ' (' + p.type + ')';
             select.appendChild(opt);
+            count++;
           }
         });
+
+        var raw = (filterText || '').trim();
+        if (raw && count === 0) {
+          var customOpt = document.createElement('option');
+          customOpt.value = '__custom__';
+          customOpt.textContent = 'Use "' + raw + '" as custom plant';
+          select.appendChild(customOpt);
+        }
+
+        return {
+          matches: count,
+          raw: raw
+        };
       }
 
       renderOptions('');
 
       if (searchInput) {
         searchInput.addEventListener('input', function () {
-          renderOptions(this.value);
-          infoBox.innerHTML =
-            '<h3>Plant information</h3><p>Select a plant above to view description and care tips.</p>';
+          var result = renderOptions(this.value);
+          var raw = this.value.trim();
+          if (raw) {
+            if (result.matches === 0) {
+              select.value = '__custom__';
+              document.getElementById('plantName').value = raw;
+              infoBox.innerHTML =
+                '<h3>Custom plant mode</h3><p>No library match found. Your custom plant name is ready. Fill remaining fields and click Add Plant.</p>';
+              if (typeof refreshAddPlantPreview === 'function') refreshAddPlantPreview();
+            } else {
+              infoBox.innerHTML =
+                '<h3>Plant information</h3><p>Select a plant above to view description and care tips.</p>';
+            }
+          } else {
+            infoBox.innerHTML =
+              '<h3>Plant information</h3><p>Select a plant above to view description and care tips.</p>';
+          }
+        });
+
+        searchInput.addEventListener('keydown', function (e) {
+          if (e.key !== 'Enter') return;
+          e.preventDefault();
+          var result = renderOptions(this.value);
+          var raw = this.value.trim();
+          if (raw && result.matches === 0) {
+            select.value = '__custom__';
+            document.getElementById('plantName').value = raw;
+            infoBox.innerHTML =
+              '<h3>Custom plant mode</h3><p>No library match found. Your custom plant name is ready. Fill remaining fields and click Add Plant.</p>';
+            if (typeof refreshAddPlantPreview === 'function') refreshAddPlantPreview();
+          }
         });
       }
 
@@ -32,6 +75,14 @@
         var idx = this.value;
         if (idx === '') {
           infoBox.innerHTML = '<h3>Plant information</h3><p>Select a plant above to view description and care tips.</p>';
+          return;
+        }
+        if (idx === '__custom__') {
+          var rawName = searchInput ? searchInput.value.trim() : '';
+          if (rawName) document.getElementById('plantName').value = rawName;
+          infoBox.innerHTML =
+            '<h3>Custom plant selected</h3><p>Fill plant type, growth stage and notes, then click Add Plant.</p>';
+          if (typeof refreshAddPlantPreview === 'function') refreshAddPlantPreview();
           return;
         }
         var plant = plantCatalog[idx];
@@ -44,14 +95,39 @@
         document.getElementById('plantName').value = plant.name;
         document.getElementById('plantType').value = plant.type;
         document.getElementById('initialNote').value = plant.info;
-        document.getElementById('plantImageUrl').value = plant.imageUrl || '';
 
         // If growth stage empty, we can auto-set to Seedling or Mature
         var gs = document.getElementById('growthStage');
         if (gs && !gs.value.trim()) {
           gs.value = 'Mature';
         }
+        if (typeof refreshAddPlantPreview === 'function') refreshAddPlantPreview();
       });
+    }
+
+    function refreshAddPlantPreview() {
+      var preview = document.getElementById('addPlantPreview');
+      if (!preview) return;
+      var name = (document.getElementById('plantName') || {}).value || '';
+      var type = (document.getElementById('plantType') || {}).value || '';
+      var stage = (document.getElementById('growthStage') || {}).value || '';
+      var note = (document.getElementById('initialNote') || {}).value || '';
+      var fileInput = document.getElementById('plantImageFile');
+      var hasFile = !!(fileInput && fileInput.files && fileInput.files[0]);
+
+      var safeName = name.trim() || 'Plant name not set';
+      var safeType = type.trim() || 'Type not selected';
+      var safeStage = stage.trim() || 'Growth stage not set';
+      var source = hasFile ? 'Uploaded image file' : 'No image provided';
+      var notePreview = note.trim() ? note.trim().slice(0, 120) : 'No note yet.';
+
+      preview.innerHTML =
+        '<h3>Plant Preview</h3>' +
+        '<p><strong>Name:</strong> ' + safeName + '</p>' +
+        '<p><strong>Type:</strong> ' + safeType + '</p>' +
+        '<p><strong>Growth:</strong> ' + safeStage + '</p>' +
+        '<p><strong>Image:</strong> ' + source + '</p>' +
+        '<p><strong>Note:</strong> ' + notePreview + '</p>';
     }
 
     async function initDashboardMain() {
@@ -60,7 +136,6 @@
 
       // Attach growth stage auto-detect events
       var fileInput = document.getElementById('plantImageFile');
-      var urlInput = document.getElementById('plantImageUrl');
 
       if (fileInput) {
         fileInput.addEventListener('change', function () {
@@ -71,17 +146,30 @@
         });
       }
 
-      if (urlInput) {
-        urlInput.addEventListener('change', function () {
-          var url = this.value.trim();
-          if (url) {
-            guessGrowthStageFromImageMeta({ url: url });
-          }
-        });
-      }
-
       var form = document.getElementById('addPlantForm');
       if (!form) return;
+      var nameInput = document.getElementById('plantName');
+      var typeInput = document.getElementById('plantType');
+      var stageInput = document.getElementById('growthStage');
+      var noteInput = document.getElementById('initialNote');
+      var imageFileInput = document.getElementById('plantImageFile');
+
+      [nameInput, typeInput, stageInput, noteInput, imageFileInput].forEach(function (el) {
+        if (!el) return;
+        el.addEventListener('input', refreshAddPlantPreview);
+        el.addEventListener('change', refreshAddPlantPreview);
+      });
+
+      document.querySelectorAll('.quick-chip').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+          var type = this.getAttribute('data-plant-type');
+          var stage = this.getAttribute('data-growth-stage');
+          if (type && typeInput) typeInput.value = type;
+          if (stage && stageInput) stageInput.value = stage;
+          refreshAddPlantPreview();
+        });
+      });
+      refreshAddPlantPreview();
 
       function readFileAsDataURL(file) {
         return new Promise(function (resolve, reject) {
@@ -128,7 +216,6 @@
 
         var name = document.getElementById('plantName').value.trim();
         var type = document.getElementById('plantType').value.trim();
-        var imageUrl = document.getElementById('plantImageUrl').value.trim();
         var growth = document.getElementById('growthStage').value.trim();
         var note = document.getElementById('initialNote').value.trim();
         var fileInputEl = document.getElementById('plantImageFile');
@@ -144,7 +231,7 @@
         var plant = {
           name: name,
           type: type,
-          imageUrl: imageUrl || '',
+          imageUrl: '',
           imageData: '',
           growthStage: growth || 'Seedling',
           notes: [],
@@ -178,18 +265,12 @@
               imageData: imageData,
               imageUrl: ''
             });
-          } else if (plant.imageUrl) {
-            plant.progressPhotos.push({
-              date: plant.createdAt,
-              caption: 'Initial photo',
-              imageData: '',
-              imageUrl: plant.imageUrl
-            });
           }
 
           await savePlant(plant);
           await Promise.all([renderPlantLibrary(), refreshHeaderStats()]);
           form.reset();
+          refreshAddPlantPreview();
           alert('Plant added!');
         } catch (error) {
           console.error('Error saving plant:', error);

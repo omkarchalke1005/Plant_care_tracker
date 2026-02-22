@@ -325,7 +325,107 @@
 
       {name:'Adenium (Desert Rose)', type:'Outdoor',
        info:'Succulent-like plant with swollen trunk and colorful flowers. Loves strong sunlight and low watering.',
-       imageUrl:'https://images.pexels.com/photos/672142/pexels-photo-672142.jpeg?auto=compress&cs=tinysrgb&w=600'}
+       imageUrl:'https://images.pexels.com/photos/672142/pexels-photo-672142.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Monstera Deliciosa', type:'Indoor',
+       info:'Large split leaves, ideal for bright indirect light. Water when top 2 inches of soil are dry.',
+       imageUrl:'https://images.pexels.com/photos/5699668/pexels-photo-5699668.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Dracaena Marginata', type:'Indoor',
+       info:'Upright narrow leaves with red edges. Tolerates medium light and occasional missed watering.',
+       imageUrl:'https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Anthurium', type:'Indoor',
+       info:'Glossy leaves and red/pink spathes. Likes warmth, humidity, and bright filtered light.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Dieffenbachia', type:'Indoor',
+       info:'Attractive variegated foliage plant. Keep in medium light and water when topsoil dries slightly.',
+       imageUrl:'https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Syngonium', type:'Indoor',
+       info:'Arrowhead vine with soft leaves. Performs well in bright indirect light and moderate watering.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Peperomia', type:'Indoor',
+       info:'Compact ornamental foliage plant for desks. Prefers light watering and airy potting mix.',
+       imageUrl:'https://images.pexels.com/photos/450326/pexels-photo-450326.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Hoya (Wax Plant)', type:'Indoor',
+       info:'Thick leaves and fragrant clusters when mature. Likes bright indirect light and less frequent watering.',
+       imageUrl:'https://images.pexels.com/photos/2124380/pexels-photo-2124380.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Parlor Palm', type:'Indoor',
+       info:'Classic indoor palm for low to medium light. Keep soil lightly moist and avoid overwatering.',
+       imageUrl:'https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Nerve Plant (Fittonia)', type:'Indoor',
+       info:'Small veined leaves with strong color contrast. Needs humidity and regular but light watering.',
+       imageUrl:'https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Asparagus Fern', type:'Indoor',
+       info:'Soft airy foliage, likes bright filtered light. Keep slightly moist and trim old stems regularly.',
+       imageUrl:'https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Tradescantia (Wandering Dude)', type:'Indoor',
+       info:'Fast trailing plant with purple-green leaves. Likes bright indirect light and regular pinching.',
+       imageUrl:'https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Bird of Paradise (Indoor)', type:'Indoor',
+       info:'Large tropical foliage plant. Give high light and deep watering when topsoil becomes dry.',
+       imageUrl:'https://images.pexels.com/photos/5699668/pexels-photo-5699668.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Mandevilla', type:'Outdoor',
+       info:'Flowering climber with trumpet blooms. Loves sun, regular feeding, and support for vines.',
+       imageUrl:'https://images.pexels.com/photos/60597/hibiscus-flower-red-pink-60597.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Plumeria (Frangipani)', type:'Outdoor',
+       info:'Tropical flowering tree with fragrant blooms. Needs full sun and well-drained soil.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Petunia', type:'Outdoor',
+       info:'Long-season flowering annual for beds and pots. Needs sunlight and deadheading for more flowers.',
+       imageUrl:'https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Dahlia', type:'Outdoor',
+       info:'Showy blooms in many sizes and colors. Provide full sun, staking, and consistent moisture.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Zinnia', type:'Outdoor',
+       info:'Easy flowering plant with bright blooms. Thrives in warm weather and direct sunlight.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Cosmos', type:'Outdoor',
+       info:'Light airy flowering annual. Needs sun and moderate watering with well-drained soil.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Portulaca (Moss Rose)', type:'Outdoor',
+       info:'Heat-loving succulent flowering plant. Great for sunny spots with minimal watering.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Periwinkle (Vinca)', type:'Outdoor',
+       info:'Hardy flowering plant for hot climates. Needs sunlight and occasional deep watering.',
+       imageUrl:'https://images.pexels.com/photos/60597/hibiscus-flower-red-pink-60597.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Hydrangea', type:'Outdoor',
+       info:'Large ornamental flower clusters. Prefers morning sun, afternoon shade, and evenly moist soil.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Gardenia', type:'Outdoor',
+       info:'Fragrant white flowers and glossy leaves. Likes warm weather, acidic soil, and regular moisture.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Lantana', type:'Outdoor',
+       info:'Clustered multicolor flowers that attract pollinators. Drought tolerant once established.',
+       imageUrl:'https://images.pexels.com/photos/434840/pexels-photo-434840.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Jasminum Sambac', type:'Outdoor',
+       info:'Evergreen jasmine with strong fragrance. Needs sunlight and steady watering for bloom.',
+       imageUrl:'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg?auto=compress&cs=tinysrgb&w=600'},
+
+      {name:'Rangoon Creeper', type:'Outdoor',
+       info:'Vigorous climber with color-changing flowers. Needs support, sunlight, and seasonal pruning.',
+       imageUrl:'https://images.pexels.com/photos/60597/hibiscus-flower-red-pink-60597.jpeg?auto=compress&cs=tinysrgb&w=600'}
     ];
 
     /* ---------- FIREBASE STORAGE HELPERS ---------- */
