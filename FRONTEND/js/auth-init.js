@@ -3,7 +3,6 @@
       initHomeSlider();
       initNav();
       initProfileUI();
-      initChatbotUI();
       initContactForm();
 
       function showPreAuthLanding() {

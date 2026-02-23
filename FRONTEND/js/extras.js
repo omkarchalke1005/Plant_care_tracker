@@ -994,6 +994,32 @@ function getMoodTrend(history) {
   return { label: 'Stable', delta: delta, cls: 'stable' };
 }
 
+function getMoodRisk(score, missedRate) {
+  if (score < 40 || missedRate >= 45) return { label: 'Critical', cls: 'critical' };
+  if (score < 70 || missedRate >= 25) return { label: 'Watch', cls: 'watch' };
+  return { label: 'Stable', cls: 'stable' };
+}
+
+function buildMoodActionPlan(data) {
+  var actions = [];
+  if (data.pendingTasks > 0) {
+    actions.push('Complete at least 1 pending care task today.');
+  }
+  if (data.missedTasks > 0) {
+    actions.push('Recover missed tasks: start with watering/moisture check first.');
+  }
+  if (data.score < 70) {
+    actions.push('Run a quick plant check: soil + leaf condition + sunlight placement.');
+  }
+  if (data.completionRate < 60) {
+    actions.push('Use Smart Auto Planner for the next 14 or 30 days.');
+  }
+  if (!actions.length) {
+    actions.push('Keep current routine and maintain daily consistency.');
+  }
+  return actions.slice(0, 3);
+}
+
 async function loadPlantMoodPlants(){
 
   try{
@@ -1036,6 +1062,8 @@ async function showSelectedPlantMood(){
     let doneTasks = plantTasks.filter(t => normalizeTaskStatus(t) === 'done').length;
     let missedTasks = plantTasks.filter(t => normalizeTaskStatus(t) === 'missed').length;
     let pendingTasks = plantTasks.filter(t => normalizeTaskStatus(t) === 'pending').length;
+    let completionRate = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+    let missedRate = totalTasks ? Math.round((missedTasks / totalTasks) * 100) : 0;
 
     /* SCORE (status-based) */
     // Done increases health, missed decreases it, pending gives a small neutral buffer.
@@ -1080,16 +1108,34 @@ async function showSelectedPlantMood(){
     let latestTask = plantTasks.sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
     let moodHistory = writeMoodHistory(plantId, score, mood);
     let trend = getMoodTrend(moodHistory);
+    let risk = getMoodRisk(score, missedRate);
+    let actionPlan = buildMoodActionPlan({
+      score: score,
+      completionRate: completionRate,
+      missedTasks: missedTasks,
+      pendingTasks: pendingTasks
+    });
     let trendSign = trend.delta > 0 ? '+' + trend.delta : String(trend.delta);
     let historyHtml = moodHistory.map(function (entry) {
       return '<div class="mood-history-item"><span class="mood-history-date">' + entry.date + '</span><strong>' + entry.score + '%</strong></div>';
+    }).join('');
+    let trendBarsHtml = moodHistory.map(function (entry) {
+      var h = Math.max(8, Math.min(100, Number(entry.score) || 0));
+      var shortDate = String(entry.date || '').slice(5);
+      return '<div class="mood-trend-col"><i style="height:' + h + '%"></i><span>' + shortDate + '</span></div>';
+    }).join('');
+    let actionHtml = actionPlan.map(function (item) {
+      return '<li>' + item + '</li>';
     }).join('');
 
     document.getElementById("plantMoodResult").innerHTML = `
     <div class="mood-box ${moodClass}">
       <div class="mood-header">
         <h3 class="mood-plant-name">${nameMap[String(plant.id)] || plant.name}</h3>
-        <span class="mood-pill">LIVE STATUS</span>
+        <div class="mood-header-pills">
+          <span class="mood-pill">LIVE STATUS</span>
+          <span class="mood-risk-badge mood-risk-${risk.cls}">Risk: ${risk.label}</span>
+        </div>
       </div>
 
       <p class="mood-main"><strong>${mood}</strong></p>
@@ -1123,7 +1169,7 @@ async function showSelectedPlantMood(){
         </div>
         <div class="mood-stat">
           <span class="mood-stat-label">Completion Rate</span>
-          <span class="mood-stat-value">${totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0}%</span>
+          <span class="mood-stat-value">${completionRate}%</span>
         </div>
       </div>
 
@@ -1139,6 +1185,14 @@ async function showSelectedPlantMood(){
           <span class="mood-trend-pill mood-trend-${trend.cls}">${trend.label} (${trendSign})</span>
         </div>
         <div class="mood-history-list">${historyHtml || '<div class="mood-history-empty">No history yet</div>'}</div>
+        <div class="mood-trend-chart">${trendBarsHtml || ''}</div>
+      </div>
+
+      <div class="mood-action-wrap">
+        <div class="mood-history-head">
+          <span>Recommended Next Actions</span>
+        </div>
+        <ul class="mood-action-list">${actionHtml}</ul>
       </div>
     </div>
     `;

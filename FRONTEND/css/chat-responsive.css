@@ -19,12 +19,14 @@
     }
 
 .plant-doctor-fab{
-  right:140px;
+  right:18px;
+  bottom:86px;
   background:linear-gradient(135deg,#00c853,#1b5e20);
 }
 
 .task-history-fab{
-  right:200px;
+  right:18px;
+  bottom:154px;
   background:linear-gradient(135deg,#26a69a,#00695c);
 }
 

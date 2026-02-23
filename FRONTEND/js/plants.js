@@ -384,7 +384,6 @@
       var infoBox = document.getElementById('plantInfo');
       var imageBox = document.getElementById('plantImageBox');
       var notesList = document.getElementById('notesList');
-      var historyList = document.getElementById('historyList');
       var plants = await getPlantsForUser();
       var plant = null;
       for (var i = 0; i < plants.length; i++) {
@@ -397,7 +396,6 @@
         if (imageBox) imageBox.textContent = 'Select a plant from the Plant Gallery to view its dashboard.';
         if (infoBox) infoBox.textContent = '';
         if (notesList) notesList.innerHTML = '';
-        if (historyList) historyList.innerHTML = '';
         return;
       }
 
@@ -419,17 +417,6 @@
           var li = document.createElement('li');
           li.textContent = n.date + ' — ' + n.text;
           notesList.appendChild(li);
-        });
-      }
-
-      historyList.innerHTML = '';
-      if (!plant.history || !plant.history.length) {
-        historyList.innerHTML = '<li>No care history yet.</li>';
-      } else {
-        plant.history.forEach(function (h) {
-          var li2 = document.createElement('li');
-          li2.textContent = h.date + ' — ' + h.action;
-          historyList.appendChild(li2);
         });
       }
 

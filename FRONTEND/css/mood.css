@@ -88,6 +88,13 @@
   grid-column: 1 / -1;
 }
 
+.mood-header-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
 .mood-plant-name {
   margin: 0;
   font-size: clamp(1.26rem, 1.1rem + 0.45vw, 1.6rem);
@@ -105,6 +112,30 @@
   font-size: 0.74rem;
   letter-spacing: 0.04em;
   font-weight: 700;
+}
+
+.mood-risk-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  font-weight: 800;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.mood-risk-stable {
+  background: rgba(31, 168, 84, 0.34);
+}
+
+.mood-risk-watch {
+  background: rgba(242, 180, 32, 0.34);
+}
+
+.mood-risk-critical {
+  background: rgba(210, 62, 62, 0.36);
 }
 
 .mood-main {
@@ -296,23 +327,101 @@
 
 /* ===== MOOD COLOR THEMES ===== */
 
-.mood-divine {
+body:not(.dark) .mood-box {
+  color: #163827;
+  border: 1px solid #bfdcc8;
+  box-shadow: 0 16px 30px rgba(25, 80, 45, 0.12);
+}
+
+body:not(.dark) .mood-plant-name,
+body:not(.dark) .mood-main,
+body:not(.dark) .mood-score-value {
+  color: #143824;
+}
+
+body:not(.dark) .mood-reason,
+body:not(.dark) .mood-score-row,
+body:not(.dark) .mood-tip,
+body:not(.dark) .mood-stat-label,
+body:not(.dark) .mood-stat-value,
+body:not(.dark) .mood-history-head,
+body:not(.dark) .mood-history-date,
+body:not(.dark) .mood-trend-col span,
+body:not(.dark) .mood-action-list li,
+body:not(.dark) .mood-count-pill {
+  color: #2e5641;
+}
+
+body:not(.dark) .mood-pill,
+body:not(.dark) .mood-risk-badge {
+  border-color: #9ccbb0;
+  background: rgba(255, 255, 255, 0.66);
+  color: #1f5239;
+}
+
+body:not(.dark) .progress-container {
+  background: #eaf4ed;
+  border-color: #c9e1d0;
+}
+
+body:not(.dark) .progress-bar {
+  background: linear-gradient(90deg, #55cf89, #35af6a);
+  box-shadow: 0 0 10px rgba(53, 175, 106, 0.32);
+}
+
+body:not(.dark) .mood-stat,
+body:not(.dark) .mood-count-pill,
+body:not(.dark) .mood-history-item,
+body:not(.dark) .mood-history-wrap,
+body:not(.dark) .mood-trend-chart,
+body:not(.dark) .mood-action-wrap,
+body:not(.dark) .mood-tip {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: #b8d9c4;
+}
+
+body:not(.dark) .mood-trend-col i {
+  background: linear-gradient(180deg, #5fcb8c, #3cae6f);
+}
+
+body:not(.dark) .mood-divine {
+  background: linear-gradient(145deg, #d9f7e4, #c7f1d7);
+}
+
+body:not(.dark) .mood-thriving {
+  background: linear-gradient(145deg, #dff3ff, #cce9fb);
+}
+
+body:not(.dark) .mood-stable {
+  background: linear-gradient(145deg, #fff3d7, #ffe9bf);
+}
+
+body:not(.dark) .mood-struggling {
+  background: linear-gradient(145deg, #ffe8d7, #ffd8bf);
+}
+
+body:not(.dark) .mood-critical {
+  background: linear-gradient(145deg, #ffe2e2, #ffd0d0);
+}
+
+/* Keep current rich colors in dark mode */
+body.dark .mood-divine {
   background: linear-gradient(145deg, #08b35d, #059448);
 }
 
-.mood-thriving {
+body.dark .mood-thriving {
   background: linear-gradient(145deg, #2f9ce8, #197fc5);
 }
 
-.mood-stable {
+body.dark .mood-stable {
   background: linear-gradient(145deg, #d6a30d, #be8e09);
 }
 
-.mood-struggling {
+body.dark .mood-struggling {
   background: linear-gradient(145deg, #e1870b, #c66b04);
 }
 
-.mood-critical {
+body.dark .mood-critical {
   background: linear-gradient(145deg, #df4744, #c82b28);
 }
 
@@ -360,6 +469,10 @@
 
   .mood-history-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mood-trend-chart {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .mood-score-row {
@@ -471,6 +584,60 @@ body.dark #plantMoodSelect {
 .mood-history-item:hover {
   transform: translateY(-2px);
   background: rgba(255, 255, 255, 0.2);
+}
+
+.mood-trend-chart {
+  margin-top: 0.58rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 0.7rem;
+  padding: 0.5rem 0.45rem 0.42rem;
+  background: rgba(0, 0, 0, 0.12);
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.28rem;
+  align-items: end;
+  min-height: 88px;
+}
+
+.mood-trend-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.2rem;
+}
+
+.mood-trend-col i {
+  display: block;
+  width: 12px;
+  min-height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.58));
+}
+
+.mood-trend-col span {
+  font-size: 0.64rem;
+  opacity: 0.9;
+}
+
+.mood-action-wrap {
+  margin-top: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 0.86rem;
+  background: rgba(0, 0, 0, 0.13);
+  padding: 0.62rem 0.72rem;
+  grid-column: 1 / -1;
+}
+
+.mood-action-list {
+  margin: 0.15rem 0 0;
+  padding-left: 1rem;
+}
+
+.mood-action-list li {
+  margin-bottom: 0.24rem;
+  font-size: 0.9rem;
+  line-height: 1.35;
 }
 
 body.dark #plantMoodSection .mood-shell {

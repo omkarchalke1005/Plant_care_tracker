@@ -191,7 +191,6 @@
               <li>Save each plant with photo, type and growth stage.</li>
               <li>Plan watering and fertilizer dates with a calendar.</li>
               <li>See care history and important notes per plant.</li>
-              <li>Use the Plant Assistant chatbot for quick help.</li>
             </ul>
             <div class="home-metric-row">
               <div class="home-metric-card">
@@ -269,11 +268,10 @@
               </p>
             </div>
             <div class="info-box home-step-card">
-              <h3><span class="home-step-no">04</span>Trace & Chat</h3>
+              <h3><span class="home-step-no">04</span>Trace</h3>
               <p>
                 In the <strong>Plant Analytics</strong> tab you can see exact watering dates,
-                fertilizer dates, growth bars and then open the AI chatbot icon at the bottom
-                of the screen for help and guidance.
+                fertilizer dates, growth bars and plant progress insights.
               </p>
             </div>
           </div>
@@ -306,7 +304,7 @@
 
         <!-- PLANT INFO LIBRARY -->
         <div class="card">
-          <h2>Plant Information Library</h2>
+          <h2>SELECT A NEW PLANT</h2>
 
           <div class="form-group">
             <label for="catalogSearch">Search plant by name</label>
@@ -331,11 +329,7 @@
 
         <!-- ADD PLANT -->
         <div class="card add-plant-card">
-          <h2>Add a New Plant</h2>
-          <p class="card-subtitle">
-            Add plant picture, name, type (indoor or outdoor), growth stage and an information note.
-            It will appear in your Plant Gallery, and each plant will have its own dashboard page.
-          </p>
+          <h2>ADD PLANTS</h2>
 
           <div class="add-plant-quickbar">
             <div class="quick-group">
@@ -399,10 +393,6 @@
       <section id="librarySection" class="app-section">
         <div class="card">
           <h2>Plant Gallery</h2>
-          <p class="card-subtitle">
-            All the plants you added. Click any plant card to open its full dashboard with plant analytics,
-            information notes and history. Use the delete button to remove a plant completely.
-          </p>
           <div id="plantLibrary" class="grid"></div>
         </div>
       </section>
@@ -424,8 +414,6 @@
             <div>
               <h3>Notes</h3>
               <ul id="notesList" class="item-list"></ul>
-              <h3>History</h3>
-              <ul id="historyList" class="item-list"></ul>
             </div>
           </div>
           <div class="card">
@@ -600,9 +588,6 @@
       <section id="tracerSection" class="app-section">
         <div class="card">
           <h2>Plant Analytics</h2>
-          <p class="card-subtitle">
-            Track user behaviour analytics for each plant with completion, missed ratio, streak, and health trend.
-          </p>
 
           <div class="form-group">
             <label for="tracerPlantSelect">Select Plant for Analytics</label>
@@ -718,6 +703,7 @@
       <!-- PROFILE -->
       <section id="profileSection" class="app-section">
         <div class="card">
+          <span class="profile-kicker">Personal Dashboard</span>
           <h2>Your Dashboard</h2>
           <p class="card-subtitle">
             Personalise your space and quickly see your plant journey details.
@@ -768,25 +754,49 @@
             <!-- RIGHT: stats -->
             <div class="profile-summary">
               <h3 class="mb-04">Your Plant Stats</h3>
-              <ul class="item-list">
-                <li>Total plants: <strong><span id="profilePlantsCount">0</span></strong></li>
+              <div class="profile-mini-grid">
+                <div class="profile-mini-card">
+                  <span>Total Plants</span>
+                  <strong id="profilePlantsCount">0</strong>
+                </div>
+                <div class="profile-mini-card">
+                  <span>Care Completion</span>
+                  <strong id="profileCompletionPct">0%</strong>
+                </div>
+                <div class="profile-mini-card">
+                  <span>Pending Tasks</span>
+                  <strong id="profilePendingCount">0</strong>
+                </div>
+                <div class="profile-mini-card">
+                  <span>Missed Tasks</span>
+                  <strong id="profileMissedCount">0</strong>
+                </div>
+              </div>
+
+              <div class="profile-bars">
+                <div class="profile-bar-row">
+                  <span>Indoor Share</span>
+                  <div class="profile-bar-track"><i id="profileIndoorBar"></i></div>
+                  <em id="profileIndoorPct">0%</em>
+                </div>
+                <div class="profile-bar-row">
+                  <span>Outdoor Share</span>
+                  <div class="profile-bar-track"><i id="profileOutdoorBar"></i></div>
+                  <em id="profileOutdoorPct">0%</em>
+                </div>
+              </div>
+
+              <ul class="item-list profile-plain-list">
                 <li>Indoor plants: <strong><span id="profileIndoorCount">0</span></strong></li>
                 <li>Outdoor plants: <strong><span id="profileOutdoorCount">0</span></strong></li>
-                <li>Latest plant added: <strong><span id="profileLastPlant">-</span></strong></li>
               </ul>
-              <p class="small-text mt-05">
-                Tip: keep your profile updated so you can quickly show your project data
-                (total plants, types and activity) during presentations.
-              </p>
+              <p class="profile-last-added">Latest plant: <strong id="profileLastPlant">-</strong></p>
             </div>
           </div>
 
           <!-- EDIT PROFILE CARD -->
           <div id="profileEditCard" class="card profile-edit hidden">
             <h3>Edit your profile</h3>
-            <p class="card-subtitle">
-              Update your basic details below. Everything is stored safely inside your own browser using localStorage.
-            </p>
             <form id="editProfileForm">
               <div class="grid">
                 <div>
@@ -820,9 +830,6 @@
       <section id="contactSection" class="app-section">
         <div class="card">
           <h2>Contact Us</h2>
-          <p class="card-subtitle">
-            Have a problem with your plant or the tracker? Send a message and it will open directly in WhatsApp with the admin.
-          </p>
 
           <div class="contact-info">
             <p><strong>Phone:</strong> 8956676259</p>
@@ -964,9 +971,7 @@
       <section id="plantMoodSection" class="app-section">
         <div class="card mood-shell">
           <div class="mood-page-hero">
-            <span class="mood-kicker">Plant Wellness Studio</span>
             <h2>Plant Mood Indicator</h2>
-            <p class="card-subtitle">Live emotional health dashboard for each plant based on your care consistency.</p>
             <div class="mood-hero-pills">
               <span class="mood-hero-pill">Live Score</span>
               <span class="mood-hero-pill">Care Trend</span>
@@ -980,7 +985,6 @@
           </div>
 
           <div id="plantMoodResult" class="mood-result-area">
-            Select plant to see mood.
           </div>
         </div>
       </section>
@@ -989,38 +993,10 @@
 
     <!-- FLOATING CHAT ICON -->
      <button id="taskHistoryFab" class="chat-fab task-history-fab" title="Task History">📋</button>
-     <button id="plantDoctorFab" class="chat-fab plant-doctor-fab" title="Plant Doctor Bot">&#127807;</button>
-     <button id="chatFab" class="chat-fab" title="Chat with Plant Assistant">&#129302;</button>
+     <button id="plantDoctorFab" class="chat-fab plant-doctor-fab" title="Plant Doctor Bot">🧑‍⚕️</button>
      <button id="themeToggle" class="chat-fab theme-toggle-offset" title="Toggle Dark/Light Mode">&#127769;</button>
 
 
-    <!-- AI CHATBOT POPUP (UNIQUE VERSION) -->
-    <section id="chatbotSection" class="chat-popup hidden">
-      <div class="card">
-        <div class="chat-header-row">
-          <h2>AI Plant Assistant</h2>
-          <button id="chatCloseBtn" aria-label="Close chat">×</button>
-        </div>
-        <p class="card-subtitle">
-          Ask anything – plant care, watering, fertilizer or how to use this website.  
-          The assistant will always reply with a helpful message.
-        </p>
-
-        <div class="tracer-panel">
-          <p class="small-text chat-tip">
-            Tip: Add your plants and tasks. Then ask questions like “When should I water my plant?” or
-            “How often to fertilize indoor plants?”
-          </p>
-          <div id="chatWindow"></div>
-          <div class="flex-row-gap-05">
-            <input id="chatInput" type="text"
-                   placeholder="Ask anything about plants or this site..."
-                   class="chat-input-pill">
-            <button id="chatSendBtn" class="btn-secondary chat-ask-btn">Ask</button>
-          </div>
-        </div>
-      </div>
-    </section>
     <section id="plantDoctorPopup" class="chat-popup hidden">
   <div class="card">
     <div class="chat-header-row">
