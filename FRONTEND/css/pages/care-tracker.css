@@ -243,6 +243,16 @@
       border-left: 4px solid #8e87ba;
     }
 
+    .task-prune {
+      background: linear-gradient(90deg, #f1eaff, #f8f4ff);
+      border-left: 4px solid #7d63c8;
+    }
+
+    .task-moisture {
+      background: linear-gradient(90deg, #e8fbf8, #f2fffd);
+      border-left: 4px solid #2aa79c;
+    }
+
     .task-done-row {
       border-left: 4px solid #66bb6a;
       background: linear-gradient(90deg, #ebf8ed, #f7fcf8);
@@ -255,6 +265,43 @@
     }
 
     .calendar { margin-top: 0.5rem; }
+
+    .calendar-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 0.7rem;
+      margin: 0.15rem 0 0.65rem;
+      padding: 0.55rem 0.6rem;
+      border: 1px solid #d8e8db;
+      border-radius: 0.85rem;
+      background: linear-gradient(145deg, #f9fcf9, #edf5ef);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: #214931;
+      white-space: nowrap;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid rgba(18, 55, 35, 0.2);
+      display: inline-block;
+    }
+
+    .legend-swatch.water { background: #8fc6f8; }
+    .legend-swatch.fert { background: #9ad8a2; }
+    .legend-swatch.cut { background: #f6b6d1; }
+    .legend-swatch.both { background: #f3d47d; }
+    .legend-swatch.prune { background: #b9a0ef; }
+    .legend-swatch.moisture { background: #8dd7cf; }
+    .legend-swatch.repot { background: #efbe81; }
+    .legend-swatch.pest { background: #e79ba3; }
 
     .calendar-header {
       display: flex;
@@ -331,6 +378,26 @@
     .calendar-cell.cut-task {
       background: linear-gradient(145deg, #ffe4ef, #ffd2e5);
       border-color: #f0adc8;
+    }
+
+    .calendar-cell.prune-task {
+      background: linear-gradient(145deg, #efe3ff, #e2d1ff);
+      border-color: #bda1ef;
+    }
+
+    .calendar-cell.moisture-task {
+      background: linear-gradient(145deg, #dff7f4, #ccf0ea);
+      border-color: #98d9d1;
+    }
+
+    .calendar-cell.repot-task {
+      background: linear-gradient(145deg, #ffe9d4, #ffd8b3);
+      border-color: #e7ba81;
+    }
+
+    .calendar-cell.pest-task {
+      background: linear-gradient(145deg, #ffdfe1, #ffc9cd);
+      border-color: #e59aa2;
     }
 
     @keyframes trackerSectionIn {

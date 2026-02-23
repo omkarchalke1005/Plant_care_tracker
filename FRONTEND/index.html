@@ -490,7 +490,7 @@
         <div class="card">
           <h2>Plant Care Tracker</h2>
           <p class="card-subtitle">
-            Add watering, fertilizing and cutting tasks. Calendar colors: Blue=Water, Green=Fertilizer, Pink=Cutting, Yellow=Water+Fertilizer.
+            Add watering, fertilizing, cutting, pruning, soil moisture check, repotting and pest check tasks.
           </p>
 
           <div class="tracker-layout">
@@ -510,6 +510,10 @@
                   <option value="water">Watering</option>
                   <option value="fert">Fertilizing</option>
                   <option value="cut">Cutting Leaf</option>
+                  <option value="prune">Pruning</option>
+                  <option value="moisture">Soil Moisture Check</option>
+                  <option value="repot">Repotting</option>
+                  <option value="pest">Pest Check</option>
                 </select>
               </div>
 
@@ -549,12 +553,20 @@
                 <ul id="smartPlanPreviewList" class="item-list smart-plan-list"></ul>
               </div>
 
-              <h3 class="mt-08">Tasks</h3>
-              <ul id="trackerTaskList" class="task-list"></ul>
             </div>
 
             <!-- RIGHT -->
             <div>
+              <div class="calendar-legend" aria-label="Calendar Color Legend">
+                <div class="legend-item"><span class="legend-swatch water"></span><span>Water</span></div>
+                <div class="legend-item"><span class="legend-swatch fert"></span><span>Fertilizer</span></div>
+                <div class="legend-item"><span class="legend-swatch cut"></span><span>Cutting</span></div>
+                <div class="legend-item"><span class="legend-swatch both"></span><span>Water + Fertilizer</span></div>
+                <div class="legend-item"><span class="legend-swatch prune"></span><span>Pruning</span></div>
+                <div class="legend-item"><span class="legend-swatch moisture"></span><span>Moisture Check</span></div>
+                <div class="legend-item"><span class="legend-swatch repot"></span><span>Repotting</span></div>
+                <div class="legend-item"><span class="legend-swatch pest"></span><span>Pest Check</span></div>
+              </div>
               <h3>Calendar</h3>
               <div class="calendar">
                 <div class="calendar-header">
@@ -564,6 +576,8 @@
                 </div>
                 <div class="calendar-grid" id="trackerCalendarGrid"></div>
               </div>
+              <h3 class="mt-08">Tasks (Upcoming 10 Days, Not Done)</h3>
+              <ul id="trackerTaskList" class="task-list"></ul>
             </div>
           </div>
         </div>

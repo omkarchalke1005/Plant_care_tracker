@@ -405,8 +405,45 @@ body.dark #trackerSection .calendar-cell.cut-task {
   box-shadow: inset 0 0 0 1px rgba(255, 216, 236, 0.2) !important;
 }
 
+body.dark #trackerSection .calendar-cell.prune-task {
+  background: linear-gradient(135deg, #58418a, #463370) !important;
+  border-color: #b9a0ec !important;
+  box-shadow: inset 0 0 0 1px rgba(232, 219, 255, 0.2) !important;
+}
+
+body.dark #trackerSection .calendar-cell.moisture-task {
+  background: linear-gradient(135deg, #216a66, #1a5652) !important;
+  border-color: #79c7c0 !important;
+  box-shadow: inset 0 0 0 1px rgba(206, 255, 249, 0.2) !important;
+}
+
+body.dark #trackerSection .calendar-cell.repot-task {
+  background: linear-gradient(135deg, #8a5b2f, #6d4624) !important;
+  border-color: #e0ae73 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 229, 196, 0.2) !important;
+}
+
+body.dark #trackerSection .calendar-cell.pest-task {
+  background: linear-gradient(135deg, #8b3a40, #6f2e34) !important;
+  border-color: #e08a92 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 216, 220, 0.2) !important;
+}
+
 body.dark #trackerSection .calendar-cell span {
   color: #effff6 !important;
+}
+
+body.dark #trackerSection .calendar-legend {
+  background: linear-gradient(145deg, #17372a, #122f24) !important;
+  border-color: rgba(126, 242, 169, 0.26) !important;
+}
+
+body.dark #trackerSection .legend-item {
+  color: #dbffe8 !important;
+}
+
+body.dark #trackerSection .legend-swatch {
+  border-color: rgba(223, 255, 236, 0.3) !important;
 }
 
 body.dark #trackerSection .smart-planner {

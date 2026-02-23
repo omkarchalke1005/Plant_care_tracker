@@ -103,7 +103,15 @@ async function addTrackerTask(){
 
   var task = {
     plantId: pid,
-    title: type === 'water' ? 'Watering' : type === 'fert' ? 'Fertilizing' : 'Cutting Leaf',
+    title:
+      type === 'water' ? 'Watering'
+      : type === 'fert' ? 'Fertilizing'
+      : type === 'cut' ? 'Cutting Leaf'
+      : type === 'prune' ? 'Pruning'
+      : type === 'moisture' ? 'Soil Moisture Check'
+      : type === 'repot' ? 'Repotting'
+      : type === 'pest' ? 'Pest Check'
+      : 'Care Task',
     date: date,
     status: 'pending',
     createdAt: todayStr()
@@ -341,15 +349,33 @@ async function renderTrackerTasks(){
   var tasks = await getTrackerTasks();
   var plants = await getGalleryPlants();
   var nameMap = typeof buildPlantNameMap === 'function' ? buildPlantNameMap(plants) : {};
-  var filteredTasks = pid ? tasks.filter(t=>String(t.plantId)===String(pid)) : tasks;
+  var filteredTasks = pid ? tasks.filter(function (t) { return String(t.plantId) === String(pid); }) : tasks;
+  var today = todayStr();
+  var tenDaysAhead = addDays(today, 10);
+  filteredTasks = filteredTasks.filter(function (t) {
+    var date = String(t && t.date ? t.date : '');
+    var status = normalizeTaskStatus(t);
+    return date >= today && date <= tenDaysAhead && status !== 'done';
+  });
   filteredTasks.sort(function(a,b){ return String(a.date).localeCompare(String(b.date)); });
 
   if(trackerTaskList) trackerTaskList.innerHTML='';
+  if (!filteredTasks.length) {
+    if (trackerTaskList) {
+      trackerTaskList.innerHTML = '<li class="task-other">No pending tasks for the upcoming 10 days.</li>';
+    }
+    return;
+  }
   filteredTasks.forEach(function(t){
     var plant = plants.find(p=>String(p.id)===String(t.plantId));
     var status = normalizeTaskStatus(t);
     var li=document.createElement('li');
-    var baseCls = t.title.toLowerCase().includes('water')?'task-water':t.title.toLowerCase().includes('fert')?'task-fert':'task-other';
+    var title = String(t.title || '').toLowerCase();
+    var baseCls = 'task-other';
+    if (title.indexOf('water') !== -1) baseCls = 'task-water';
+    else if (title.indexOf('fert') !== -1 || title.indexOf('feed') !== -1) baseCls = 'task-fert';
+    else if (title.indexOf('prun') !== -1) baseCls = 'task-prune';
+    else if (title.indexOf('moisture') !== -1) baseCls = 'task-moisture';
     li.className = baseCls + (status === 'done' ? ' task-done-row' : '') + (status === 'missed' ? ' task-missed-row' : '');
 
     var row = document.createElement('div');
@@ -407,7 +433,11 @@ function getTaskTypeFlags(task) {
   return {
     water: title.indexOf('water') !== -1,
     fert: title.indexOf('fertil') !== -1 || title.indexOf('feed') !== -1,
-    cut: title.indexOf('cut') !== -1
+    cut: title.indexOf('cut') !== -1,
+    prune: title.indexOf('prun') !== -1,
+    moisture: title.indexOf('moisture') !== -1,
+    repot: title.indexOf('repot') !== -1,
+    pest: title.indexOf('pest') !== -1
   };
 }
 
@@ -452,18 +482,30 @@ async function renderTrackerCalendar(){
     var hasWater = false;
     var hasFert = false;
     var hasCut = false;
+    var hasPrune = false;
+    var hasMoisture = false;
+    var hasRepot = false;
+    var hasPest = false;
 
     dayTasks.forEach(function(t){
       var flags = getTaskTypeFlags(t);
       hasWater = hasWater || flags.water;
       hasFert = hasFert || flags.fert;
       hasCut = hasCut || flags.cut;
+      hasPrune = hasPrune || flags.prune;
+      hasMoisture = hasMoisture || flags.moisture;
+      hasRepot = hasRepot || flags.repot;
+      hasPest = hasPest || flags.pest;
     });
 
     if(hasWater && hasFert) cell.classList.add('both-task');
     else if(hasWater) cell.classList.add('water-task');
     else if(hasFert) cell.classList.add('fert-task');
     else if(hasCut) cell.classList.add('cut-task');
+    else if(hasPrune) cell.classList.add('prune-task');
+    else if(hasMoisture) cell.classList.add('moisture-task');
+    else if(hasRepot) cell.classList.add('repot-task');
+    else if(hasPest) cell.classList.add('pest-task');
 
     grid.appendChild(cell);
   }
@@ -637,6 +679,14 @@ function ensurePlantReminderStyles() {
     '.plant-reminder-ok{' +
       'margin-top:10px;border:0;background:#2f8f58;color:#fff;padding:8px 14px;border-radius:10px;' +
       'font-weight:700;cursor:pointer;' +
+    '}' +
+    '.plant-reminder-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}' +
+    '.plant-reminder-done{' +
+      'border:0;background:#1f6fbe;color:#fff;padding:8px 14px;border-radius:10px;' +
+      'font-weight:700;cursor:pointer;' +
+    '}' +
+    '.plant-reminder-done[disabled]{opacity:.7;cursor:wait;}' +
+    '.plant-reminder-ok[disabled]{opacity:.7;cursor:wait;' +
     '}';
   document.head.appendChild(style);
 }
@@ -650,7 +700,7 @@ function escapeReminderText(value) {
     .replace(/'/g, '&#39;');
 }
 
-function showPlantReminderNotification(plantName, taskTitle, dateStr, onDismiss) {
+function showPlantReminderNotification(plantName, taskTitle, dateStr, taskId, onDismiss) {
   ensurePlantReminderStyles();
 
   var oldWrap = document.getElementById('plantReminderWrap');
@@ -675,7 +725,10 @@ function showPlantReminderNotification(plantName, taskTitle, dateStr, onDismiss)
       '<p class="plant-reminder-row"><span class="plant-reminder-label">Plant:</span>' + escapeReminderText(plantName) + '</p>' +
       '<p class="plant-reminder-row"><span class="plant-reminder-label">Task:</span>' + escapeReminderText(taskTitle) + '</p>' +
       '<p class="plant-reminder-row"><span class="plant-reminder-label">Date:</span>' + escapeReminderText(dateStr) + '</p>' +
-      '<button class="plant-reminder-ok" type="button">Got it</button>' +
+      '<div class="plant-reminder-actions">' +
+        '<button class="plant-reminder-done" type="button">Done</button>' +
+        '<button class="plant-reminder-ok" type="button">Got it</button>' +
+      '</div>' +
     '</div>';
 
   wrap.appendChild(card);
@@ -699,8 +752,35 @@ function showPlantReminderNotification(plantName, taskTitle, dateStr, onDismiss)
 
   var closeBtn = card.querySelector('.plant-reminder-close');
   var okBtn = card.querySelector('.plant-reminder-ok');
+  var doneBtn = card.querySelector('.plant-reminder-done');
   if (closeBtn) closeBtn.addEventListener('click', dismiss);
   if (okBtn) okBtn.addEventListener('click', dismiss);
+  if (doneBtn) {
+    doneBtn.addEventListener('click', async function () {
+      if (!taskId) {
+        dismiss();
+        return;
+      }
+      doneBtn.disabled = true;
+      if (okBtn) okBtn.disabled = true;
+      try {
+        await updateTask(taskId, {
+          status: 'done',
+          completedAt: todayStr()
+        });
+        if (typeof renderTrackerTasks === 'function') await renderTrackerTasks();
+        if (typeof renderTrackerCalendar === 'function') await renderTrackerCalendar();
+        if (typeof renderTaskHistory === 'function') await renderTaskHistory();
+        if (typeof renderTracer === 'function') await renderTracer();
+        if (typeof renderProfile === 'function') await renderProfile();
+      } catch (error) {
+        console.error('Error marking reminder task done:', error);
+        alert('Could not mark this task as done.');
+      } finally {
+        dismiss();
+      }
+    });
+  }
 
   plantReminderToastTimer = setTimeout(dismiss, 9000);
 }
@@ -711,17 +791,18 @@ function processPlantReminderQueue() {
 
   plantReminderShowing = true;
   var item = plantReminderQueue.shift();
-  showPlantReminderNotification(item.plantName, item.taskTitle, item.dateStr, function () {
+  showPlantReminderNotification(item.plantName, item.taskTitle, item.dateStr, item.taskId, function () {
     plantReminderShowing = false;
     processPlantReminderQueue();
   });
 }
 
-function enqueuePlantReminder(plantName, taskTitle, dateStr) {
+function enqueuePlantReminder(plantName, taskTitle, dateStr, taskId) {
   plantReminderQueue.push({
     plantName: plantName,
     taskTitle: taskTitle,
-    dateStr: dateStr
+    dateStr: dateStr,
+    taskId: taskId
   });
   processPlantReminderQueue();
 }
@@ -754,7 +835,8 @@ tasks.forEach(function(t){
         remindersToShow.push({
           plantName: nameMap[String(plant.id)] || plant.name,
           taskTitle: t.title,
-          dateStr: t.date
+          dateStr: t.date,
+          taskId: t.id
         });
 
         notifiedTasks.push(uniqueKey);
@@ -771,7 +853,7 @@ tasks.forEach(function(t){
 if(remindersToShow.length){
   setTimeout(function(){
     remindersToShow.forEach(function(r){
-      enqueuePlantReminder(r.plantName, r.taskTitle, r.dateStr);
+      enqueuePlantReminder(r.plantName, r.taskTitle, r.dateStr, r.taskId);
     });
   }, 1500);
 }
