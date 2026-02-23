@@ -285,10 +285,6 @@
         <div class="card home-hero">
           <div class="hero-text">
             <h1>Add Plants & Overview 🌿</h1>
-            <p>
-              This is your main area to add new plants. You can also see overall stats and use the Plant
-              Information Library to quickly fill details.
-            </p>
             <div class="hero-stats">
               <div class="hero-stat">
                 <div>Total Plants</div>
@@ -311,9 +307,6 @@
         <!-- PLANT INFO LIBRARY -->
         <div class="card">
           <h2>Plant Information Library</h2>
-          <p class="card-subtitle">
-            Select a plant to see its information. The details will appear below and will also fill the Add Plant form.
-          </p>
 
           <div class="form-group">
             <label for="catalogSearch">Search plant by name</label>
@@ -525,23 +518,13 @@
               <button type="button" class="btn-primary" id="trackerAddBtn">Add Task</button>
 
               <div class="smart-planner">
-                <h3>Seasonal Care Mode</h3>
-                <div class="seasonal-toggle-row">
-                  <label class="switch">
-                    <input id="seasonalModeToggle" type="checkbox">
-                    <span class="slider"></span>
-                  </label>
-                  <span id="seasonalModeState">OFF</span>
-                </div>
-                <p id="seasonalModeInfo" class="small-text"></p>
-
                 <h3>Smart Auto Planner</h3>
-                <p class="small-text">Generate advanced care tasks (watering + fertilizing) automatically.</p>
                 <div class="form-group">
                   <label for="smartPlanRange">Plan Range</label>
                   <select id="smartPlanRange">
                     <option value="14">14 Days</option>
                     <option value="30" selected>30 Days</option>
+                    <option value="45">45 Days</option>
                     <option value="60">60 Days</option>
                   </select>
                 </div>
@@ -660,7 +643,7 @@
         <div class="card timeline-hub">
           <h2>Weather Smart Care</h2>
           <p class="card-subtitle">
-            Get weather-based watering and fertilizer suggestions for your plants.
+            Get weather-based CARE suggestions for your plants.
           </p>
 
           <form id="weatherSmartCareFormMain" class="timeline-upload-panel">

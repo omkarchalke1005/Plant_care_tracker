@@ -8,14 +8,6 @@ if(themeToggle){
   });
 }
 
-if (typeof initSeasonalModeUI === 'function') {
-  initSeasonalModeUI();
-}
-
-
-
-
-
 /* ===== CARE TRACKER LOGIC (UPDATED TO USE FIREBASE) ===== */
 
 function normalizeTaskStatus(task) {
@@ -134,20 +126,6 @@ async function addTrackerTask(){
 var smartPlanCache = [];
 var sunlightCleanupDone = false;
 
-function getSeasonalModifiers() {
-  if (typeof isSeasonalModeEnabled === 'function' && !isSeasonalModeEnabled()) {
-    return { waterAdjust: 0, fertAdjust: 0, sunlightCheckEvery: 2 };
-  }
-  var month = new Date().getMonth() + 1; // 1-12
-  if (month >= 3 && month <= 6) {
-    return { waterAdjust: -1, fertAdjust: 0, sunlightCheckEvery: 2 };
-  }
-  if (month >= 11 || month <= 1) {
-    return { waterAdjust: 1, fertAdjust: 5, sunlightCheckEvery: 3 };
-  }
-  return { waterAdjust: 0, fertAdjust: 0, sunlightCheckEvery: 2 };
-}
-
 function createDateSequence(firstDateStr, intervalDays, endDateStr) {
   var dates = [];
   var date = firstDateStr;
@@ -174,13 +152,35 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
     ? getScheduleForPlant(plant)
     : (plant.type === 'Outdoor' ? { water: 3, fert: 20 } : { water: 5, fert: 30 });
 
-  var waterEvery = Math.max(2, baseSchedule.water);
-  var fertEvery = Math.max(10, baseSchedule.fert);
+  function getPlantSeed(value) {
+    var s = String(value || '').trim();
+    var hash = 0;
+    for (var i = 0; i < s.length; i++) {
+      hash = ((hash << 5) - hash) + s.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
+  }
+
+  var seed = getPlantSeed(String(plant.id) + '|' + String(plant.name || '') + '|' + String(plant.type || ''));
+  var waterEvery = (seed % 4) + 1; // strictly 1,2,3,4 days as requested
+  var fertEvery = Math.max(10, (Number(baseSchedule.fert) || 20) + ((seed % 3) - 1) * 2);
+  var pruneEvery = [14, 21, 28, 35][seed % 4];
+  var moistureEvery = [2, 3, 4, 5][Math.floor(seed / 2) % 4];
+  var pestEvery = [4, 5, 7, 10][Math.floor(seed / 3) % 4];
+  var isOutdoor = /outdoor/i.test(String(plant.type || ''));
+  var isIndoor = /indoor/i.test(String(plant.type || ''));
 
   var plantTasks = tasks.filter(function (t) { return String(t.plantId) === String(plantId); });
   var waterTasks = plantTasks.filter(function (t) { return /water/i.test(t.title); })
     .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
   var fertTasks = plantTasks.filter(function (t) { return /(fertil|feed|manure)/i.test(t.title); })
+    .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+  var pruneTasks = plantTasks.filter(function (t) { return /prun/i.test(String(t.title || '')); })
+    .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+  var moistureTasks = plantTasks.filter(function (t) { return /moisture/i.test(String(t.title || '')); })
+    .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
+  var pestTasks = plantTasks.filter(function (t) { return /pest/i.test(String(t.title || '')); })
     .sort(function (a, b) { return String(a.date).localeCompare(String(b.date)); });
 
   var doneWaterTasks = waterTasks.filter(function (t) { return normalizeTaskStatus(t) === 'done'; });
@@ -193,15 +193,55 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
   var trackedCount = completedCount + missedCount;
   var missRatio = trackedCount ? (missedCount / trackedCount) : 0;
 
-  // Adaptive reminder logic:
-  // - If user misses many tasks, lighten schedule slightly to improve consistency.
-  // - If user is very consistent, tighten watering by 1 day for better growth monitoring.
-  if (missRatio >= 0.45) {
-    waterEvery += 1;
-    fertEvery += 4;
-  } else if (missRatio <= 0.1 && trackedCount >= 6) {
-    waterEvery = Math.max(2, waterEvery - 1);
+  if (isOutdoor) {
+    // Outdoor profile (requested):
+    // Water every 2-3 days, soil alternate days, pest every 7 days,
+    // fertilize every 15 days, prune every 25 days.
+    waterEvery = 2 + (seed % 2); // 2 or 3
+    moistureEvery = 2;
+    pestEvery = 7;
+    fertEvery = 15;
+    pruneEvery = 25;
+  } else if (isIndoor) {
+    // Indoor profile (requested):
+    // Water every 4-5 days, soil every 3 days, pest every 10 days,
+    // fertilize every 15 days, prune every 27 days.
+    waterEvery = 4 + (seed % 2); // 4 or 5
+    moistureEvery = 3;
+    pestEvery = 10;
+    fertEvery = 15;
+    pruneEvery = 27;
+  } else {
+    // Keep watering interval within 1..4 while adapting slightly by consistency.
+    if (missRatio >= 0.45) {
+      waterEvery = Math.min(4, waterEvery + 1);
+      fertEvery += 4;
+    } else if (missRatio <= 0.1 && trackedCount >= 6) {
+      waterEvery = Math.max(1, waterEvery - 1);
+    }
   }
+
+  var seasonLabel = String(baseSchedule.seasonLabel || 'Off');
+  if (!isOutdoor && !isIndoor) {
+    if (seasonLabel === 'Summer') {
+      moistureEvery = Math.max(2, moistureEvery - 1);
+      pestEvery = Math.max(3, pestEvery - 1);
+      pruneEvery = Math.max(14, pruneEvery - 7);
+    } else if (seasonLabel === 'Monsoon') {
+      moistureEvery += 1;
+      pestEvery = Math.max(3, pestEvery - 1);
+    } else if (seasonLabel === 'Winter') {
+      fertEvery += 5;
+      moistureEvery += 1;
+      pestEvery += 2;
+      pruneEvery += 7;
+    }
+  }
+
+  fertEvery = Math.max(10, Math.min(40, fertEvery));
+  pruneEvery = Math.max(14, Math.min(45, pruneEvery));
+  moistureEvery = Math.max(2, Math.min(10, moistureEvery));
+  pestEvery = Math.max(3, Math.min(14, pestEvery));
 
   var lastDoneWater = doneWaterTasks.length ? doneWaterTasks[doneWaterTasks.length - 1] : null;
   var lastDoneFert = doneFertTasks.length ? doneFertTasks[doneFertTasks.length - 1] : null;
@@ -216,12 +256,39 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
   if (nextWater < today) nextWater = today;
   if (nextFert < today) nextFert = addDays(today, 1);
 
+  var lastDonePrune = pruneTasks.filter(function (t) { return normalizeTaskStatus(t) === 'done'; }).slice(-1)[0] || null;
+  var lastDoneMoisture = moistureTasks.filter(function (t) { return normalizeTaskStatus(t) === 'done'; }).slice(-1)[0] || null;
+  var lastDonePest = pestTasks.filter(function (t) { return normalizeTaskStatus(t) === 'done'; }).slice(-1)[0] || null;
+  var lastAnyPrune = pruneTasks.length ? pruneTasks[pruneTasks.length - 1] : null;
+  var lastAnyMoisture = moistureTasks.length ? moistureTasks[moistureTasks.length - 1] : null;
+  var lastAnyPest = pestTasks.length ? pestTasks[pestTasks.length - 1] : null;
+
+  var pruneAnchor = lastDonePrune ? lastDonePrune.date : (lastAnyPrune ? lastAnyPrune.date : today);
+  var moistureAnchor = lastDoneMoisture ? lastDoneMoisture.date : (lastAnyMoisture ? lastAnyMoisture.date : today);
+  var pestAnchor = lastDonePest ? lastDonePest.date : (lastAnyPest ? lastAnyPest.date : today);
+
+  var nextPrune = addDays(pruneAnchor, pruneEvery);
+  var nextMoisture = addDays(moistureAnchor, moistureEvery);
+  var nextPest = addDays(pestAnchor, pestEvery);
+  if (nextPrune < today) nextPrune = addDays(today, 1);
+  if (nextMoisture < today) nextMoisture = today;
+  if (nextPest < today) nextPest = addDays(today, 1);
+
   var candidate = [];
   createDateSequence(nextWater, waterEvery, endDate).forEach(function (d) {
     candidate.push({ plantId: plantId, title: 'Watering', date: d, status: 'pending', createdAt: today });
   });
   createDateSequence(nextFert, fertEvery, endDate).forEach(function (d) {
     candidate.push({ plantId: plantId, title: 'Fertilizing', date: d, status: 'pending', createdAt: today });
+  });
+  createDateSequence(nextPrune, pruneEvery, endDate).forEach(function (d) {
+    candidate.push({ plantId: plantId, title: 'Pruning', date: d, status: 'pending', createdAt: today });
+  });
+  createDateSequence(nextMoisture, moistureEvery, endDate).forEach(function (d) {
+    candidate.push({ plantId: plantId, title: 'Soil Moisture Check', date: d, status: 'pending', createdAt: today });
+  });
+  createDateSequence(nextPest, pestEvery, endDate).forEach(function (d) {
+    candidate.push({ plantId: plantId, title: 'Pest Check', date: d, status: 'pending', createdAt: today });
   });
 
   var existingKeys = {};
@@ -247,14 +314,18 @@ async function buildSmartPlanForPlant(plantId, rangeDays) {
 
   var waterCount = unique.filter(function (t) { return t.title === 'Watering'; }).length;
   var fertCount = unique.filter(function (t) { return t.title === 'Fertilizing'; }).length;
+  var pruneCount = unique.filter(function (t) { return t.title === 'Pruning'; }).length;
+  var moistureCount = unique.filter(function (t) { return t.title === 'Soil Moisture Check'; }).length;
+  var pestCount = unique.filter(function (t) { return t.title === 'Pest Check'; }).length;
 
   var summary =
     displayName + ': ' + unique.length + ' new tasks (' +
     waterCount + ' water, ' + fertCount +
-    ' fertilizer). Skipped ' + skipped + ' duplicates.' +
+    ' fertilizer, ' + pruneCount + ' pruning, ' + moistureCount + ' moisture check, ' + pestCount + ' pest check' +
+    '). Skipped ' + skipped + ' duplicates.' +
     ' Interval used: water every ' + waterEvery + ' day(s), fertilizer every ' + fertEvery + ' day(s).' +
-    ' Miss ratio: ' + Math.round(missRatio * 100) + '%.' +
-    (baseSchedule.seasonal ? ' Seasonal mode: ' + baseSchedule.seasonLabel + '.' : '');
+    ' Pruning every ' + pruneEvery + ' day(s), moisture check every ' + moistureEvery + ' day(s), pest check every ' + pestEvery + ' day(s).' +
+    ' Miss ratio: ' + Math.round(missRatio * 100) + '%.';
 
   return { tasks: unique, summary: summary, plantName: displayName };
 }
@@ -1090,12 +1161,6 @@ document.addEventListener("click", function(e){
     setTimeout(()=>{
       loadPlantMoodPlants();
     },500);
-  }
-
-  if(e.target.matches('[data-section="trackerSection"]')){
-    setTimeout(function(){
-      if (typeof initSeasonalModeUI === 'function') initSeasonalModeUI();
-    }, 200);
   }
 
 });

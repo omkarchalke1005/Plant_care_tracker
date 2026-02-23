@@ -88,75 +88,15 @@
       }
     }
 
-    function isSeasonalModeEnabled() {
-      return localStorage.getItem('pct_seasonal_mode') === 'on';
-    }
-
-    function getSeasonalScheduleAdjustments() {
-      var month = new Date().getMonth() + 1; // 1-12
-      if (month >= 3 && month <= 6) { // Summer
-        return { waterAdjust: -1, fertAdjust: 0, seasonLabel: 'Summer' };
-      }
-      if (month >= 7 && month <= 10) { // Monsoon
-        return { waterAdjust: 1, fertAdjust: 0, seasonLabel: 'Monsoon' };
-      }
-      if (month >= 11 || month <= 2) { // Winter
-        return { waterAdjust: 1, fertAdjust: 5, seasonLabel: 'Winter' };
-      }
-      return { waterAdjust: 0, fertAdjust: 0, seasonLabel: 'Normal' };
-    }
-
     function getScheduleForPlant(plant) {
       // Base: Indoor 5/30, Outdoor 3/20
       var base = (!plant || plant.type === 'Outdoor') ? { water: 3, fert: 20 } : { water: 5, fert: 30 };
-
-      if (!isSeasonalModeEnabled()) {
-        return {
-          water: base.water,
-          fert: base.fert,
-          seasonal: false,
-          seasonLabel: 'Off'
-        };
-      }
-
-      var adj = getSeasonalScheduleAdjustments();
       return {
-        water: Math.max(2, base.water + adj.waterAdjust),
-        fert: Math.max(10, base.fert + adj.fertAdjust),
-        seasonal: true,
-        seasonLabel: adj.seasonLabel
+        water: base.water,
+        fert: base.fert,
+        seasonal: false,
+        seasonLabel: 'Off'
       };
-    }
-
-    function initSeasonalModeUI() {
-      var toggle = document.getElementById('seasonalModeToggle');
-      var stateEl = document.getElementById('seasonalModeState');
-      var infoEl = document.getElementById('seasonalModeInfo');
-      if (!toggle || !stateEl || !infoEl) return;
-
-      function renderSeasonalMeta() {
-        var on = isSeasonalModeEnabled();
-        toggle.checked = on;
-        stateEl.textContent = on ? 'ON' : 'OFF';
-        stateEl.style.color = on ? '#9bffca' : '#c8d8cf';
-
-        if (on) {
-          var adj = getSeasonalScheduleAdjustments();
-          infoEl.textContent = 'Active season: ' + adj.seasonLabel +
-            '. Water interval ' + (adj.waterAdjust >= 0 ? '+' : '') + adj.waterAdjust +
-            ' day(s), fertilizer interval ' + (adj.fertAdjust >= 0 ? '+' : '') + adj.fertAdjust + ' day(s).';
-        } else {
-          infoEl.textContent = 'Seasonal Care Mode is off. Using default intervals by plant type.';
-        }
-      }
-
-      toggle.addEventListener('change', async function () {
-        localStorage.setItem('pct_seasonal_mode', this.checked ? 'on' : 'off');
-        renderSeasonalMeta();
-        if (typeof renderTracer === 'function') await renderTracer();
-      });
-
-      renderSeasonalMeta();
     }
 
     function updateTimerForPlant(username) {
