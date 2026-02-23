@@ -1294,6 +1294,91 @@ function getPlantDoctorFallbackReply(symptomText){
     "\n\nWatering advice:\n" + water;
 }
 
+function getPlantDoctorContactsByPlacement(placement){
+  var indoorDoctors = [
+    {
+      name: "Dr. Asha Verma (Indoor Plant Clinic)",
+      phone: "+91 98765 12001",
+      address: "12 Green Park Extension, New Delhi 110016"
+    },
+    {
+      name: "Dr. Rahul Menon (Urban Leaf Care)",
+      phone: "+91 98765 12002",
+      address: "28 Indiranagar 100 Feet Road, Bengaluru 560038"
+    },
+    {
+      name: "Dr. Neha Kulkarni (Balcony Plant Doctor)",
+      phone: "+91 98765 12003",
+      address: "204 FC Road, Shivajinagar, Pune 411005"
+    }
+  ];
+
+  var outdoorDoctors = [
+    {
+      name: "Dr. Vikram Patil (Outdoor Crop & Garden Care)",
+      phone: "+91 98765 22001",
+      address: "88 Baner Road, Pune 411045"
+    },
+    {
+      name: "Dr. Meera Reddy (Landscape Plant Specialist)",
+      phone: "+91 98765 22002",
+      address: "44 Jubilee Hills Main Road, Hyderabad 500033"
+    },
+    {
+      name: "Dr. Karan Singh (Field & Nursery Doctor)",
+      phone: "+91 98765 22003",
+      address: "76 SG Highway, Ahmedabad 380015"
+    }
+  ];
+
+  if (placement === "Indoor") return indoorDoctors;
+  if (placement === "Outdoor") return outdoorDoctors;
+  return indoorDoctors.slice(0, 2).concat(outdoorDoctors.slice(0, 2));
+}
+
+function buildPlantDoctorContactReply(placement){
+  var doctors = getPlantDoctorContactsByPlacement(placement);
+  var title = placement === "Indoor" || placement === "Outdoor"
+    ? placement + " plant doctor contacts:"
+    : "Plant doctor contacts (indoor/outdoor mix):";
+
+  var lines = [
+    "I could not confidently identify this disease from the current symptoms.",
+    "",
+    title
+  ];
+
+  for (var i = 0; i < doctors.length; i++) {
+    lines.push(
+      (i + 1) + ". " + doctors[i].name +
+      "\n   Phone: " + doctors[i].phone +
+      "\n   Address: " + doctors[i].address
+    );
+  }
+
+  lines.push("");
+  lines.push("Share plant type (Indoor/Outdoor), leaf photos, and watering routine with the doctor for faster diagnosis.");
+
+  return lines.join("\n");
+}
+
+function inferPlacementFromText(symptomText){
+  var input = String(symptomText || "").toLowerCase();
+  if (/\bindoor\b|\broom\b|\bbalcony\b|\bapartment\b/.test(input)) return "Indoor";
+  if (/\boutdoor\b|\bgarden\b|\byard\b|\bterrace\b|\bfarm\b/.test(input)) return "Outdoor";
+  return "";
+}
+
+function getKnownDoctorDiagnosis(symptomText){
+  var input = String(symptomText || "").toLowerCase();
+  if (!input) return "";
+
+  var hasAnySymptomWord = /(yellow|brown|drooping|wilting|spots|fungus|mold|rot|blight|rust|curl|powdery|mildew|pest|insect|aphid|mites)/.test(input);
+  if (!hasAnySymptomWord) return "";
+
+  return getPlantDoctorFallbackReply(symptomText);
+}
+
 async function sendPlantDoctor(){
   var inputEl = document.getElementById("plantDoctorInput");
   var raw = inputEl ? inputEl.value.trim() : "";
@@ -1307,7 +1392,15 @@ async function sendPlantDoctor(){
   if(chat && chat.lastElementChild){
     chat.lastElementChild.remove();
   }
-  addPlantDoctorMessage("bot", getPlantDoctorFallbackReply(raw));
+
+  var knownDiagnosis = getKnownDoctorDiagnosis(raw);
+  if (knownDiagnosis) {
+    addPlantDoctorMessage("bot", knownDiagnosis);
+    return;
+  }
+
+  var placement = inferPlacementFromText(raw);
+  addPlantDoctorMessage("bot", buildPlantDoctorContactReply(placement));
 }
 
 var plantDoctorInputEl = document.getElementById("plantDoctorInput");

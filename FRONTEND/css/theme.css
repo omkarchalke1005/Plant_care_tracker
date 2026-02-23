@@ -904,3 +904,62 @@ html body.dark #homeSection .home-step-no {
   border-color: #476a88 !important;
   color: #e5f2ff !important;
 }
+
+/* Add Plants dark mode contrast fix */
+body.dark #dashboardSection .add-plant-quickbar .quick-group {
+  background: linear-gradient(145deg, #182331, #15202d) !important;
+  border-color: #31475f !important;
+}
+
+body.dark #dashboardSection .quick-label {
+  color: #d2def0 !important;
+}
+
+body.dark #dashboardSection .quick-chip {
+  background: linear-gradient(135deg, #1a2634, #1b2b3b) !important;
+  border-color: #3a5674 !important;
+  color: #e3edf9 !important;
+}
+
+body.dark #dashboardSection .quick-chip:hover {
+  box-shadow: 0 8px 16px rgba(12, 20, 29, 0.5) !important;
+}
+
+body.dark #dashboardSection .add-plant-preview {
+  background: linear-gradient(145deg, #15202d, #111b27) !important;
+  border-color: #2f4661 !important;
+}
+
+body.dark #dashboardSection .add-plant-preview h3 {
+  color: #e8f1fb !important;
+}
+
+body.dark #dashboardSection .add-plant-preview p,
+body.dark #dashboardSection .add-plant-preview strong {
+  color: #d3e3f5 !important;
+}
+
+/* Profile stats dark mode contrast fix */
+body.dark #profileSection .profile-mini-card {
+  background: linear-gradient(140deg, #1a2837, #162230) !important;
+  border-color: #36506a !important;
+}
+
+body.dark #profileSection .profile-mini-card span {
+  color: #c2d4e8 !important;
+}
+
+body.dark #profileSection .profile-mini-card strong {
+  color: #ecf4ff !important;
+}
+
+body.dark #profileSection .profile-bar-track {
+  background: #2a3a4d !important;
+}
+
+body.dark #profileSection .profile-bar-row span,
+body.dark #profileSection .profile-bar-row em,
+body.dark #profileSection .profile-last-added,
+body.dark #profileSection .profile-last-added strong {
+  color: #d0e0f3 !important;
+}
