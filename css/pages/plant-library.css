@@ -1,0 +1,147 @@
+    /* LIBRARY (AGGRESSIVE VISUAL STYLE) */
+    #librarySection .card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #cde4d2;
+      background:
+        radial-gradient(circle at 8% -20%, rgba(147, 220, 169, 0.34), rgba(255, 255, 255, 0)),
+        linear-gradient(150deg, #f8fff9, #edf8f0 52%, #f8fdf9);
+      box-shadow: 0 20px 42px rgba(16, 78, 38, 0.13);
+    }
+
+    #librarySection .card::before {
+      content: "";
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      right: -100px;
+      top: -140px;
+      background: radial-gradient(circle, rgba(97, 190, 124, 0.3), rgba(97, 190, 124, 0));
+      pointer-events: none;
+    }
+
+    #librarySection h2 {
+      font-size: clamp(1.75rem, 1.5rem + 0.8vw, 2.3rem);
+      color: #123f28;
+      letter-spacing: 0.015em;
+      margin-bottom: 0.38rem;
+    }
+
+    #librarySection .card-subtitle {
+      color: #456a54;
+      max-width: 72ch;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    #plantLibrary {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .plant-card {
+      border-radius: 1.15rem;
+      overflow: hidden;
+      border: 1px solid #bfdcc6;
+      background: linear-gradient(165deg, #ffffff, #f0faf2);
+      box-shadow: 0 14px 30px rgba(15, 83, 39, 0.13);
+      cursor: pointer;
+      transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.22s ease;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .plant-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(145deg, rgba(59, 186, 96, 0.15), rgba(0, 0, 0, 0));
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .plant-card:hover {
+      transform: translateY(-8px) scale(1.015);
+      border-color: #7fcd93;
+      box-shadow:
+        0 20px 36px rgba(15, 83, 39, 0.22),
+        0 0 0 1px rgba(94, 196, 123, 0.22) inset;
+    }
+
+    .plant-card:hover::before {
+      opacity: 1;
+    }
+
+    .plant-card img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      filter: saturate(1.15) contrast(1.05);
+      transition: transform 0.45s ease, filter 0.35s ease;
+    }
+
+    .plant-card:hover img {
+      transform: scale(1.08);
+      filter: saturate(1.3) contrast(1.08);
+    }
+
+    .plant-card-body {
+      padding: 0.82rem 0.95rem 0.96rem;
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid rgba(148, 203, 163, 0.44);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(239, 250, 242, 0.92));
+    }
+
+    .plant-name {
+      font-weight: 800;
+      font-size: 1.35rem;
+      line-height: 1.15;
+      color: #0f3c26;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.3rem;
+      max-width: calc(100% - 84px);
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .plant-meta {
+      display: inline-block;
+      font-size: 0.82rem;
+      color: #305f45;
+      background: #e8f6eb;
+      border: 1px solid #cae6d2;
+      border-radius: 999px;
+      padding: 0.22rem 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .plant-delete-wrapper {
+      position: absolute;
+      top: 0.45rem;
+      right: 0.45rem;
+    }
+
+    .plant-card .btn-danger {
+      border-radius: 999px;
+      padding: 0.34rem 0.72rem;
+      font-size: 0.76rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffe9ee, #ffdce4);
+      border: 1px solid #f5b6c4;
+      color: #b51f3d;
+      box-shadow: 0 5px 12px rgba(181, 31, 61, 0.16);
+      backdrop-filter: blur(2px);
+    }
+
+    .plant-card .btn-danger:hover {
+      background: linear-gradient(135deg, #ffdce4, #ffcfd9);
+      box-shadow: 0 8px 14px rgba(181, 31, 61, 0.24);
+      transform: translateY(-1px);
+    }
+
+

@@ -1,15 +1,1047 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <title>Plant Care Tracker - Omkar Vikas Chalke</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plant Care Tracker</title>
-  <meta http-equiv="refresh" content="0; url=./FRONTEND/index.html">
+
+    <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/pages/home.css">
+  <link rel="stylesheet" href="./css/pages/dashboard-add-plants.css">
+  <link rel="stylesheet" href="./css/pages/plant-library.css">
+  <link rel="stylesheet" href="./css/pages/plant-dashboard.css">
+  <link rel="stylesheet" href="./css/pages/care-tracker.css">
+  <link rel="stylesheet" href="./css/pages/plant-tracer.css">
+  <link rel="stylesheet" href="./css/pages/chat.css">
+  <link rel="stylesheet" href="./css/pages/contact-about.css">
+  <link rel="stylesheet" href="./css/pages/profile.css">
+  <link rel="stylesheet" href="./css/chat-responsive.css">
+  <link rel="stylesheet" href="./css/theme.css">
+  <link rel="stylesheet" href="./css/mood.css">
+  <link rel="stylesheet" href="./css/inline-separate.css">
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 </head>
 <body>
-  <script>
-    window.location.replace("./FRONTEND/index.html");
-  </script>
-  <p>Redirecting... <a href="./FRONTEND/index.html">Open Plant Care Tracker</a></p>
-</body>
+  <!-- PRE-AUTH LANDING PAGE -->
+  <section id="preAuthLanding" class="preauth-landing">
+    <header class="preauth-header">
+      <div class="preauth-logo">Plant Care Tracker</div>
+      <div class="preauth-actions">
+        <button id="landingLoginBtn" class="btn-secondary" type="button">Login</button>
+        <button id="landingRegisterBtn" class="btn-primary" type="button">Register</button>
+      </div>
+    </header>
+
+    <main class="preauth-main">
+      <section class="preauth-hero">
+        <p class="preauth-tag">Smart Plant Management</p>
+        <h1>Grow healthier plants with a simple daily tracking system.</h1>
+        <p>
+          Plant Care Tracker helps you organize watering, fertilizing, plant notes, and growth updates in one clean dashboard.
+        </p>
+        <div class="preauth-hero-buttons">
+          <button id="landingHeroLoginBtn" class="btn-primary" type="button">Start with Login</button>
+          <button id="landingHeroRegisterBtn" class="btn-secondary" type="button">Create Account</button>
+        </div>
+      </section>
+
+      <section class="preauth-grid">
+        <article class="preauth-card">
+          <h3>Why This Website Is Useful</h3>
+          <ul>
+            <li>Keeps your plant care schedule in one place.</li>
+            <li>Helps you avoid missed watering and fertilizer tasks.</li>
+            <li>Makes plant progress visible with history and tracking.</li>
+          </ul>
+        </article>
+
+        <article class="preauth-card">
+          <h3>How Users Can Use It</h3>
+          <ol>
+            <li>Register and add your plants with type and growth stage.</li>
+            <li>Create care tasks and monitor the calendar reminders.</li>
+            <li>Check dashboards, task history, and growth updates regularly.</li>
+          </ol>
+        </article>
+
+        <article class="preauth-card">
+          <h3>Who This Website Is For</h3>
+          <ul>
+            <li>Students building plant or web-based projects.</li>
+            <li>Beginners who want easy daily plant care guidance.</li>
+            <li>Plant lovers managing multiple indoor/outdoor plants.</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+  </section>
+
+  <!-- AUTH (LOGIN / REGISTER) -->
+  <div id="authWrapper" class="auth-wrapper hidden">
+    <div id="loginCard" class="auth-card">
+      <h1>Plant Care Tracker</h1>
+      <p>Login to track your plants, care notes, and watering schedule.</p>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input id="loginEmail" type="email" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" placeholder="Enter password">
+        </div>
+        <div id="loginMessage" class="small-text"></div>
+        <div class="mt-1">
+          <button type="submit" class="btn-primary w-100">Login</button>
+        </div>
+      </form>
+
+      <p class="small-text mt-1">
+        New here?
+        <button id="showRegisterBtn" class="btn-link">Create an account</button>
+      </p>
+    </div>
+
+    <div id="registerCard" class="auth-card hidden">
+      <h1>Create Account</h1>
+      <p>Register to start your personal plant care dashboard.</p>
+
+      <form id="registerForm">
+        <div class="form-group">
+          <label for="regUsername">Username</label>
+          <input id="regUsername" type="text" placeholder="Choose a username">
+        </div>
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <input id="regName" type="text" placeholder="Your full name">
+        </div>
+        <div class="form-group">
+          <label for="regPhone">Phone Number</label>
+          <input id="regPhone" type="text" placeholder="Your phone number">
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email</label>
+          <input id="regEmail" type="email" placeholder="Your email">
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <input id="regPassword" type="password" placeholder="Create a password">
+        </div>
+        <div id="registerMessage" class="small-text"></div>
+        <div class="mt-1">
+          <button type="submit" class="btn-primary w-100">Register</button>
+        </div>
+      </form>
+
+      <p class="small-text mt-1">
+        Already have an account?
+        <button id="showLoginBtn" class="btn-link">Login here</button>
+      </p>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="appWrapper" class="hidden">
+    <header class="main-header">
+      <div class="logo">Plant Care Tracker</div>
+      <nav>
+  <button class="nav-link active" data-section="homeSection">Home</button>
+  <button class="nav-link" data-section="dashboardSection">Add Plants</button>
+  <button class="nav-link" data-section="trackerSection">Care Tracker</button>
+  <button class="nav-link" data-section="librarySection">Plant Gallery</button>
+  <button class="nav-link" data-section="tracerSection">Plant Analytics</button>
+  <button class="nav-link" data-section="growthTimelineSection">Weather</button>
+  <button class="nav-link" data-section="plantMoodSection">Plant Mood</button>
+  <button class="nav-link" data-section="profileSection">Dashboard</button>
+  <button class="nav-link" data-section="contactSection">Contact</button>
+  <button class="nav-link" data-section="aboutSection">About</button>
+</nav>
+
+      
+      <div class="user-box">
+        <span id="usernameDisplay"></span>
+        <button id="logoutBtn" class="btn-secondary">Logout</button>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <!-- NEW HOME PAGE -->
+      <section id="homeSection" class="app-section">
+        <div class="card home-hero-main">
+          <div class="home-hero-text">
+            <span class="home-kicker">Smart Plant Journal</span>
+            <h1>Welcome to Plant Care Tracker</h1>
+            <p>
+              This website helps you organize all your plants in one place – with photos, notes,
+              watering reminders and a special plant tracer dashboard.
+            </p>
+            <div class="home-highlight-row">
+              <span class="home-highlight-pill">Simple Daily Tracking</span>
+              <span class="home-highlight-pill">Student Friendly</span>
+              <span class="home-highlight-pill">Visual Growth Logs</span>
+            </div>
+            <p><strong>What you can do here:</strong></p>
+            <ul>
+              <li>Save each plant with photo, type and growth stage.</li>
+              <li>Plan watering and fertilizer dates with a calendar.</li>
+              <li>See care history and important notes per plant.</li>
+            </ul>
+            <div class="home-metric-row">
+              <div class="home-metric-card">
+                <span>Focus</span>
+                <strong>Healthy Plants</strong>
+              </div>
+              <div class="home-metric-card">
+                <span>Workflow</span>
+                <strong>Add -> Plan -> Track</strong>
+              </div>
+            </div>
+          </div>
+          <div class="home-hero-image">
+            <div>
+              <h3>All your plants, neatly organized.</h3>
+              <p>
+                Start by adding a plant in the <strong>Add Plants</strong> tab.
+                Then explore <strong>Plant Gallery</strong>, <strong>Care Tracker</strong> and
+                <strong>Plant Analytics</strong>.
+              </p>
+              <div id="homeSlider" class="home-slider">
+                <img src="https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Indoor plants by window" loading="eager" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=1200'">
+                <img src="https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Tropical houseplants" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=1200'">
+                <img src="https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Urban jungle plants" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/1048039/pexels-photo-1048039.jpeg?auto=compress&cs=tinysrgb&w=1200'">
+                <img src="https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Green leafy plants" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=1200'">
+                <img src="https://images.pexels.com/photos/1048039/pexels-photo-1048039.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Balcony garden" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=1200'">
+                <img src="https://images.pexels.com/photos/1509428/pexels-photo-1509428.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="Succulent arrangement" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=1200'">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Beautiful Plant Care Gallery</h2>
+          <p class="card-subtitle">
+            A small visual inspiration to remind you how amazing healthy plants look.
+          </p>
+          <div class="home-gallery">
+            <img src="https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Houseplants in bright room" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=900'">
+            <img src="https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Green leaf close-up" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=900'">
+            <img src="https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Snake plant in pot" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=900'">
+            <img src="https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Monstera indoor plant" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/1048039/pexels-photo-1048039.jpeg?auto=compress&cs=tinysrgb&w=900'">
+            <img src="https://images.pexels.com/photos/1005058/pexels-photo-1005058.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Botanical garden greenery" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/3076899/pexels-photo-3076899.jpeg?auto=compress&cs=tinysrgb&w=900'">
+            <img src="https://images.pexels.com/photos/1506665/pexels-photo-1506665.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Fern leaves" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=900'">
+            <img src="./assets/home-aloe-vera.avif" alt="Aloe vera plant" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/883465/pexels-photo-883465.jpeg?auto=compress&cs=tinysrgb&w=900'">
+            <img src="https://images.pexels.com/photos/4751972/pexels-photo-4751972.jpeg?auto=compress&cs=tinysrgb&w=900" alt="Plant nursery collection" loading="lazy" onerror="this.onerror=null;this.src='https://images.pexels.com/photos/2123482/pexels-photo-2123482.jpeg?auto=compress&cs=tinysrgb&w=900'">
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>How to Use This Website</h2>
+          <p class="card-subtitle">
+            Follow these simple steps to get the best use from Plant Care Tracker.
+          </p>
+          <div class="grid home-how-grid">
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">01</span>Go to Add Plants</h3>
+              <p>
+                Open the <strong>Add Plants</strong> tab and add your first plant.
+                You can select from the built-in Plant Information Library and upload a picture.
+              </p>
+            </div>
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">02</span>Check Plant Gallery</h3>
+              <p>
+                After adding plants, all of them appear in the <strong>Plant Gallery</strong>.
+                Click any plant card to open its individual <strong>Plant Dashboard</strong>.
+              </p>
+            </div>
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">03</span>Use Care Tracker</h3>
+              <p>
+                In the <strong>Care Tracker</strong> tab, add watering and fertilizer tasks,
+                see upcoming and past activities and view everything on the calendar.
+              </p>
+            </div>
+            <div class="info-box home-step-card">
+              <h3><span class="home-step-no">04</span>Trace</h3>
+              <p>
+                In the <strong>Plant Analytics</strong> tab you can see exact watering dates,
+                fertilizer dates, growth bars and plant progress insights.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ADD PLANTS -->
+      <section id="dashboardSection" class="app-section">
+        <div class="card home-hero">
+          <div class="hero-text">
+            <h1>Add Plants & Overview 🌿</h1>
+            <div class="hero-stats">
+              <div class="hero-stat">
+                <div>Total Plants</div>
+                <strong id="plantCount">0</strong>
+              </div>
+              <div class="hero-stat">
+                <div>Upcoming Tasks</div>
+                <strong id="upcomingCount">0</strong>
+              </div>
+            </div>
+          </div>
+          <div class="hero-image">
+            <div>
+              <h3>Add your plants in seconds</h3>
+              <p>Use the library, upload a picture and start tracking watering, sunlight and growth.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- PLANT INFO LIBRARY -->
+        <div class="card">
+          <h2>SELECT A NEW PLANT</h2>
+
+          <div class="form-group">
+            <label for="catalogSearch">Search plant by name</label>
+            <input id="catalogSearch" type="text" placeholder="Type to search in library (e.g. money, tulsi, rose)">
+          </div>
+
+          <div class="form-group">
+            <label for="catalogPlantSelect">Select Plant from Library</label>
+            <select id="catalogPlantSelect"></select>
+          </div>
+
+          <div id="catalogPlantInfoBox" class="info-box">
+            <h3>Plant information</h3>
+            <p>Select a plant above to view description, type and basic care information.</p>
+          </div>
+
+          <p class="small-text">
+            After choosing a plant, scroll down to the "Add a New Plant" form. The plant name,
+            type and information note will already be filled. You can still edit them and upload your own picture.
+          </p>
+        </div>
+
+        <!-- ADD PLANT -->
+        <div class="card add-plant-card">
+          <h2>ADD PLANTS</h2>
+
+          <div class="add-plant-quickbar">
+            <div class="quick-group">
+              <span class="quick-label">Quick Type</span>
+              <button type="button" class="quick-chip" data-plant-type="Indoor">Indoor</button>
+              <button type="button" class="quick-chip" data-plant-type="Outdoor">Outdoor</button>
+            </div>
+            <div class="quick-group">
+              <span class="quick-label">Quick Stage</span>
+              <button type="button" class="quick-chip" data-growth-stage="Seedling">Seedling</button>
+              <button type="button" class="quick-chip" data-growth-stage="Young">Young</button>
+              <button type="button" class="quick-chip" data-growth-stage="Mature">Mature</button>
+            </div>
+          </div>
+
+          <div id="addPlantPreview" class="add-plant-preview">
+            <h3>Plant Preview</h3>
+            <p class="small-text">Fill the form to preview how your plant entry will look.</p>
+          </div>
+
+          <form id="addPlantForm">
+            <div class="grid">
+              <div>
+                <div class="form-group">
+                  <label for="plantName">Plant Name</label>
+                  <input id="plantName" type="text" placeholder="Eg. Money Plant">
+                </div>
+                <div class="form-group">
+                  <label for="plantType">Plant Type</label>
+                  <select id="plantType">
+                    <option value="">Select type</option>
+                    <option value="Indoor">Indoor Plant</option>
+                    <option value="Outdoor">Outdoor Plant</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="growthStage">Growth Stage</label>
+                  <input id="growthStage" type="text" placeholder="Eg. Seedling / Mature / New cutting">
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                  <label for="plantImageFile">Upload Plant Picture (optional)</label>
+                  <input id="plantImageFile" type="file" accept="image/*">
+                </div>
+                <div class="form-group">
+                  <label for="initialNote">Plant Information Note</label>
+                  <textarea id="initialNote"
+                    placeholder="Eg. Native to tropical regions, prefers bright indirect light and slightly moist soil."></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="mt-075">
+              <button type="submit" class="btn-primary">Add Plant</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- PLANT LIBRARY -->
+      <section id="librarySection" class="app-section">
+        <div class="card">
+          <h2>Plant Gallery</h2>
+          <div id="plantLibrary" class="grid"></div>
+        </div>
+      </section>
+
+      <!-- PLANT DASHBOARD (DETAIL FOR ONE PLANT) -->
+      <section id="plantDashboardSection" class="app-section">
+        <div class="card">
+          <h2>Plant Dashboard</h2>
+          <p class="card-subtitle">
+            View and update details for this plant.
+          </p>
+          <div class="dashboard-layout">
+            <div>
+              <div id="plantImageBox" class="plant-photo-placeholder">
+                Select a plant to view its dashboard.
+              </div>
+              <div id="plantInfo"></div>
+            </div>
+            <div>
+              <h3>Notes</h3>
+              <ul id="notesList" class="item-list"></ul>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Update Plant Details</h3>
+            <form id="updatePlantForm">
+              <div class="grid">
+                <div>
+                  <div class="form-group">
+                    <label for="plantNameDash">Plant Name</label>
+                    <input id="plantNameDash" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="plantTypeDash">Plant Type</label>
+                    <select id="plantTypeDash">
+                      <option value="Indoor">Indoor Plant</option>
+                      <option value="Outdoor">Outdoor Plant</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="growthStageDash">Growth Stage</label>
+                    <input id="growthStageDash" type="text">
+                  </div>
+                </div>
+                <div>
+                  <div class="form-group">
+                    <label for="plantImageUrlDash">Plant Image URL</label>
+                    <input id="plantImageUrlDash" type="text">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary">Update Plant</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Add Note</h3>
+            <form id="addNoteFormDash">
+              <div class="form-group">
+                <label for="noteTextDash">Note</label>
+                <textarea id="noteTextDash" placeholder="Add a care note or observation"></textarea>
+              </div>
+              <button type="submit" class="btn-primary">Add Note</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- PLANT DASHBOARD (DETAIL FOR ONE PLANT) -->
+      
+
+      
+
+      
+      <!-- CARE TRACKER -->
+      <section id="trackerSection" class="app-section">
+        <div class="card">
+          <h2>Plant Care Tracker</h2>
+          <p class="card-subtitle">
+            Add watering, fertilizing, cutting, pruning, soil moisture check, repotting and pest check tasks.
+          </p>
+
+          <div class="tracker-layout">
+            <!-- LEFT -->
+            <div>
+              <h3>Add Care Task</h3>
+
+              <div class="form-group">
+                <label>Select Plant</label>
+                <select id="trackerPlantSelect"></select>
+              </div>
+
+              <div class="form-group">
+                <label>Task Type</label>
+                <select id="trackerTaskType">
+                  <option value="">Select Task</option>
+                  <option value="water">Watering</option>
+                  <option value="fert">Fertilizing</option>
+                  <option value="cut">Cutting Leaf</option>
+                  <option value="prune">Pruning</option>
+                  <option value="moisture">Soil Moisture Check</option>
+                  <option value="repot">Repotting</option>
+                  <option value="pest">Pest Check</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Date</label>
+                <input id="trackerTaskDate" type="date">
+              </div>
+
+              <button type="button" class="btn-primary" id="trackerAddBtn">Add Task</button>
+
+              <div class="smart-planner">
+                <h3>Smart Auto Planner</h3>
+                <div class="form-group">
+                  <label for="smartPlanRange">Plan Range</label>
+                  <select id="smartPlanRange">
+                    <option value="14">14 Days</option>
+                    <option value="30" selected>30 Days</option>
+                    <option value="45">45 Days</option>
+                    <option value="60">60 Days</option>
+                  </select>
+                </div>
+                <div class="smart-planner-actions">
+                  <button type="button" class="btn-secondary" id="smartPlanPreviewBtn">Preview Plan</button>
+                  <button type="button" class="btn-primary" id="smartPlanSaveBtn">Generate & Save</button>
+                </div>
+                <div id="smartPlanSummary" class="small-text"></div>
+                <ul id="smartPlanPreviewList" class="item-list smart-plan-list"></ul>
+              </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div>
+              <div class="calendar-legend" aria-label="Calendar Color Legend">
+                <div class="legend-item"><span class="legend-swatch water"></span><span>Water</span></div>
+                <div class="legend-item"><span class="legend-swatch fert"></span><span>Fertilizer</span></div>
+                <div class="legend-item"><span class="legend-swatch cut"></span><span>Cutting</span></div>
+                <div class="legend-item"><span class="legend-swatch both"></span><span>Water + Fertilizer</span></div>
+                <div class="legend-item"><span class="legend-swatch prune"></span><span>Pruning</span></div>
+                <div class="legend-item"><span class="legend-swatch moisture"></span><span>Moisture Check</span></div>
+                <div class="legend-item"><span class="legend-swatch repot"></span><span>Repotting</span></div>
+                <div class="legend-item"><span class="legend-swatch pest"></span><span>Pest Check</span></div>
+              </div>
+              <h3>Calendar</h3>
+              <div class="calendar">
+                <div class="calendar-header">
+                  <button type="button" id="trackerCalPrev" class="calendar-nav-btn" aria-label="Previous month">&lt;</button>
+                  <strong id="trackerCalMonthLabel"></strong>
+                  <button type="button" id="trackerCalNext" class="calendar-nav-btn" aria-label="Next month">&gt;</button>
+                </div>
+                <div class="calendar-grid" id="trackerCalendarGrid"></div>
+              </div>
+              <h3 class="mt-08">Tasks (Upcoming 10 Days, Not Done)</h3>
+              <ul id="trackerTaskList" class="task-list"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="taskHistorySection" class="app-section">
+        <div class="card">
+          <h2>Task History</h2>
+          <p class="card-subtitle">
+            See all completed and missed tasks for your plants.
+          </p>
+
+          <div class="form-group">
+            <label for="taskHistoryPlantFilter">Select Plant</label>
+            <select id="taskHistoryPlantFilter">
+              <option value="all">All Plants</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="taskHistoryFilter">Filter</label>
+            <select id="taskHistoryFilter">
+              <option value="all">All</option>
+              <option value="done">Completed</option>
+              <option value="missed">Missed</option>
+              <option value="pending">Pending</option>
+            </select>
+          </div>
+
+          <div id="taskHistoryStats" class="info-box"></div>
+          <ul id="taskHistoryList" class="item-list"></ul>
+        </div>
+      </section>
+
+
+      <!-- PLANT TRACER -->
+      <section id="tracerSection" class="app-section">
+        <div class="card">
+          <h2>Plant Analytics</h2>
+
+          <div class="form-group">
+            <label for="tracerPlantSelect">Select Plant for Analytics</label>
+            <select id="tracerPlantSelect"></select>
+          </div>
+
+          <div class="tracer-layout">
+            <!-- LEFT: Overview -->
+            <div class="tracer-panel">
+              <h3>Plant Overview</h3>
+              <div id="tracerPlantImageBox" class="plant-photo-placeholder tracer-image-bg">
+                Select a plant to view tracing details.
+              </div>
+              <div class="mt-07" id="tracerPlantHeader"></div>
+
+              <div class="tracer-meta" id="tracerPlantMeta"></div>
+            </div>
+
+            <!-- RIGHT: User Behaviour Analytics + dates -->
+            <div class="tracer-panel">
+              <div class="growth-chart-title">
+                <h3>User Behaviour Analytics</h3>
+                <span class="tracer-kicker">Care rhythm, consistency and growth energy</span>
+              </div>
+              <div id="tracerHealthSummary" class="tracer-health-summary"></div>
+              <div class="tracer-stage-header">
+                <h4>Growth Momentum</h4>
+                <span id="tracerStagePill" class="tracer-stage-pill">Stage insight</span>
+              </div>
+              <div id="growthChart" class="growth-chart"></div>
+              <p id="tracerTrendMeta" class="tracer-trend-meta"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="growthTimelineSection" class="app-section">
+        <div class="card timeline-hub">
+          <h2>Weather Smart Care</h2>
+          <p class="card-subtitle">
+            Get weather-based CARE suggestions for your plants.
+          </p>
+
+          <form id="weatherSmartCareFormMain" class="timeline-upload-panel">
+            <div class="grid">
+              <div>
+                <div class="form-group">
+                  <label for="weatherPlantSelectMain">Select Plant</label>
+                  <select id="weatherPlantSelectMain"></select>
+                </div>
+                <div class="form-group">
+                  <label for="weatherMoisturePrefMain">Moisture Preference</label>
+                  <select id="weatherMoisturePrefMain">
+                    <option value="low">Low</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="weatherLastWateredMain">Last Watered Date</label>
+                  <input id="weatherLastWateredMain" type="date">
+                </div>
+                <div class="form-group">
+                  <label for="weatherIndoorMain">Placement</label>
+                  <select id="weatherIndoorMain">
+                    <option value="true">Indoor</option>
+                    <option value="false">Outdoor</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                  <label for="weatherLatitudeMain">Latitude</label>
+                  <input id="weatherLatitudeMain" type="number" step="any" placeholder="e.g. 19.0760">
+                </div>
+                <div class="form-group">
+                  <label for="weatherLongitudeMain">Longitude</label>
+                  <input id="weatherLongitudeMain" type="number" step="any" placeholder="e.g. 72.8777">
+                </div>
+                <div class="weather-action-row">
+                  <button type="button" id="weatherUseLocationMain" class="btn-secondary">Use My Location</button>
+                  <button type="submit" class="btn-primary">Get Weather Advice</button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="timeline-stats-grid weather-stats-grid">
+            <div class="timeline-stat-card">
+              <span>Hydration Risk</span>
+              <strong id="weatherRiskMain">-</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>Next Water Date</span>
+              <strong id="weatherNextWaterMain">-</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>Water Frequency</span>
+              <strong id="weatherFrequencyMain">-</strong>
+            </div>
+            <div class="timeline-stat-card">
+              <span>Fertilizer In</span>
+              <strong id="weatherFertilizerMain">-</strong>
+            </div>
+          </div>
+
+          <div id="weatherSummaryMain" class="timeline-compare-panel"></div>
+          <ul id="weatherNotesMain" class="item-list"></ul>
+        </div>
+      </section>
+
+
+      <!-- PROFILE -->
+      <section id="profileSection" class="app-section">
+        <div class="card">
+          <span class="profile-kicker">Personal Dashboard</span>
+          <h2>Your Dashboard</h2>
+          <p class="card-subtitle">
+            Personalise your space and quickly see your plant journey details.
+          </p>
+
+          <div class="profile-grid">
+            <!-- LEFT: main profile -->
+            <div class="profile-summary">
+              <div class="profile-header">
+                <div id="profileAvatar" class="profile-avatar">U</div>
+                <div>
+                  <h3 id="profileDisplayName">Plant lover</h3>
+                  <p class="small-text mt-015">
+                    Caring for <strong><span id="profilePlantsMain">0</span></strong> plants 🌿
+                  </p>
+                </div>
+              </div>
+
+              <div class="profile-fields">
+                <div class="profile-field">
+                  <span class="profile-field-label">Full Name</span>
+                  <span id="profileNameView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Username</span>
+                  <span id="profileUsernameView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Email</span>
+                  <span id="profileEmailView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Phone</span>
+                  <span id="profilePhoneView">-</span>
+                </div>
+                <div class="profile-field">
+                  <span class="profile-field-label">Member since</span>
+                  <span id="profileMemberSince">-</span>
+                </div>
+              </div>
+
+              <div class="profile-actions">
+                <button id="editProfileBtn" class="btn-primary">Edit Profile</button>
+                <button id="cancelEditProfileBtn" class="btn-secondary hidden">Cancel</button>
+              </div>
+            </div>
+
+            <!-- RIGHT: stats -->
+            <div class="profile-summary">
+              <h3 class="mb-04">Your Plant Stats</h3>
+              <div class="profile-mini-grid">
+                <div class="profile-mini-card">
+                  <span>Total Plants</span>
+                  <strong id="profilePlantsCount">0</strong>
+                </div>
+                <div class="profile-mini-card">
+                  <span>Care Completion</span>
+                  <strong id="profileCompletionPct">0%</strong>
+                </div>
+                <div class="profile-mini-card">
+                  <span>Pending Tasks</span>
+                  <strong id="profilePendingCount">0</strong>
+                </div>
+                <div class="profile-mini-card">
+                  <span>Missed Tasks</span>
+                  <strong id="profileMissedCount">0</strong>
+                </div>
+              </div>
+
+              <div class="profile-bars">
+                <div class="profile-bar-row">
+                  <span>Indoor Share</span>
+                  <div class="profile-bar-track"><i id="profileIndoorBar"></i></div>
+                  <em id="profileIndoorPct">0%</em>
+                </div>
+                <div class="profile-bar-row">
+                  <span>Outdoor Share</span>
+                  <div class="profile-bar-track"><i id="profileOutdoorBar"></i></div>
+                  <em id="profileOutdoorPct">0%</em>
+                </div>
+              </div>
+
+              <ul class="item-list profile-plain-list">
+                <li>Indoor plants: <strong><span id="profileIndoorCount">0</span></strong></li>
+                <li>Outdoor plants: <strong><span id="profileOutdoorCount">0</span></strong></li>
+              </ul>
+              <p class="profile-last-added">Latest plant: <strong id="profileLastPlant">-</strong></p>
+            </div>
+          </div>
+
+          <!-- EDIT PROFILE CARD -->
+          <div id="profileEditCard" class="card profile-edit hidden">
+            <h3>Edit your profile</h3>
+            <form id="editProfileForm">
+              <div class="grid">
+                <div>
+                  <div class="form-group">
+                    <label for="editFullName">Full Name</label>
+                    <input id="editFullName" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input id="editEmail" type="email">
+                  </div>
+                </div>
+                <div>
+                  <div class="form-group">
+                    <label for="editPhone">Phone Number</label>
+                    <input id="editPhone" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="editPassword">Change Password (optional)</label>
+                    <input id="editPassword" type="password" placeholder="Leave blank to keep same password">
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btn-primary mt-05">Save Profile</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="contactSection" class="app-section">
+        <div class="card">
+          <h2>Contact Us</h2>
+
+          <div class="contact-info">
+            <p><strong>Phone:</strong> 8956676259</p>
+            <p><strong>WhatsApp:</strong> <a href="https://wa.me/918956676259" target="_blank">+91 8956676259</a></p>
+            <p><strong>Email:</strong> omkarplantcaretracker@gmail.com</p>
+          </div>
+
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="yourName">Your Name</label>
+              <input id="yourName" type="text" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+              <label for="yourEmail">Your Email</label>
+              <input id="yourEmail" type="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+              <label for="yourMessage">Your Message / Problem</label>
+              <textarea id="yourMessage"
+                placeholder="Describe your plant problem or issue with the tracker."></textarea>
+            </div>
+            <button type="submit" class="btn-primary">Send Message</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ABOUT (GLOWING) -->
+      <section id="aboutSection" class="app-section">
+        <div class="card">
+          <div class="about-hero">
+            <span class="about-kicker">Plant Care Platform</span>
+            <h2>About Plant Care Tracker</h2>
+            <p class="card-subtitle">
+              A modern plant journey workspace that combines reminders, visual growth logs, and care intelligence in one place.
+            </p>
+            <div class="about-pill-row">
+              <span class="about-pill">Simple Daily Workflow</span>
+              <span class="about-pill">Student Project Ready</span>
+              <span class="about-pill">Visual Progress Tracking</span>
+              <span class="about-pill">Care Intelligence</span>
+            </div>
+          </div>
+
+          <div class="about-stat-grid">
+            <div class="about-stat-card">
+              <span>Core Focus</span>
+              <strong>Healthy Plants</strong>
+              <p>Track routines, avoid missed watering, and keep plant care consistent.</p>
+            </div>
+            <div class="about-stat-card">
+              <span>Experience</span>
+              <strong>Visual + Practical</strong>
+              <p>Timeline, gallery, analytics and dashboard are built for real care decisions.</p>
+            </div>
+            <div class="about-stat-card">
+              <span>Audience</span>
+              <strong>Everyone</strong>
+              <p>Useful for beginners, home gardeners, and students building project demos.</p>
+            </div>
+          </div>
+
+          <div class="about-columns">
+            <article class="about-highlight">
+              <h3>Why this website is useful</h3>
+              <p>
+                Plant Care Tracker turns scattered notes into a focused system. Instead of guessing care dates,
+                you can see what happened, what is pending, and what to do next.
+              </p>
+            </article>
+            <article class="about-highlight">
+              <h3>Mission</h3>
+              <p>
+                Make plant care simple, organized, and reliable for every user with clear reminders, practical tools, and clean design.
+              </p>
+            </article>
+            <article class="about-highlight">
+              <h3>Vision</h3>
+              <p>
+                Build a future where homes, classrooms, and communities use digital tracking to grow healthier plants with less waste.
+              </p>
+            </article>
+            <article class="about-highlight">
+              <h3>Daily usage flow</h3>
+              <p>
+                Add your plants, schedule care tasks, review your calendar weekly, and use analytics before making care decisions.
+              </p>
+            </article>
+          </div>
+
+          <div class="about-impact-strip">
+            <div class="about-impact-item">
+              <strong>Track</strong>
+              <span>Every plant update with history and notes</span>
+            </div>
+            <div class="about-impact-item">
+              <strong>Plan</strong>
+              <span>Watering and fertilizer tasks with dates</span>
+            </div>
+            <div class="about-impact-item">
+              <strong>Improve</strong>
+              <span>See growth trends and adjust plant care</span>
+            </div>
+          </div>
+
+          <h3 class="mt-1">Our Team</h3>
+          <p class="card-subtitle mt-02">
+            The people building Plant Care Tracker.
+          </p>
+
+          <div class="team-grid">
+            <div class="team-card">
+              <div class="team-avatar">OC</div>
+              <div class="team-name">Omkar Chalke</div>
+              <div class="team-role">Co-Founder</div>
+              <p class="mt-03 fs-085">
+                Leads product direction and turns plant-care ideas into practical features.
+              </p>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar">AS</div>
+              <div class="team-name">Ayush Sawant</div>
+              <div class="team-role">Project Lead</div>
+              <p class="mt-03 fs-085">
+                Manages planning, structure, and execution across the application experience.
+              </p>
+            </div>
+            <div class="team-card">
+              <div class="team-avatar">VC</div>
+              <div class="team-name">Vikas Chalke</div>
+              <div class="team-role">UI Designer</div>
+              <p class="mt-03 fs-085">
+                Crafts interface style, visual clarity, and interaction polish for usability.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="plantMoodSection" class="app-section">
+        <div class="card mood-shell">
+          <div class="mood-page-hero">
+            <h2>Plant Mood Indicator</h2>
+            <div class="mood-hero-pills">
+              <span class="mood-hero-pill">Live Score</span>
+              <span class="mood-hero-pill">Care Trend</span>
+              <span class="mood-hero-pill">7-Day Timeline</span>
+            </div>
+          </div>
+
+          <div class="mood-select-wrap">
+            <label for="plantMoodSelect">Select Plant</label>
+            <select id="plantMoodSelect"></select>
+          </div>
+
+          <div id="plantMoodResult" class="mood-result-area">
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FLOATING CHAT ICON -->
+     <button id="taskHistoryFab" class="chat-fab task-history-fab" title="Task History">📋</button>
+     <button id="plantDoctorFab" class="chat-fab plant-doctor-fab" title="Plant Doctor Bot">🧑‍⚕️</button>
+     <button id="themeToggle" class="chat-fab theme-toggle-offset" title="Toggle Dark/Light Mode">&#127769;</button>
+
+
+    <section id="plantDoctorPopup" class="chat-popup hidden">
+  <div class="card">
+    <div class="chat-header-row">
+      <h2>🌿 Plant Doctor</h2>
+      <button onclick="closePlantDoctor()">×</button>
+    </div>
+
+    <p class="card-subtitle">
+      Describe plant symptoms and get instant solution.
+    </p>
+
+    <div class="tracer-panel">
+      <div id="plantDoctorChatWindow"
+      class="doctor-chat-window"></div>
+
+      <div class="flex-row-gap-06">
+        <input id="plantDoctorInput"
+        placeholder="Example: yellow leaves, fungus, drooping..."
+        class="doctor-input">
+
+        <button onclick="sendPlantDoctor()"
+        class="btn-secondary doctor-btn">
+        Diagnose
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+  </div>
+    <script src="./js/firebase.js"></script>
+    <script src="./js/app-core.js"></script>
+    <script src="./js/plants.js"></script>
+    <script src="./js/tracker.js"></script>
+    <script src="./js/tracer-chat-profile.js"></script>
+    <script src="./js/auth-init.js"></script>
+    <script src="./js/extras.js"></script>
+</body> 
 </html>
+
+
+
+
+
+
+
+
+
+

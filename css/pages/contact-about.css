@@ -1,0 +1,327 @@
+    /* CONTACT & ABOUT */
+    #contactSection {
+      position: relative;
+      padding: 1.12rem;
+      border-radius: 1.22rem;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(170, 229, 186, 0.3), rgba(255, 255, 255, 0)),
+        linear-gradient(140deg, #f8fff9, #eff8f1 55%, #f7fcf8);
+      border: 1px solid #d5e9da;
+      box-shadow: 0 18px 40px rgba(20, 74, 38, 0.12);
+    }
+
+    #contactSection::before {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      right: -105px;
+      top: -130px;
+      background: radial-gradient(circle, rgba(109, 204, 134, 0.28), rgba(109, 204, 134, 0));
+      pointer-events: none;
+    }
+
+    #contactSection .card {
+      position: relative;
+      margin-bottom: 0;
+      border: 1px solid #cae4d0;
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 14px 30px rgba(18, 75, 37, 0.12);
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 2fr);
+      gap: 1rem 1.2rem;
+      align-items: start;
+    }
+
+    #contactSection .card > h2 {
+      grid-column: 1 / -1;
+      margin-bottom: 0.2rem;
+      font-size: clamp(1.6rem, 1.45rem + 0.7vw, 2.05rem);
+      color: #103b25;
+    }
+
+    #contactSection .card > .card-subtitle {
+      grid-column: 1 / -1;
+      margin-bottom: 0.25rem;
+      color: #496c56;
+      line-height: 1.5;
+      max-width: 72ch;
+    }
+
+    .contact-info {
+      border: 1px solid #c8e4cf;
+      border-radius: 1rem;
+      padding: 0.95rem 1rem;
+      background: linear-gradient(145deg, #f9fffa, #edf8f0);
+      box-shadow: 0 10px 24px rgba(20, 80, 40, 0.1);
+      font-size: 0.96rem;
+    }
+
+    .contact-info p {
+      margin-bottom: 0.6rem;
+      color: #244f35;
+    }
+
+    .contact-info p:last-child {
+      margin-bottom: 0;
+    }
+
+    .contact-info a {
+      color: #196f38;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(25, 111, 56, 0.35);
+    }
+
+    .contact-info a:hover {
+      color: #0e5a2b;
+    }
+
+    #contactForm {
+      border: 1px solid #c8e4cf;
+      border-radius: 1rem;
+      padding: 0.95rem 1rem 1.05rem;
+      background: linear-gradient(145deg, #ffffff, #f0f9f2);
+      box-shadow: 0 12px 24px rgba(20, 80, 40, 0.09);
+    }
+
+    #contactForm .form-group label {
+      font-weight: 600;
+      color: #1f4f33;
+    }
+
+    #contactForm input,
+    #contactForm textarea {
+      border-radius: 0.9rem;
+      border: 1px solid #b8d9c0;
+      background: linear-gradient(180deg, #ffffff, #f5fbf7);
+      min-height: 50px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    }
+
+    #contactForm textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    #contactForm input:focus,
+    #contactForm textarea:focus {
+      border-color: #4ba363;
+      box-shadow: 0 0 0 3px rgba(75, 163, 99, 0.18);
+      transform: translateY(-1px);
+    }
+
+    #contactForm .btn-primary {
+      margin-top: 0.2rem;
+      padding: 0.76rem 1.35rem;
+      font-size: 1rem;
+      background: linear-gradient(135deg, #3cae56, #277740);
+      box-shadow: 0 10px 22px rgba(39, 119, 64, 0.34);
+    }
+
+    #contactForm .btn-primary:hover {
+      box-shadow: 0 14px 26px rgba(39, 119, 64, 0.46);
+    }
+
+    /* ABOUT REDESIGN */
+    #aboutSection {
+      background:
+        radial-gradient(circle at 8% 0%, rgba(141, 232, 176, 0.34), rgba(255, 255, 255, 0)),
+        radial-gradient(circle at 100% 0%, rgba(145, 208, 255, 0.22), rgba(255, 255, 255, 0)),
+        linear-gradient(145deg, #eefdf2, #f9fff8 58%, #eff8ff);
+      border-radius: 1.3rem;
+      padding: 1.2rem;
+      box-shadow: 0 20px 50px rgba(29, 98, 62, 0.18);
+    }
+
+    #aboutSection .card {
+      margin-bottom: 0;
+      background: rgba(255, 255, 255, 0.84);
+      backdrop-filter: blur(9px);
+      border: 1px solid rgba(150, 220, 170, 0.56);
+      box-shadow: 0 18px 38px rgba(24, 84, 48, 0.16);
+      padding: 1.1rem;
+    }
+
+    .about-hero {
+      border: 1px solid #c7e9d2;
+      border-radius: 1rem;
+      padding: 1rem 1.1rem;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(236, 251, 242, 0.86));
+      box-shadow: 0 10px 24px rgba(31, 97, 59, 0.14);
+    }
+
+    .about-kicker {
+      display: inline-block;
+      padding: 0.24rem 0.62rem;
+      border-radius: 999px;
+      background: linear-gradient(120deg, #def8e8, #eef7ff);
+      border: 1px solid #b4dfc2;
+      color: #0f6038;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.35rem;
+    }
+
+    .about-pill-row {
+      margin-top: 0.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.42rem;
+    }
+
+    .about-pill {
+      display: inline-flex;
+      padding: 0.35rem 0.78rem;
+      border-radius: 999px;
+      background: linear-gradient(130deg, #d5ffe4, #edf9ff);
+      font-size: 0.78rem;
+      color: #1d633a;
+      border: 1px solid #b6e8cb;
+      box-shadow: 0 8px 18px rgba(79, 172, 113, 0.22);
+    }
+
+    .about-stat-grid {
+      margin-top: 0.8rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    .about-stat-card {
+      border: 1px solid #c7e8d1;
+      border-radius: 0.95rem;
+      padding: 0.72rem 0.8rem;
+      background: linear-gradient(155deg, #ffffff, #effaf4);
+      box-shadow: 0 10px 24px rgba(18, 73, 43, 0.1);
+    }
+
+    .about-stat-card span {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #4f7b61;
+      margin-bottom: 0.24rem;
+    }
+
+    .about-stat-card strong {
+      display: block;
+      color: #1d5b39;
+      margin-bottom: 0.3rem;
+      font-size: 1.06rem;
+    }
+
+    .about-stat-card p {
+      margin: 0;
+      color: #426450;
+      font-size: 0.86rem;
+      line-height: 1.35;
+    }
+
+    .about-columns {
+      margin-top: 0.86rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.72rem;
+    }
+
+    .about-highlight {
+      border-radius: 0.9rem;
+      border: 1px solid #c2e5cf;
+      background: linear-gradient(140deg, #f8fffa, #eaf8ef);
+      padding: 0.8rem 0.9rem;
+      box-shadow: 0 10px 22px rgba(30, 90, 56, 0.1);
+    }
+
+    .about-highlight h3 {
+      color: #1f6b34;
+      margin-bottom: 0.25rem;
+    }
+
+    .about-highlight p {
+      margin: 0;
+      color: #355b45;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .about-impact-strip {
+      margin-top: 0.86rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+    }
+
+    .about-impact-item {
+      border: 1px solid #c5e4d0;
+      border-radius: 0.85rem;
+      background: linear-gradient(150deg, #ffffff, #eef7ff);
+      padding: 0.68rem 0.72rem;
+    }
+
+    .about-impact-item strong {
+      display: block;
+      color: #134f31;
+      margin-bottom: 0.16rem;
+    }
+
+    .about-impact-item span {
+      display: block;
+      color: #496e59;
+      font-size: 0.84rem;
+      line-height: 1.3;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 0.8rem;
+      margin-top: 0.7rem;
+    }
+
+    .team-card {
+      background: linear-gradient(135deg, #f8fffa, #e9fff1);
+      border-radius: 0.9rem;
+      padding: 0.8rem 0.9rem;
+      border: 1px solid #c7eed2;
+      box-shadow: 0 8px 18px rgba(46, 125, 50, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .team-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(46, 125, 50, 0.22);
+    }
+
+    .team-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #0f5a34;
+      margin-bottom: 0.32rem;
+      border: 1px solid #a6dbbc;
+      background: linear-gradient(135deg, #dcfce7, #e0f2fe);
+    }
+
+    .team-name {
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+      color: #1c5f2c;
+    }
+
+    .team-role {
+      font-size: 0.83rem;
+      color: #4f6f52;
+    }
+
+

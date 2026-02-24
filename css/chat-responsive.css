@@ -1,0 +1,116 @@
+﻿    /* FLOATING CHAT ICON + POPUP */
+    .chat-fab {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4caf50, #2e7d32);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      z-index: 120;
+    }
+
+.plant-doctor-fab{
+  right:18px;
+  bottom:86px;
+  background:linear-gradient(135deg,#00c853,#1b5e20);
+}
+
+.task-history-fab{
+  right:18px;
+  bottom:154px;
+  background:linear-gradient(135deg,#26a69a,#00695c);
+}
+
+
+    .chat-fab:hover {
+      transform: translateY(-2px);
+    }
+
+    .chat-popup {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 360px;
+      max-width: 92vw;
+      z-index: 110;
+    }
+
+    .chat-popup .card {
+      margin-bottom: 0;
+    }
+
+    .chat-header-row {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:0.4rem;
+    }
+
+    #chatCloseBtn {
+      background:transparent;
+      border:none;
+      font-size:1.2rem;
+      cursor:pointer;
+      color:#2e7d32;
+      padding:0.1rem 0.4rem;
+      border-radius:999px;
+    }
+    #chatCloseBtn:hover {
+      background:#e8f5e9;
+    }
+
+    @media (max-width: 800px) {
+      .home-hero-main,
+      .home-hero,
+      .dashboard-layout,
+      .tracker-layout,
+      .tracer-layout,
+      .profile-grid { grid-template-columns: 1fr; }
+      .tracer-health-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .growth-chart-title { align-items: flex-start; flex-direction: column; gap: 0.32rem; }
+      .tracer-kicker { white-space: normal; }
+      .tracer-stage-header { flex-wrap: wrap; }
+      .timeline-stats-grid,
+      .about-stat-grid,
+      .about-impact-strip { grid-template-columns: 1fr 1fr; }
+      .timeline-compare-controls,
+      .timeline-compare-card,
+      .about-columns,
+      #contactSection .card { grid-template-columns: 1fr; }
+      .timeline-toolbar .form-group,
+      .timeline-filter-row .form-group { min-width: 100%; }
+      .timeline-filter-row .btn-secondary { width: 100%; }
+
+      #aboutSection { padding: 0.8rem; }
+
+      .main-header {
+        flex-wrap: wrap;
+        gap: 0.6rem;
+      }
+
+      .main-header nav {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .timeline-stats-grid,
+      .about-stat-grid,
+      .about-impact-strip { grid-template-columns: 1fr; }
+    }
+
+
+  
+

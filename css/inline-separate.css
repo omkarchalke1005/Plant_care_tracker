@@ -1,0 +1,70 @@
+.mt-1 { margin-top: 1rem; }
+.mt-08 { margin-top: 0.8rem; }
+.mt-075 { margin-top: 0.75rem; }
+.mt-07 { margin-top: 0.7rem; }
+.mt-05 { margin-top: 0.5rem; }
+.mt-04 { margin-top: 0.4rem; }
+.mt-03 { margin-top: 0.3rem; }
+.mt-02 { margin-top: 0.2rem; }
+.mt-015 { margin-top: 0.15rem; }
+.mb-04 { margin-bottom: 0.4rem; }
+.m-0 { margin: 0; }
+.w-100 { width: 100%; }
+.fs-085 { font-size: 0.85rem; }
+
+.tracer-image-bg {
+  background: radial-gradient(circle at top, #0f3b23, #020b07);
+}
+
+.theme-toggle-offset {
+  right: 18px;
+  bottom: 18px;
+}
+
+.chat-tip {
+  color: #9bffca;
+  margin-bottom: 0.4rem;
+}
+
+.flex-row-gap-05 {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.flex-row-gap-06 {
+  display: flex;
+  gap: 6px;
+}
+
+.chat-input-pill {
+  flex: 1;
+  padding: 0.5rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid #0f3b23;
+  background: #01140c;
+  color: #c8facc;
+}
+
+.chat-ask-btn {
+  background: #00c853;
+  border-color: #00c853;
+  color: #021407;
+}
+
+.doctor-chat-window {
+  height: 200px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+
+.doctor-input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 20px;
+  border: 1px solid #0f3b23;
+}
+
+.doctor-btn {
+  background: #00c853;
+  color: black;
+}
